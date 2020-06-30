@@ -8,6 +8,8 @@ import io.ktor.http.ContentType
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
 import io.ktor.routing.get
+import org.koin.dsl.module
+import org.koin.ktor.ext.Koin
 
 fun Application.main() {
     install(CallLogging)
@@ -15,5 +17,11 @@ fun Application.main() {
         get("/") {
             call.respondText("Hello, World!", ContentType.Text.Html)
         }
+    }
+
+    install(Koin) {
+        modules(module {
+
+        })
     }
 }

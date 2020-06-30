@@ -20,8 +20,9 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(Dependencies.logbackClassic)
+    implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorServerCio)
+    implementation(Dependencies.logbackClassic)
 }
 
 tasks {
