@@ -17,6 +17,7 @@ object Dependencies {
     const val argon2 = "de.mkammerer:argon2-jvm:${Versions.argon2}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val ktorAuthJwt = "io.ktor:ktor-auth-jwt:${Versions.ktor}"
+    const val ktorLocations = "io.ktor:ktor-locations:${Versions.ktor}"
     const val ktorServerCio = "io.ktor:ktor-server-cio:${Versions.ktor}"
     const val logbackClassic = "ch.qos.logback:logback-classic:${Versions.logback}"
     const val sqlDelightGradle = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"

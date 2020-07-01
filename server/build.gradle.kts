@@ -24,6 +24,7 @@ dependencies {
     implementation(Dependencies.argon2)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)
+    implementation(Dependencies.ktorLocations)
     implementation(Dependencies.ktorServerCio)
     implementation(Dependencies.logbackClassic)
     implementation(Dependencies.sqlDelightSqlite)
