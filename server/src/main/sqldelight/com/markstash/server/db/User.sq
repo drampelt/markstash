@@ -9,8 +9,12 @@ CREATE INDEX user_email ON user(email);
 
 insert:
 INSERT INTO user(email, password, apiKey)
-VALUES ?;
+VALUES (?, ?, ?);
 
 findByEmail:
 SELECT * FROM user
 WHERE email = ?;
+
+findByApiKey:
+SELECT * FROM user
+WHERE apiKey = ?;
