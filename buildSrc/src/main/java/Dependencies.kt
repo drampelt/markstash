@@ -4,6 +4,7 @@ object Versions {
 
     // Gradle plugins
     const val shadow = "5.2.0"
+    const val sqlDelight = "1.4.0"
 
     // Libraries
     const val koin = "2.1.5"
@@ -15,4 +16,6 @@ object Dependencies {
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val ktorServerCio = "io.ktor:ktor-server-cio:${Versions.ktor}"
     const val logbackClassic = "ch.qos.logback:logback-classic:${Versions.logback}"
+    const val sqlDelightGradle = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"
+    const val sqlDelightSqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
 }

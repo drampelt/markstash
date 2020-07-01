@@ -2,6 +2,7 @@ plugins {
     application
     kotlin("jvm")
     id("com.github.johnrengelman.shadow") version Versions.shadow
+    id("com.squareup.sqldelight")
 }
 
 group = "com.markstash.server"
@@ -23,6 +24,7 @@ dependencies {
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorServerCio)
     implementation(Dependencies.logbackClassic)
+    implementation(Dependencies.sqlDelightSqlite)
 }
 
 tasks {
@@ -31,5 +33,11 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = Versions.jvm
+    }
+}
+
+sqldelight {
+    database("Database") {
+        packageName = "com.markstash.server.db"
     }
 }

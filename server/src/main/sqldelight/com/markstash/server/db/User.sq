@@ -1,0 +1,16 @@
+CREATE TABLE user (
+    id INTEGER PRIMARY KEY ASC,
+    email TEXT NOT NULL UNIQUE,
+    password TEXT,
+    apiKey TEXT NOT NULL
+);
+
+CREATE INDEX user_email ON user(email);
+
+insert:
+INSERT INTO user(email, password, apiKey)
+VALUES ?;
+
+findByEmail:
+SELECT * FROM user
+WHERE email = ?;
