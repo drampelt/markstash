@@ -45,5 +45,6 @@ tasks {
 sqldelight {
     database("Database") {
         packageName = "com.markstash.server.db"
+        schemaOutputDirectory = file("src/main/sqldelight/databases")
     }
 }

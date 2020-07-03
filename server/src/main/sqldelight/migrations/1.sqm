@@ -1,0 +1,13 @@
+CREATE TABLE bookmark (
+    id INTEGER PRIMARY KEY ASC,
+    userId INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    url TEXT NOT NULL,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+);
+
+CREATE INDEX bookmark_userId ON bookmark(userId);
+CREATE INDEX bookmark_url ON bookmark(url);
+
+UPDATE setting SET value = "2" WHERE name = "databaseVersion";
