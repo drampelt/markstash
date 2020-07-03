@@ -33,6 +33,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
+import java.io.File
 
 fun Application.main() {
     val jwtIssuer = environment.config.property("jwt.issuer").getString()
@@ -41,11 +42,16 @@ fun Application.main() {
     val jwtSecret = environment.config.property("jwt.secret").getString()
     val jwtAlgorithm = Algorithm.HMAC256(jwtSecret)
 
+    val dbPath = environment.config.propertyOrNull("markstash.database_dir")?.getString() ?: "database"
+    val dbFolder = File(dbPath)
+    dbFolder.mkdirs()
+    val dbFile = File(dbFolder, "markstash.db")
+
     install(CallLogging)
 
     install(Koin) {
         modules(module {
-            single<SqlDriver> { JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY) }
+            single<SqlDriver> { JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}") }
             single { Database(get()) }
             single { Argon2Factory.create() }
             single(named(Constants.Jwt.ISSUER)) { jwtIssuer }

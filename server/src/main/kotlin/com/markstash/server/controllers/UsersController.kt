@@ -2,9 +2,9 @@ package com.markstash.server.controllers
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.markstash.api.models.User
 import com.markstash.api.users.RegisterRequest
 import com.markstash.api.users.RegisterResponse
-import com.markstash.api.models.User
 import com.markstash.server.Constants
 import com.markstash.server.auth.ApiKeyGenerator
 import com.markstash.server.auth.CurrentUser
