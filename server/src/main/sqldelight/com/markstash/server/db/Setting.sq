@@ -1,0 +1,18 @@
+CREATE TABLE setting (
+    name TEXT PRIMARY KEY UNIQUE NOT NULL,
+    value TEXT NOT NULL DEFAULT "null"
+) WITHOUT ROWID;
+
+INSERT INTO setting(name, value)
+VALUES ("databaseVersion", "1");
+
+selectAll:
+SELECT * FROM setting;
+
+findByName:
+SELECT value FROM setting
+WHERE name = ?;
+
+update:
+REPLACE INTO setting(name, value)
+VALUES (?, ?);

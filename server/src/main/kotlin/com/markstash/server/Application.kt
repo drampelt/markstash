@@ -36,6 +36,8 @@ import org.koin.ktor.ext.get
 import java.io.File
 
 fun Application.main() {
+    val startTime = System.currentTimeMillis()
+
     val jwtIssuer = environment.config.property("jwt.issuer").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtRealm = environment.config.property("jwt.realm").getString()
@@ -53,6 +55,7 @@ fun Application.main() {
         modules(module {
             single<SqlDriver> { JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}") }
             single { Database(get()) }
+            single { Settings(get()) }
             single { Argon2Factory.create() }
             single(named(Constants.Jwt.ISSUER)) { jwtIssuer }
             single(named(Constants.Jwt.AUDIENCE)) { jwtAudience }
@@ -102,7 +105,21 @@ fun Application.main() {
     }
 
     GlobalScope.launch(Dispatchers.IO) {
-        Database.Schema.create(get())
+        val dbStartTime = System.currentTimeMillis()
+
+        if (!dbFile.exists()) {
+            log.info("Creating database...")
+            Database.Schema.create(get())
+        }
+
+        val settings = get<Settings>()
+        if (settings.databaseVersion < Database.Schema.version) {
+            log.info("Migrating database from version ${settings.databaseVersion} to ${Database.Schema.version}...")
+            Database.Schema.migrate(get(), settings.databaseVersion, Database.Schema.version)
+            settings.databaseVersion = Database.Schema.version
+        }
+
+        log.info("Finished db setup in ${System.currentTimeMillis() - dbStartTime}ms")
     }
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -111,4 +128,6 @@ fun Application.main() {
         sqlDriver.close()
         log.info("Goodbye")
     })
+
+    log.info("Finished configuration in ${System.currentTimeMillis() - startTime}ms")
 }
