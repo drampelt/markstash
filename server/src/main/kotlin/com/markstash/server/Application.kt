@@ -2,6 +2,7 @@ package com.markstash.server
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.markstash.api.ErrorResponse
 import com.markstash.server.auth.CurrentUser
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.users
@@ -10,16 +11,24 @@ import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import de.mkammerer.argon2.Argon2Factory
 import io.ktor.application.Application
+import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Locations
+import io.ktor.response.respond
 import io.ktor.routing.Routing
+import io.ktor.serialization.json
+import io.ktor.serialization.serialization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.MissingFieldException
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -45,6 +54,21 @@ fun Application.main() {
             single(named(Constants.Jwt.SECRET)) { jwtSecret }
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
         })
+    }
+
+    install(StatusPages) {
+        exception<Throwable> { cause ->
+            call.respond(HttpStatusCode.InternalServerError)
+            throw cause
+        }
+
+        exception<MissingFieldException> { cause ->
+            call.respond(HttpStatusCode.BadRequest, ErrorResponse.simple(cause.message ?: "Missing field"))
+        }
+    }
+
+    install(ContentNegotiation) {
+        json()
     }
 
     install(Authentication) {

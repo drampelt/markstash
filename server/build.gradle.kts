@@ -21,10 +21,13 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation(project(":shared:api"))
+
     implementation(Dependencies.argon2)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)
     implementation(Dependencies.ktorLocations)
+    implementation(Dependencies.ktorSerialization)
     implementation(Dependencies.ktorServerCio)
     implementation(Dependencies.logbackClassic)
     implementation(Dependencies.sqlDelightSqlite)

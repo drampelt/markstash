@@ -2,6 +2,9 @@ package com.markstash.server.controllers
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.markstash.api.sessions.LoginRequest
+import com.markstash.api.sessions.LoginResponse
+import com.markstash.api.models.User
 import com.markstash.server.Constants
 import com.markstash.server.db.Database
 import de.mkammerer.argon2.Argon2
@@ -9,6 +12,8 @@ import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.post
+import io.ktor.request.receive
+import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Route
 import org.koin.core.qualifier.named
@@ -25,10 +30,9 @@ fun Route.sessions() {
     val jwtAlgorithm: Algorithm by inject(named(Constants.Jwt.ALGORITHM))
 
     post<Login> {
-        val email = call.parameters["email"] ?: return@post call.respondText("Invalid email", status = HttpStatusCode.BadRequest)
-        val password = call.parameters["password"] ?: return@post call.respondText("Invalid password", status = HttpStatusCode.BadRequest)
-        val user = db.userQueries.findByEmail(email).executeAsOneOrNull() ?: return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
-        if (!argon2.verify(user.password, password.toCharArray())) return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
+        val request = call.receive<LoginRequest>()
+        val user = db.userQueries.findByEmail(request.email).executeAsOneOrNull() ?: return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
+        if (!argon2.verify(user.password, request.password.toCharArray())) return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
 
         val jwtToken = JWT.create()
             .withSubject("Authentication")
@@ -37,6 +41,9 @@ fun Route.sessions() {
             .withClaim("apiKey", user.apiKey)
             .sign(jwtAlgorithm)
 
-        call.respondText(jwtToken)
+        call.respond(LoginResponse(
+            user = User(id = user.id, email = user.email),
+            authToken = jwtToken
+        ))
     }
 }
