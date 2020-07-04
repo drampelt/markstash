@@ -8,6 +8,7 @@ import com.markstash.api.users.RegisterResponse
 import com.markstash.server.Constants
 import com.markstash.server.auth.ApiKeyGenerator
 import com.markstash.server.auth.CurrentUser
+import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
 import de.mkammerer.argon2.Argon2
 import io.ktor.application.call
@@ -63,7 +64,6 @@ fun Route.users() {
 
     authenticate {
         get<Users.Me> {
-            val currentUser = call.authentication.principal<CurrentUser>() ?: return@get
             call.respond(
                 User(
                     id = currentUser.user.id,

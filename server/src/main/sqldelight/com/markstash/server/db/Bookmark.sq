@@ -9,3 +9,22 @@ CREATE TABLE bookmark (
 
 CREATE INDEX bookmark_userId ON bookmark(userId);
 CREATE INDEX bookmark_url ON bookmark(url);
+
+insert:
+INSERT INTO bookmark (userId, title, url, createdAt, updatedAt)
+VALUES (?, ?, ?, datetime('now'), datetime('now'));
+
+lastInsert:
+SELECT last_insert_rowid();
+
+findById:
+SELECT * FROM bookmark
+WHERE userId = ? AND id = ?;
+
+findByUserId:
+SELECT * FROM bookmark
+WHERE userId = ?;
+
+deleteById:
+DELETE FROM bookmark
+WHERE userId = ? AND id = ?;

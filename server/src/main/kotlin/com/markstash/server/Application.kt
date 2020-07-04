@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.markstash.api.ErrorResponse
 import com.markstash.server.auth.CurrentUser
+import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.users
 import com.markstash.server.db.Database
@@ -15,9 +16,11 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.application.log
 import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.NotFoundException
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Locations
@@ -74,6 +77,10 @@ fun Application.main() {
         exception<MissingFieldException> { cause ->
             call.respond(HttpStatusCode.BadRequest, ErrorResponse.simple(cause.message ?: "Missing field"))
         }
+
+        exception<NotFoundException> { cause ->
+            call.respond(HttpStatusCode.NotFound, ErrorResponse.simple(cause.message ?: "Not found"))
+        }
     }
 
     install(ContentNegotiation) {
@@ -102,6 +109,10 @@ fun Application.main() {
     install(Routing) {
         sessions()
         users()
+
+        authenticate {
+            bookmarks()
+        }
     }
 
     GlobalScope.launch(Dispatchers.IO) {
