@@ -1,10 +1,10 @@
-@file:JsQualifier("browser.tabs")
-
-package browser.tabs
+package browser
 
 import kotlin.js.Promise
 
-external fun query(queryInfo: QueryInfo): Promise<Array<Tab>>
+external interface Tabs {
+    fun query(queryInfo: QueryInfo): Promise<Array<Tab>>
+}
 
 external interface QueryInfo {
     var active: Boolean?
