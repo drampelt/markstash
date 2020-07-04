@@ -4,7 +4,10 @@
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="Common (experimental) " allPlatforms="JS []/JVM [1.6]/Native []" useProjectSettings="false" isTestModule="true" externalProjectId=":shared:api">
         <newMppModelJpsModuleKind>SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
-        <externalSystemTestTasks>jvmTest|:shared:api:jvmTest|jvm</externalSystemTestTasks>
+        <externalSystemTestTasks>
+          <externalSystemTestTask>jsBrowserTest|:shared:api:jsTest|js</externalSystemTestTask>
+          <externalSystemTestTask>jvmTest|:shared:api:jvmTest|jvm</externalSystemTestTask>
+        </externalSystemTestTasks>
         <compilerSettings />
         <compilerArguments>
           <option name="languageVersion" value="1.3" />

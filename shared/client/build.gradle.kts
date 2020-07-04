@@ -1,6 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
 }
 
 version = "unspecified"
@@ -10,14 +9,6 @@ repositories {
 }
 
 kotlin {
-    jvm {
-        val main by compilations.getting {
-            kotlinOptions {
-                jvmTarget = Versions.jvm
-            }
-        }
-    }
-
     js {
         browser()
     }
@@ -27,7 +18,10 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
-                implementation(Dependencies.kotlinSerializationCommon)
+                api(project(":shared:api"))
+
+                implementation(Dependencies.ktorClientCore)
+                implementation(Dependencies.ktorClientSerialization)
             }
         }
 
@@ -38,19 +32,19 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-
-                implementation(Dependencies.kotlinSerializationJvm)
-            }
-        }
-
         val jsMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-js"))
 
-                implementation(Dependencies.kotlinSerializationJs)
+                api(Dependencies.ktorClientJs)
+                api(Dependencies.ktorClientSerializationJs)
+
+                // Required for ktor client
+                api(npm("bufferutil"))
+                api(npm("utf-8-validate"))
+                api(npm("abort-controller"))
+                api(npm("text-encoding"))
+                api(npm("fs"))
             }
         }
     }

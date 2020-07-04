@@ -1,4 +1,4 @@
 rootProject.name = "markstash"
 include("server")
-include("shared:api")
+include("shared:api", "shared:client")
 include("extension")
