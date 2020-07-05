@@ -8,15 +8,18 @@ import com.markstash.api.errors.ValidationException
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.features.HttpResponseValidator
+import io.ktor.client.features.defaultRequest
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.request.header
 import io.ktor.client.statement.readBytes
 import io.ktor.utils.io.core.String
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 
 class ApiClient(
-    val baseUrl: String
+    var baseUrl: String,
+    var authToken: String? = null
 ) {
     val httpClient = HttpClient { configure() }
     val json = Json(JsonConfiguration.Stable)
@@ -25,6 +28,10 @@ class ApiClient(
         expectSuccess = false
         install(JsonFeature) {
             serializer = KotlinxSerializer(json)
+        }
+
+        defaultRequest {
+            authToken?.let { header("Authorization", "Bearer $it") }
         }
 
         HttpResponseValidator {

@@ -3,6 +3,7 @@ package com.markstash.extension.popup
 import browser.browser
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
+import com.markstash.extension.apiClient
 import com.markstash.extension.dyn
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asDeferred
@@ -34,6 +35,7 @@ val popup = functionalComponent<RProps> {
     useEffect(listOf()) {
         GlobalScope.launch {
             val storedConfig = browser.storage.local.get().asDeferred().await().unsafeCast<Configuration>()
+            apiClient.authToken = storedConfig.authToken
             setConfig(storedConfig)
             setIsLoading(false)
         }
@@ -45,6 +47,7 @@ val popup = functionalComponent<RProps> {
             user = response.user
         }
         browser.storage.local.set(newConfig).asDeferred().await()
+        apiClient.authToken = response.authToken
         setConfig(newConfig)
     }
 
@@ -65,8 +68,9 @@ val popup = functionalComponent<RProps> {
             }
         }
         else -> {
-            p { +"Logged in as ${user.email}" }
-            br {}
+            child(bookmarkForm)
+            hr {}
+            p { +user.email }
             button {
                 +"Log Out"
                 attrs.onClickFunction = { handleLogOut() }

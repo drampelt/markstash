@@ -2,8 +2,7 @@ package com.markstash.extension.popup
 
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.client.api.ApiClient
-import com.markstash.client.api.SessionsApi
+import com.markstash.extension.sessionsApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
@@ -18,9 +17,6 @@ import react.useState
 interface LoginProps : RProps {
     var onLogIn: (LoginResponse) -> Unit
 }
-
-val apiClient = ApiClient("http://localhost:8080")
-val sessionsApi = SessionsApi(apiClient)
 
 val loginForm = functionalComponent<LoginProps> { props ->
     val (email, setEmail) = useState("")
