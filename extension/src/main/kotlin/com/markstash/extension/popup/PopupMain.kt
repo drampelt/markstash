@@ -1,15 +1,76 @@
 package com.markstash.extension.popup
 
 import browser.browser
+import com.markstash.api.models.User
+import com.markstash.api.sessions.LoginResponse
 import com.markstash.extension.dyn
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.asDeferred
+import kotlinx.coroutines.launch
+import kotlinx.html.js.onClickFunction
+import react.RProps
+import react.child
+import react.dom.*
+import react.functionalComponent
+import react.useEffect
+import react.useState
 import kotlin.browser.document
 
 fun popupMain() {
-    browser.tabs.query(dyn {
-        active = true
-        currentWindow = true
-    }).then { (tab) ->
-        document.getElementById("page-title")?.innerHTML = "Title: ${tab.title}"
-        document.getElementById("page-url")?.innerHTML = "Title: ${tab.url}"
+    render(document.getElementById("main")) {
+        child(popup)
+    }
+}
+
+interface Configuration {
+    var authToken: String?
+    var user: User?
+}
+
+val popup = functionalComponent<RProps> {
+    val (isLoading, setIsLoading) = useState(true)
+    val (config, setConfig) = useState<Configuration>(dyn {  })
+
+    useEffect(listOf()) {
+        GlobalScope.launch {
+            val storedConfig = browser.storage.local.get().asDeferred().await().unsafeCast<Configuration>()
+            setConfig(storedConfig)
+            setIsLoading(false)
+        }
+    }
+
+    fun handleLogIn(response: LoginResponse) = GlobalScope.launch {
+        val newConfig = dyn<Configuration> {
+            authToken = response.authToken
+            user = response.user
+        }
+        browser.storage.local.set(newConfig).asDeferred().await()
+        setConfig(newConfig)
+    }
+
+    fun handleLogOut() = GlobalScope.launch {
+        browser.storage.local.clear().asDeferred().await()
+        val newConfig = dyn<Configuration> {}
+        setConfig(newConfig)
+    }
+
+    val user = config.user
+    when {
+        isLoading -> {
+            p { +"Loading..." }
+        }
+        user == null -> {
+            child(loginForm) {
+                attrs.onLogIn = { handleLogIn(it) }
+            }
+        }
+        else -> {
+            p { +"Logged in as ${user.email}" }
+            br {}
+            button {
+                +"Log Out"
+                attrs.onClickFunction = { handleLogOut() }
+            }
+        }
     }
 }

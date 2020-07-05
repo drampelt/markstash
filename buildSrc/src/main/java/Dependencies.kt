@@ -10,9 +10,11 @@ object Versions {
     const val argon2 = "2.7"
     const val koin = "2.1.5"
     const val kotlinCoroutines = "1.3.7"
+    const val kotlinReact = "16.13.1-pre.105-kotlin-1.3.72"
     const val kotlinSerialization = "0.20.0"
     const val ktor = "1.3.2"
     const val logback = "1.2.3"
+    const val react = "16.13.1"
 }
 
 object Dependencies {
@@ -20,6 +22,8 @@ object Dependencies {
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val kotlinCoroutinesCommon = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.kotlinCoroutines}"
     const val kotlinCoroutinesJs = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.kotlinCoroutines}"
+    const val kotlinReact = "org.jetbrains:kotlin-react:${Versions.kotlinReact}"
+    const val kotlinReactDom = "org.jetbrains:kotlin-react-dom:${Versions.kotlinReact}"
     const val kotlinSerializationCommon = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:${Versions.kotlinSerialization}"
     const val kotlinSerializationJs = "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:${Versions.kotlinSerialization}"
     const val kotlinSerializationJvm = "org.jetbrains.kotlinx:kotlinx-serialization-runtime:${Versions.kotlinSerialization}"

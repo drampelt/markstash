@@ -14,8 +14,12 @@ dependencies {
     implementation(project(":shared:client"))
 
     implementation(Dependencies.kotlinCoroutinesJs)
+    implementation(Dependencies.kotlinReact)
+    implementation(Dependencies.kotlinReactDom)
 
     implementation(npm("webextension-polyfill"))
+    implementation(npm("react", Versions.react))
+    implementation(npm("react-dom", Versions.react))
 }
 
 kotlin.target.browser {
