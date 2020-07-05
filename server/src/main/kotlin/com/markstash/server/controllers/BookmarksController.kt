@@ -2,11 +2,11 @@ package com.markstash.server.controllers
 
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
+import com.markstash.api.errors.NotFoundException
 import com.markstash.api.models.Bookmark
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
 import io.ktor.application.call
-import io.ktor.features.NotFoundException
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.delete

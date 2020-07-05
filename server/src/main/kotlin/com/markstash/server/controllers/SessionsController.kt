@@ -2,19 +2,18 @@ package com.markstash.server.controllers
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.markstash.api.errors.ForbiddenException
+import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.api.models.User
 import com.markstash.server.Constants
 import com.markstash.server.db.Database
 import de.mkammerer.argon2.Argon2
 import io.ktor.application.call
-import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.Route
 import org.koin.core.qualifier.named
 import org.koin.ktor.ext.inject
@@ -31,8 +30,8 @@ fun Route.sessions() {
 
     post<Login> {
         val request = call.receive<LoginRequest>()
-        val user = db.userQueries.findByEmail(request.email).executeAsOneOrNull() ?: return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
-        if (!argon2.verify(user.password, request.password.toCharArray())) return@post call.respondText("Invalid email or password", status = HttpStatusCode.Forbidden)
+        val user = db.userQueries.findByEmail(request.email).executeAsOneOrNull() ?: throw ForbiddenException("Invalid email or password")
+        if (!argon2.verify(user.password, request.password.toCharArray())) throw ForbiddenException("Invalid email or password")
 
         val jwtToken = JWT.create()
             .withSubject("Authentication")

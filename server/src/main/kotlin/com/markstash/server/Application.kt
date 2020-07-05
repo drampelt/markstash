@@ -2,7 +2,8 @@ package com.markstash.server
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.markstash.api.ErrorResponse
+import com.markstash.api.errors.ErrorResponse
+import com.markstash.api.errors.ServerException
 import com.markstash.server.auth.CurrentUser
 import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.sessions
@@ -21,7 +22,6 @@ import io.ktor.auth.jwt.jwt
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
-import io.ktor.features.NotFoundException
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Locations
@@ -78,8 +78,8 @@ fun Application.main() {
             call.respond(HttpStatusCode.BadRequest, ErrorResponse.simple(cause.message ?: "Missing field"))
         }
 
-        exception<NotFoundException> { cause ->
-            call.respond(HttpStatusCode.NotFound, ErrorResponse.simple(cause.message ?: "Not found"))
+        exception<ServerException> { cause ->
+            call.respond(HttpStatusCode.fromValue(cause.status), cause.errorResponse)
         }
     }
 
