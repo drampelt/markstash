@@ -4,4 +4,5 @@ package browser
 @JsNonModule
 external object browser {
     val tabs: Tabs
+    val extension: Extension
 }

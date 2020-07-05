@@ -1,30 +1,15 @@
 package com.markstash.extension
 
 import browser.browser
-import com.markstash.api.sessions.LoginRequest
-import com.markstash.client.api.ApiClient
-import com.markstash.client.api.SessionsApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlin.browser.document
+import com.markstash.extension.background.backgroundMain
+import com.markstash.extension.popup.popupMain
+import kotlin.browser.window
 
 fun main() {
-    console.log("Browser extension!")
-
-    browser.tabs.query(dyn {
-        active = true
-        currentWindow = true
-    }).then { (tab) ->
-        document.getElementById("page-title")?.innerHTML = "Title: ${tab.title}"
-        document.getElementById("page-url")?.innerHTML = "Title: ${tab.url}"
-    }
-
-    val apiClient = ApiClient("http://localhost:8080")
-    val sessionsApi = SessionsApi(apiClient)
-    GlobalScope.launch {
-        val loginResponse = sessionsApi.login(LoginRequest("email", "password"))
-        document.getElementById("info")?.innerHTML = JSON.stringify(loginResponse)
+    val getBackgroundPage = browser.extension.getBackgroundPage
+    when {
+        getBackgroundPage == null -> Unit // TODO: content scripts?
+        getBackgroundPage() == window -> backgroundMain()
+        else -> popupMain()
     }
 }
-
-fun <T> dyn(block: T.() -> Unit): T = js("{}").unsafeCast<T>().apply(block)

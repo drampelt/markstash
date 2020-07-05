@@ -18,6 +18,7 @@ import io.ktor.application.log
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.NotFoundException
@@ -27,7 +28,6 @@ import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.serialization.json
-import io.ktor.serialization.serialization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -103,6 +103,13 @@ fun Application.main() {
                 CurrentUser(db.userQueries.findByApiKey(apiKey).executeAsOne())
             }
         }
+    }
+
+    install(CORS) {
+        // Doesn't currently work for chrome-extension, see https://github.com/ktorio/ktor/issues/1656
+        host("*", schemes = listOf("chrome-extension"))
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
     }
 
     install(Locations)

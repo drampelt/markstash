@@ -7,8 +7,13 @@
     "48": "icons/border-48.png"
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "<all_urls>"
   ],
+  "background": {
+    "scripts": ["extension.js"],
+    "persistent": false
+  },
   "browser_action": {
     "default_icon": "icons/border-48.png",
     "default_title": "Bookmark",
