@@ -7,5 +7,5 @@ data class Bookmark(
     val id: Long,
     val title: String,
     val url: String,
-    val tags: List<String>
+    val tags: Set<String>
 )
