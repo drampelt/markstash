@@ -1,0 +1,11 @@
+CREATE VIEW bookmarkWithTags AS
+    SELECT *, (
+        SELECT COALESCE(GROUP_CONCAT(name, ','), '')
+        FROM tagging
+        LEFT JOIN tag ON tag.id = tagging.tagId
+        WHERE tagging.taggableType = 'bookmark' AND tagging.taggableId = bookmark.id
+    ) AS tags
+    FROM bookmark
+;
+
+UPDATE setting SET value = "4" WHERE name = "databaseVersion";

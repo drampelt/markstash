@@ -4,7 +4,7 @@ CREATE TABLE setting (
 ) WITHOUT ROWID;
 
 INSERT INTO setting(name, value)
-VALUES ("databaseVersion", "2");
+VALUES ("databaseVersion", "4");
 
 selectAll:
 SELECT * FROM setting;

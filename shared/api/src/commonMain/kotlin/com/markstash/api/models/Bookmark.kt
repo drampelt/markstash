@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Bookmark(
     val id: Long,
     val title: String,
-    val url: String
+    val url: String,
+    val tags: List<String>
 )

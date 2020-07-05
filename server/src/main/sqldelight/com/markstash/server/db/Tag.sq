@@ -1,0 +1,49 @@
+CREATE TABLE tag (
+    id INTEGER PRIMARY KEY,
+    userId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    UNIQUE(userId, name)
+);
+
+CREATE INDEX tag_userId ON tag(userId);
+CREATE INDEX tag_name ON tag(name);
+
+CREATE TABLE tagging (
+    id INTEGER PRIMARY KEY,
+    taggableType TEXT NOT NULL,
+    taggableId INTEGER NOT NULL,
+    tagId INTEGER NOT NULL,
+    UNIQUE(taggableType, taggableId, tagId)
+);
+
+CREATE INDEX tagging_taggable ON tagging(taggableType, taggableId);
+CREATE INDEX tagging_tagId ON tagging(tagId);
+
+insert:
+INSERT OR IGNORE INTO tag(userId, name)
+VALUES (?, ?);
+
+tag:
+INSERT OR IGNORE INTO tagging(taggableType, taggableId, tagId)
+VALUES (?, ?, ?);
+
+tagByName {
+    INSERT OR IGNORE INTO tag(userId, name)
+    VALUES (:userId, :name);
+    INSERT OR IGNORE INTO tagging(taggableType, taggableId, tagId)
+    VALUES (?, ?, (SELECT id FROM tag WHERE userId = :userId AND name = :name));
+}
+
+untag:
+DELETE FROM tagging
+WHERE taggableType = ? AND taggableId = ? AND tagId = ?;
+
+untagByName:
+DELETE FROM tagging
+WHERE taggableType = ? AND taggableId = ? AND tagId = (SELECT id FROM tag WHERE userId = ? AND name = ?);
+
+list:
+SELECT tag.id, tag.name
+FROM tagging
+LEFT JOIN tag ON tag.id = tagging.tagId
+WHERE tagging.taggableType = ? AND tagging.taggableId = ?;

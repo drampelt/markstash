@@ -16,7 +16,6 @@ import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import org.koin.ktor.ext.inject
-import com.markstash.server.db.Bookmark as DbBookmark
 
 @Location("/bookmarks")
 class Bookmarks {
@@ -36,7 +35,8 @@ fun Route.bookmarks() {
             Bookmark(
                 id = bookmark.id,
                 title = bookmark.title,
-                url = bookmark.url
+                url = bookmark.url,
+                tags = bookmark.tags.split(",")
             )
         })
     }
@@ -57,7 +57,8 @@ fun Route.bookmarks() {
         call.respond(CreateResponse(
             id = bookmark.id,
             title = bookmark.title,
-            url = bookmark.url
+            url = bookmark.url,
+            tags = bookmark.tags.split(",")
         ))
     }
 
@@ -67,7 +68,8 @@ fun Route.bookmarks() {
         call.respond(Bookmark(
             id = bookmark.id,
             title = bookmark.title,
-            url = bookmark.url
+            url = bookmark.url,
+            tags = bookmark.tags.split(",")
         ))
     }
 

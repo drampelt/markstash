@@ -1,0 +1,22 @@
+CREATE TABLE tag (
+    id INTEGER PRIMARY KEY,
+    userId INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    UNIQUE(userId, name)
+);
+
+CREATE INDEX tag_userId ON tag(userId);
+CREATE INDEX tag_name ON tag(name);
+
+CREATE TABLE tagging (
+    id INTEGER PRIMARY KEY,
+    taggableType TEXT NOT NULL,
+    taggableId INTEGER NOT NULL,
+    tagId INTEGER NOT NULL,
+    UNIQUE(taggableType, taggableId, tagId)
+);
+
+CREATE INDEX tagging_taggable ON tagging(taggableType, taggableId);
+CREATE INDEX tagging_tagId ON tagging(tagId);
+
+UPDATE setting SET value = "3" WHERE name = "databaseVersion";
