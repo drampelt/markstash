@@ -25,6 +25,10 @@ findByUserId:
 SELECT * FROM bookmark
 WHERE userId = ?;
 
+findByUrl:
+SELECT * FROM bookmark
+WHERE userId = ? AND url = ?;
+
 deleteById:
 DELETE FROM bookmark
 WHERE userId = ? AND id = ?;

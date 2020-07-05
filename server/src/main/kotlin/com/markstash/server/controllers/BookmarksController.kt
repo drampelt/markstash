@@ -43,15 +43,17 @@ fun Route.bookmarks() {
 
     post<Bookmarks> {
         val req = call.receive<CreateRequest>()
-        val bookmark = db.transactionWithResult<DbBookmark> {
-            db.bookmarkQueries.insert(
-                userId = currentUser.user.id,
-                title = req.title,
-                url = req.url
-            )
-            val rowId = db.bookmarkQueries.lastInsert().executeAsOne()
-            db.bookmarkQueries.findById(currentUser.user.id, rowId).executeAsOne()
-        }
+        // TODO: normalize URLs somehow
+        val bookmark = db.bookmarkQueries.findByUrl(currentUser.user.id, req.url).executeAsOneOrNull()
+            ?: db.transactionWithResult {
+                db.bookmarkQueries.insert(
+                    userId = currentUser.user.id,
+                    title = req.title,
+                    url = req.url
+                )
+                val rowId = db.bookmarkQueries.lastInsert().executeAsOne()
+                db.bookmarkQueries.findById(currentUser.user.id, rowId).executeAsOne()
+            }
         call.respond(CreateResponse(
             id = bookmark.id,
             title = bookmark.title,
@@ -60,7 +62,8 @@ fun Route.bookmarks() {
     }
 
     get<Bookmarks.Bookmark> { req ->
-        val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
+        val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull()
+            ?: throw NotFoundException()
         call.respond(Bookmark(
             id = bookmark.id,
             title = bookmark.title,
