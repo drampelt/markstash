@@ -2,13 +2,16 @@ package com.markstash.extension.popup
 
 import browser.browser
 import com.markstash.api.bookmarks.CreateRequest
+import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
 import com.markstash.extension.bookmarksApi
+import com.markstash.extension.components.tagList
 import com.markstash.extension.dyn
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.launch
 import react.RProps
+import react.child
 import react.dom.*
 import react.functionalComponent
 import react.useEffect
@@ -40,6 +43,26 @@ val bookmarkForm = functionalComponent<RProps> {
         }
     }
 
+    fun updateBookmark(bookmark: Bookmark) = GlobalScope.launch {
+        bookmarksApi.update(bookmark.id, UpdateRequest(bookmark.tags))
+    }
+
+    fun handleAddTag(tag: String): Boolean {
+        bookmark ?: return false
+        val newBookmark = bookmark.copy(tags = bookmark.tags + tag)
+        setBookmark(newBookmark)
+        updateBookmark(newBookmark)
+        return true
+    }
+
+    fun handleRemoveTag(tag: String): Boolean {
+        bookmark ?: return false
+        val newBookmark = bookmark.copy(tags = bookmark.tags - tag)
+        setBookmark(newBookmark)
+        updateBookmark(newBookmark)
+        return true
+    }
+
     when {
         isLoading -> {
             p { +"Bookmarking..." }
@@ -51,6 +74,13 @@ val bookmarkForm = functionalComponent<RProps> {
             h2 { +bookmark.title }
             p { +bookmark.url }
             p { +"✓ Bookmark saved" }
+            child(tagList) {
+                attrs {
+                    tags = bookmark.tags
+                    onAddTag = ::handleAddTag
+                    onRemoveTag = ::handleRemoveTag
+                }
+            }
         }
     }
 }

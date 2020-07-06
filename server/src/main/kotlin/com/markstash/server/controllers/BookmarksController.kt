@@ -32,7 +32,7 @@ class Bookmarks {
 fun Route.bookmarks() {
     val db: Database by inject()
 
-    val tagRegex by lazy { Regex("[A-Za-z0-9\\-]+") }
+    val tagRegex by lazy { Regex("[a-z0-9\\-]+") }
 
     get<Bookmarks.Index> {
         val bookmarks = db.bookmarkQueries.findByUserId(currentUser.user.id).executeAsList()
@@ -82,17 +82,18 @@ fun Route.bookmarks() {
         val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull()
             ?: throw NotFoundException()
         val updateRequest = call.receive<UpdateRequest>()
-        val tagsValid = updateRequest.tags.all { it.matches(tagRegex) }
+        val newTags = updateRequest.tags.map { it.toLowerCase() }
+        val tagsValid = newTags.all { it.matches(tagRegex) }
         if (!tagsValid) throw ValidationException("tags", "must be alphanumeric (may include dashes)")
 
         val currentTags = bookmark.tags.split(",").toSet()
         db.transaction {
-            (updateRequest.tags - currentTags).forEach { newTag ->
+            (newTags - currentTags).forEach { newTag ->
                 db.tagQueries.insert(currentUser.user.id, newTag)
                 db.tagQueries.tagByName("bookmark", bookmark.id, currentUser.user.id, newTag)
             }
 
-            (currentTags - updateRequest.tags).forEach { oldTag ->
+            (currentTags - newTags).forEach { oldTag ->
                 db.tagQueries.untagByName("bookmark", bookmark.id, currentUser.user.id, oldTag)
             }
         }
