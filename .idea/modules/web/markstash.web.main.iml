@@ -2,18 +2,11 @@
 <module version="4">
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="3" platform="JavaScript " allPlatforms="JS []" useProjectSettings="false" isTestModule="true" externalProjectId=":shared:client">
-        <dependsOnModuleNames>:shared:client:commonTest</dependsOnModuleNames>
-        <sourceSets>
-          <sourceSet>markstash.shared.client.jsMain</sourceSet>
-          <sourceSet>markstash.shared.client.commonTest</sourceSet>
-          <sourceSet>markstash.shared.client.commonMain</sourceSet>
-        </sourceSets>
+      <configuration version="3" platform="JavaScript " allPlatforms="JS []" useProjectSettings="false" isTestModule="false" externalProjectId=":web" pureKotlinSourceFolders="$MODULE_DIR$/../../../web/src/test/kotlin;/Users/danielrampelt/dev/markstash/web/src/main/kotlin">
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
-        <externalSystemTestTasks>jsBrowserTest|:shared:client:jsTest|js</externalSystemTestTasks>
         <compilerSettings />
         <compilerArguments>
-          <option name="outputFile" value="$MODULE_DIR$/../../../../build/js/packages/markstash-client-test/kotlin/markstash-client-test.js" />
+          <option name="outputFile" value="$MODULE_DIR$/../../../build/js/packages/markstash-web/kotlin/markstash-web.js" />
           <option name="noStdlib" value="true" />
           <option name="sourceMap" value="true" />
           <option name="metaInfo" value="true" />
