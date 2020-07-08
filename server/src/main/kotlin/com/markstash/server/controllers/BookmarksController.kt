@@ -44,7 +44,7 @@ fun Route.bookmarks() {
                 id = bookmark.id,
                 title = bookmark.title,
                 url = bookmark.url,
-                tags = bookmark.tags.split(",").toSet()
+                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
             )
         })
     }
@@ -71,7 +71,7 @@ fun Route.bookmarks() {
             id = bookmark.id,
             title = bookmark.title,
             url = bookmark.url,
-            tags = bookmark.tags.split(",").toSet()
+            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
         ))
     }
 
@@ -82,7 +82,7 @@ fun Route.bookmarks() {
             id = bookmark.id,
             title = bookmark.title,
             url = bookmark.url,
-            tags = bookmark.tags.split(",").toSet()
+            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
         ))
     }
 
@@ -109,7 +109,7 @@ fun Route.bookmarks() {
             id = bookmark.id,
             title = bookmark.title,
             url = bookmark.url,
-            tags = updateRequest.tags
+            tags = newTags.toSet()
         ))
     }
 
