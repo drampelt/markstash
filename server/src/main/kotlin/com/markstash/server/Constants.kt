@@ -8,4 +8,6 @@ object Constants {
         const val SECRET = "jwt.secret"
         const val ALGORITHM = "jwt.algorithm"
     }
+
+    val JOB_CHANNEL = "job_channel"
 }

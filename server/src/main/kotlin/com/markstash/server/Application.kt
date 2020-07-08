@@ -8,7 +8,10 @@ import com.markstash.server.auth.CurrentUser
 import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.users
+import com.markstash.server.db.Archive
 import com.markstash.server.db.Database
+import com.markstash.server.workers.JobProcessor
+import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import de.mkammerer.argon2.Argon2Factory
@@ -57,7 +60,14 @@ fun Application.main() {
     install(Koin) {
         modules(module {
             single<SqlDriver> { JdbcSqliteDriver("jdbc:sqlite:${dbFile.absolutePath}") }
-            single { Database(get()) }
+            single {
+                Database(
+                    get(),
+                    archiveAdapter = Archive.Adapter(
+                        typeAdapter = EnumColumnAdapter(),
+                        statusAdapter = EnumColumnAdapter()
+                    ))
+            }
             single { Settings(get()) }
             single { Argon2Factory.create() }
             single(named(Constants.Jwt.ISSUER)) { jwtIssuer }
@@ -65,6 +75,7 @@ fun Application.main() {
             single(named(Constants.Jwt.REALM)) { jwtRealm }
             single(named(Constants.Jwt.SECRET)) { jwtSecret }
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
+            single { JobProcessor(get()) }
         })
     }
 
@@ -138,12 +149,15 @@ fun Application.main() {
         }
 
         log.info("Finished db setup in ${System.currentTimeMillis() - dbStartTime}ms")
+
+        get<JobProcessor>().start()
     }
 
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutting down...")
         val sqlDriver = get<SqlDriver>()
         sqlDriver.close()
+        get<JobProcessor>().stop()
         log.info("Goodbye")
     })
 

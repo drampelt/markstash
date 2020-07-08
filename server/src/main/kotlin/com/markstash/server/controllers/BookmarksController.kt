@@ -8,6 +8,8 @@ import com.markstash.api.errors.ValidationException
 import com.markstash.api.models.Bookmark
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
+import com.markstash.server.workers.ArchiveWorker
+import com.markstash.server.workers.JobProcessor
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
@@ -31,6 +33,7 @@ class Bookmarks {
 
 fun Route.bookmarks() {
     val db: Database by inject()
+    val jobProcessor: JobProcessor by inject()
 
     val tagRegex by lazy { Regex("[a-z0-9\\-]+") }
 
@@ -49,8 +52,10 @@ fun Route.bookmarks() {
     post<Bookmarks> {
         val req = call.receive<CreateRequest>()
         // TODO: normalize URLs somehow
+        var isNew = false
         val bookmark = db.bookmarkQueries.findByUrl(currentUser.user.id, req.url).executeAsOneOrNull()
             ?: db.transactionWithResult {
+                isNew = true
                 db.bookmarkQueries.insert(
                     userId = currentUser.user.id,
                     title = req.title,
@@ -59,6 +64,9 @@ fun Route.bookmarks() {
                 val rowId = db.bookmarkQueries.lastInsert().executeAsOne()
                 db.bookmarkQueries.findById(currentUser.user.id, rowId).executeAsOne()
             }
+
+        if (isNew) jobProcessor.submit(ArchiveWorker(bookmark.userId, bookmark.id))
+
         call.respond(CreateResponse(
             id = bookmark.id,
             title = bookmark.title,

@@ -24,12 +24,14 @@ dependencies {
     implementation(project(":shared:api"))
 
     implementation(Dependencies.argon2)
+    implementation(Dependencies.readability4j)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)
     implementation(Dependencies.ktorLocations)
     implementation(Dependencies.ktorSerialization)
     implementation(Dependencies.ktorServerCio)
     implementation(Dependencies.logbackClassic)
+    implementation(Dependencies.selenium)
     implementation(Dependencies.sqlDelightSqlite)
 }
 

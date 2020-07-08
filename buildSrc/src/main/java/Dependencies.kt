@@ -15,10 +15,13 @@ object Versions {
     const val ktor = "1.3.2"
     const val logback = "1.2.3"
     const val react = "16.13.1"
+    const val readability4j = "1.0.3"
+    const val selenium = "3.8.1"
 }
 
 object Dependencies {
     const val argon2 = "de.mkammerer:argon2-jvm:${Versions.argon2}"
+    const val readability4j = "net.dankito.readability4j:readability4j:${Versions.readability4j}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val kotlinCoroutinesCommon = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.kotlinCoroutines}"
     const val kotlinCoroutinesJs = "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:${Versions.kotlinCoroutines}"
@@ -36,6 +39,7 @@ object Dependencies {
     const val ktorSerialization = "io.ktor:ktor-serialization:${Versions.ktor}"
     const val ktorServerCio = "io.ktor:ktor-server-cio:${Versions.ktor}"
     const val logbackClassic = "ch.qos.logback:logback-classic:${Versions.logback}"
+    const val selenium = "org.seleniumhq.selenium:selenium-java:${Versions.selenium}"
     const val sqlDelightGradle = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"
     const val sqlDelightSqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
 }

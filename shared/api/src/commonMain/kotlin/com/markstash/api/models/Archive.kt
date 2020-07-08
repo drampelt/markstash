@@ -1,0 +1,26 @@
+package com.markstash.api.models
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Archive(
+    val id: Long,
+    val bookmarkId: Long,
+    val type: Type,
+    val status: Status,
+    val path: String?,
+    val data: String?
+) {
+    @Serializable
+    enum class Type {
+        PLAIN,
+        READABILITY,
+    }
+
+    @Serializable
+    enum class Status {
+        PROCESSING,
+        COMPLETED,
+        FAILED,
+    }
+}

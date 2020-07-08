@@ -1,0 +1,49 @@
+import com.markstash.api.models.Archive;
+
+CREATE TABLE archive (
+    id INTEGER PRIMARY KEY,
+    bookmarkId INTEGER NOT NULL,
+    type TEXT AS Archive.Type NOT NULL,
+    status TEXT AS Archive.Status NOT NULL,
+    path TEXT,
+    data TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+);
+
+CREATE INDEX archive_bookmarkId ON archive(bookmarkId);
+CREATE INDEX archive_type ON archive(type);
+CREATE INDEX archive_status ON archive(type);
+CREATE INDEX archive_bookmarkId_type ON archive(bookmarkId, type);
+CREATE INDEX archive_bookmarkId_status ON archive(bookmarkId, status);
+CREATE INDEX archive_bookmarkId_type_status ON archive(bookmarkId, type, status);
+CREATE INDEX archive_createdAt ON archive(createdAt);
+CREATE INDEX archive_updatedAt ON archive(updatedAt);
+
+insert:
+INSERT INTO archive (bookmarkId, type, status, path, data, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'));
+
+lastInsert:
+SELECT last_insert_rowid();
+
+update:
+UPDATE archive
+SET status = ?, path = ?, data = ?, updatedAt = datetime('now')
+WHERE id = ?;
+
+findByBookmark:
+SELECT * FROM archive
+WHERE bookmarkId = ?;
+
+findByBookmarkAndType:
+SELECT * FROM archive
+WHERE bookmarkId = ? AND type = ?;
+
+findByBookmarkTypeAndStatus:
+SELECT * FROM archive
+WHERE bookmarkId = ? AND type = ? AND status = ?;
+
+findById:
+SELECT * FROM archive
+WHERE id = ?;
