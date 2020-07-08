@@ -30,6 +30,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.Routing
+import io.ktor.routing.route
 import io.ktor.serialization.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -125,11 +126,13 @@ fun Application.main() {
 
     install(Locations)
     install(Routing) {
-        sessions()
-        users()
+        route("/api") {
+            sessions()
+            users()
 
-        authenticate {
-            bookmarks()
+            authenticate {
+                bookmarks()
+            }
         }
     }
 

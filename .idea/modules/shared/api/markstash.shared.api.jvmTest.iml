@@ -5,8 +5,8 @@
       <configuration version="3" platform="JVM 1.6" allPlatforms="JVM [1.6]" useProjectSettings="false" isTestModule="true" externalProjectId=":shared:api">
         <dependsOnModuleNames>:shared:api:commonTest</dependsOnModuleNames>
         <sourceSets>
-          <sourceSet>markstash.shared.api.commonTest</sourceSet>
           <sourceSet>markstash.shared.api.jvmMain</sourceSet>
+          <sourceSet>markstash.shared.api.commonTest</sourceSet>
           <sourceSet>markstash.shared.api.commonMain</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>

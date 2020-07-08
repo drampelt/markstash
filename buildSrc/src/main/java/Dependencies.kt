@@ -17,6 +17,7 @@ object Versions {
     const val react = "16.13.1"
     const val readability4j = "1.0.3"
     const val selenium = "3.8.1"
+    const val webextensionPolyfill = "0.6.0"
 }
 
 object Dependencies {

@@ -17,7 +17,7 @@ dependencies {
     implementation(Dependencies.kotlinReact)
     implementation(Dependencies.kotlinReactDom)
 
-    implementation(npm("webextension-polyfill"))
+    implementation(npm("webextension-polyfill", Versions.webextensionPolyfill))
     implementation(npm("react", Versions.react))
     implementation(npm("react-dom", Versions.react))
 }

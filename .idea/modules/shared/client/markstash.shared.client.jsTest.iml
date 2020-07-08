@@ -5,9 +5,9 @@
       <configuration version="3" platform="JavaScript " allPlatforms="JS []" useProjectSettings="false" isTestModule="true" externalProjectId=":shared:client">
         <dependsOnModuleNames>:shared:client:commonTest</dependsOnModuleNames>
         <sourceSets>
-          <sourceSet>markstash.shared.client.jsMain</sourceSet>
           <sourceSet>markstash.shared.client.commonTest</sourceSet>
           <sourceSet>markstash.shared.client.commonMain</sourceSet>
+          <sourceSet>markstash.shared.client.jsMain</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>jsBrowserTest|:shared:client:jsTest|js</externalSystemTestTasks>

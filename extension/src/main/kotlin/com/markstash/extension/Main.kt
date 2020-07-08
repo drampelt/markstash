@@ -17,6 +17,6 @@ fun main() {
     }
 }
 
-val apiClient = ApiClient("http://localhost:8080")
+val apiClient = ApiClient("http://localhost:8080/api")
 val sessionsApi = SessionsApi(apiClient)
 val bookmarksApi = BookmarksApi(apiClient)
