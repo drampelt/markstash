@@ -42,5 +42,6 @@ class ArchiveWorker(
 
         db.archiveQueries.update(Archive.Status.COMPLETED, null, article.textContent, plainArchiveId)
         db.archiveQueries.update(Archive.Status.COMPLETED, null, article.content, readabilityArchiveId)
+        db.bookmarkQueries.updateMetadata(article.excerpt, article.byline, bookmarkId)
     }
 }

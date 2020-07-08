@@ -4,7 +4,9 @@ CREATE TABLE bookmark (
     title TEXT NOT NULL,
     url TEXT NOT NULL,
     createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL
+    updatedAt TEXT NOT NULL,
+    excerpt TEXT,
+    author TEXT
 );
 
 CREATE INDEX bookmark_userId ON bookmark(userId);
@@ -38,6 +40,11 @@ WHERE userId = ?;
 findByUrl:
 SELECT * FROM bookmarkWithTags
 WHERE userId = ? AND url = ?;
+
+updateMetadata:
+UPDATE bookmark
+SET excerpt = ?, author = ?
+WHERE id = ?;
 
 deleteById:
 DELETE FROM bookmark

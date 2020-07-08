@@ -1,0 +1,4 @@
+ALTER TABLE bookmark ADD excerpt TEXT;
+ALTER TABLE bookmark ADD author TEXT;
+
+UPDATE setting SET value = "6" WHERE name = "databaseVersion";

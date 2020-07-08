@@ -22,7 +22,7 @@ class ApiClient(
     var authToken: String? = null
 ) {
     val httpClient = HttpClient { configure() }
-    val json = Json(JsonConfiguration.Stable)
+    val json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
 
     private fun HttpClientConfig<*>.configure() {
         expectSuccess = false
