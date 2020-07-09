@@ -4,9 +4,9 @@ import browser.browser
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
-import com.markstash.extension.bookmarksApi
 import com.markstash.extension.components.tagList
 import com.markstash.extension.dyn
+import com.markstash.shared.js.api.bookmarksApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.launch

@@ -3,8 +3,9 @@ package com.markstash.extension.popup
 import browser.browser
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.extension.apiClient
 import com.markstash.extension.dyn
+import com.markstash.shared.js.api.apiClient
+import com.markstash.shared.js.components.loginForm
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.launch

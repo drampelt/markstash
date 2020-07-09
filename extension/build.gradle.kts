@@ -11,7 +11,9 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-js"))
 
+    implementation(project(":shared:api"))
     implementation(project(":shared:client"))
+    implementation(project(":shared:js"))
 
     implementation(Dependencies.kotlinCoroutinesJs)
     implementation(Dependencies.kotlinReact)

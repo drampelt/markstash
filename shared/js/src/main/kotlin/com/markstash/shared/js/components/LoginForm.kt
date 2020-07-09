@@ -1,8 +1,8 @@
-package com.markstash.extension.popup
+package com.markstash.shared.js.components
 
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.extension.sessionsApi
+import com.markstash.shared.js.api.sessionsApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
