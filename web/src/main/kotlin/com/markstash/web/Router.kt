@@ -1,6 +1,7 @@
 package com.markstash.web
 
 import com.markstash.web.layout.authenticatedLayout
+import com.markstash.web.pages.index.indexPage
 import com.markstash.web.pages.loginPage
 import react.RProps
 import react.child
@@ -20,7 +21,7 @@ val routes = functionalComponent<RProps> {
             route("/") {
                 child(authenticatedLayout) {
                     route("/", exact = true) {
-                        div { +"Authenticated!" }
+                        child(indexPage)
                     }
                 }
             }

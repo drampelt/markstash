@@ -4,6 +4,8 @@ import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.bookmarks.UpdateResponse
+import com.markstash.api.models.Bookmark
+import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.http.ContentType
@@ -22,5 +24,9 @@ class BookmarksApi(apiClient: ApiClient) : BaseApi(apiClient) {
             contentType(ContentType.Application.Json)
             body = request
         }
+    }
+
+    suspend fun index(): List<Bookmark> {
+        return client.get("$baseUrl/bookmarks")
     }
 }
