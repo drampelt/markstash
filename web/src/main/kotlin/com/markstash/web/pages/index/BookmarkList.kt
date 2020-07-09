@@ -9,6 +9,7 @@ import react.child
 import react.dom.*
 import react.functionalComponent
 import react.key
+import react.router.dom.routeLink
 import react.useEffect
 import react.useState
 
@@ -17,7 +18,7 @@ private interface BookmarkRowProps : RProps {
 }
 
 private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
-    div {
+    routeLink("/bookmarks/${props.bookmark.id}") {
         div { +props.bookmark.title }
         div { +props.bookmark.url }
         div { +props.bookmark.tags.joinToString(", ") }
@@ -28,7 +29,7 @@ private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
 
 interface BookmarkListProps : RProps
 
-val bookmarkList = functionalComponent<BookmarkListProps> {
+val bookmarkList = functionalComponent<BookmarkListProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
     val (bookmarks, setBookmarks) = useState<List<Bookmark>>(emptyList())
     val (error, setError) = useState<String?>(null)

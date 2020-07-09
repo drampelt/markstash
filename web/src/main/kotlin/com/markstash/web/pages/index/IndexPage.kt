@@ -5,8 +5,10 @@ import react.child
 import react.dom.*
 import react.functionalComponent
 
-val indexPage = functionalComponent<RProps> {
+val indexPage = functionalComponent<RProps> { props ->
     div {
         child(bookmarkList)
+        hr {}
+        props.children()
     }
 }

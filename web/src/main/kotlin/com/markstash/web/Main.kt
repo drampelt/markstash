@@ -7,7 +7,7 @@ import kotlin.browser.document
 import kotlin.browser.window
 
 fun main() {
-    apiClient.baseUrl = "${window.location.href}api"
+    apiClient.baseUrl = "${window.location.protocol}//${window.location.hostname}:${window.location.port}/api"
 
     render(document.getElementById("app")) {
         child(routes)
