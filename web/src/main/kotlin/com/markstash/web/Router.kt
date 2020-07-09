@@ -1,8 +1,10 @@
 package com.markstash.web
 
+import com.markstash.web.layout.authenticatedLayout
 import com.markstash.web.pages.loginPage
 import react.RProps
 import react.child
+import react.dom.*
 import react.functionalComponent
 import react.router.dom.browserRouter
 import react.router.dom.redirect
@@ -15,7 +17,13 @@ val routes = functionalComponent<RProps> {
             route("/login", strict = true) {
                 child(loginPage)
             }
-            redirect("/", "/login")
+            route("/") {
+                child(authenticatedLayout) {
+                    route("/", exact = true) {
+                        div { +"Authenticated!" }
+                    }
+                }
+            }
         }
     }
 }

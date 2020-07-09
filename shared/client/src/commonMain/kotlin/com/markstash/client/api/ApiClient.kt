@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 
 class ApiClient(
-    var baseUrl: String,
+    var baseUrl: String = "",
     var authToken: String? = null
 ) {
     val httpClient = HttpClient { configure() }

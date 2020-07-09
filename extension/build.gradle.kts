@@ -14,14 +14,6 @@ dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:client"))
     implementation(project(":shared:js"))
-
-    implementation(Dependencies.kotlinCoroutinesJs)
-    implementation(Dependencies.kotlinReact)
-    implementation(Dependencies.kotlinReactDom)
-
-    implementation(npm("webextension-polyfill", Versions.webextensionPolyfill))
-    implementation(npm("react", Versions.react))
-    implementation(npm("react-dom", Versions.react))
 }
 
 kotlin.target.browser {

@@ -119,7 +119,7 @@ fun Application.main() {
 
     install(CORS) {
         // Doesn't currently work for chrome-extension, see https://github.com/ktorio/ktor/issues/1656
-        host("*", schemes = listOf("chrome-extension"))
+        host("*", schemes = listOf("chrome-extension", "http", "https"))
         allowCredentials = true
         allowNonSimpleContentTypes = true
     }

@@ -8,6 +8,7 @@ object Versions {
 
     // Libraries
     const val argon2 = "2.7"
+    const val jsCookie = "2.2.1"
     const val koin = "2.1.5"
     const val kotlinCoroutines = "1.3.7"
     const val kotlinReact = "16.13.1-pre.105-kotlin-1.3.72"

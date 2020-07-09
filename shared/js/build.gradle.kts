@@ -23,6 +23,8 @@ dependencies {
     api(npm("react", Versions.react))
     api(npm("react-dom", Versions.react))
     api(npm("react-router-dom", Versions.reactRouter))
+    api(npm("js-cookie", Versions.jsCookie))
+    api(npm("webextension-polyfill", Versions.webextensionPolyfill))
 }
 
 kotlin.target.browser { }
