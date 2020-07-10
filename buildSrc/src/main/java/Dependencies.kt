@@ -8,6 +8,8 @@ object Versions {
 
     // Libraries
     const val argon2 = "2.7"
+    const val autoprefixer = "9.8.4"
+    const val cssLoader = "3.6.0"
     const val jsCookie = "2.2.1"
     const val koin = "2.1.5"
     const val kotlinCoroutines = "1.3.7"
@@ -16,10 +18,15 @@ object Versions {
     const val kotlinSerialization = "0.20.0"
     const val ktor = "1.3.2"
     const val logback = "1.2.3"
+    const val postcssLoader = "3.0.0"
+    const val postcssImport = "12.0.1"
+    const val postcssNested = "4.2.3"
     const val react = "16.13.1"
     const val reactRouter = "5.1.2"
     const val readability4j = "1.0.3"
     const val selenium = "3.8.1"
+    const val styleLoader = "1.2.1"
+    const val tailwindcss = "1.4.6"
     const val webextensionPolyfill = "0.6.0"
 }
 

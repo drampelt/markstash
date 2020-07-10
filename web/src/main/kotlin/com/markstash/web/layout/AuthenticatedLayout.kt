@@ -2,6 +2,7 @@ package com.markstash.web.layout
 
 import com.markstash.shared.js.api.apiClient
 import com.markstash.web.Session
+import react.RBuilder
 import react.RProps
 import react.dom.*
 import react.functionalComponent
@@ -30,9 +31,26 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
         }
     }
 
+    fun RBuilder.renderSidebar() {
+        div("hidden md:flex md:flex-shrink-0") {
+            div("flex flex-col w-64") {
+                +"sidebar"
+            }
+        }
+    }
+
+    fun RBuilder.renderLayout() {
+        div("h-screen flex overflow-hidden bg-gray-100") {
+            renderSidebar()
+            div("flex flex-col w-0 flex-1 overflow-hidden") {
+                props.children()
+            }
+        }
+    }
+
     when {
         didAuthenticate -> {
-            props.children()
+            renderLayout()
         }
         shouldLogin -> {
             redirect(to = "/login")

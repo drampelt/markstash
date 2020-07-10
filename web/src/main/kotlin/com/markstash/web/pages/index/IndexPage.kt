@@ -6,9 +6,10 @@ import react.dom.*
 import react.functionalComponent
 
 val indexPage = functionalComponent<RProps> { props ->
-    div {
+    div("flex overflow-hidden") {
         child(bookmarkList)
-        hr {}
-        props.children()
+        div("flex flex-col w-0 flex-1") {
+            props.children()
+        }
     }
 }

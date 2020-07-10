@@ -46,21 +46,23 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
         }
     }
 
-    when {
-        isLoading -> {
-            p { +"Loading..." }
-        }
-        error != null -> {
-            p { +"Error: $error" }
-        }
-        bookmarks.isEmpty() -> {
-            p { +"No bookmarks found" }
-        }
-        else -> {
-            bookmarks.forEach { bookmark ->
-                child(bookmarkRow) {
-                    attrs.key = bookmark.id.toString()
-                    attrs.bookmark = bookmark
+    div("flex flex-col w-64 overflow-y-auto") {
+        when {
+            isLoading -> {
+                p { +"Loading..." }
+            }
+            error != null -> {
+                p { +"Error: $error" }
+            }
+            bookmarks.isEmpty() -> {
+                p { +"No bookmarks found" }
+            }
+            else -> {
+                bookmarks.forEach { bookmark ->
+                    child(bookmarkRow) {
+                        attrs.key = bookmark.id.toString()
+                        attrs.bookmark = bookmark
+                    }
                 }
             }
         }

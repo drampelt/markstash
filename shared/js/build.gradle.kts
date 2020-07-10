@@ -25,6 +25,14 @@ dependencies {
     api(npm("react-router-dom", Versions.reactRouter))
     api(npm("js-cookie", Versions.jsCookie))
     api(npm("webextension-polyfill", Versions.webextensionPolyfill))
+
+    api(npm("css-loader", Versions.cssLoader))
+    api(npm("style-loader", Versions.styleLoader))
+    api(npm("postcss-loader", Versions.postcssLoader))
+    api(npm("postcss-import", Versions.postcssImport))
+    api(npm("postcss-nested", Versions.postcssNested))
+    api(npm("tailwindcss", Versions.tailwindcss))
+    api(npm("autoprefixer", Versions.autoprefixer))
 }
 
 kotlin.target.browser { }
