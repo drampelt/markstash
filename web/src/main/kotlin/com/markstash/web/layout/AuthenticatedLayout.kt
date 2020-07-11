@@ -32,7 +32,7 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
     }
 
     fun RBuilder.renderSidebar() {
-        div("hidden md:flex md:flex-shrink-0") {
+        div("hidden md:flex md:flex-shrink-0 border-r") {
             div("flex flex-col w-64") {
                 +"sidebar"
             }

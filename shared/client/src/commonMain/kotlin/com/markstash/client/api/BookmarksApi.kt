@@ -2,6 +2,7 @@ package com.markstash.client.api
 
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
+import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.bookmarks.UpdateResponse
 import com.markstash.api.models.Bookmark
@@ -28,5 +29,9 @@ class BookmarksApi(apiClient: ApiClient) : BaseApi(apiClient) {
 
     suspend fun index(): List<Bookmark> {
         return client.get("$baseUrl/bookmarks")
+    }
+
+    suspend fun show(id: Long): ShowResponse {
+        return client.get("$baseUrl/bookmarks/$id")
     }
 }

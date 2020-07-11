@@ -9,6 +9,7 @@ if (config.mode !== 'production') {
             proxy: {
                 '/api': 'http://localhost:8080',
             },
+            hot: true,
         },
     );
 }

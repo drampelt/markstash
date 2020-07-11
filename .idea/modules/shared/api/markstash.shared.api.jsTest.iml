@@ -6,8 +6,8 @@
         <dependsOnModuleNames>:shared:api:commonTest</dependsOnModuleNames>
         <sourceSets>
           <sourceSet>markstash.shared.api.jsMain</sourceSet>
-          <sourceSet>markstash.shared.api.commonMain</sourceSet>
           <sourceSet>markstash.shared.api.commonTest</sourceSet>
+          <sourceSet>markstash.shared.api.commonMain</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <externalSystemTestTasks>jsBrowserTest|:shared:api:jsTest|js</externalSystemTestTasks>

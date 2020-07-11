@@ -2,9 +2,11 @@ package com.markstash.server.controllers
 
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
+import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.errors.NotFoundException
 import com.markstash.api.errors.ValidationException
+import com.markstash.api.models.Archive
 import com.markstash.api.models.Bookmark
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
@@ -82,13 +84,26 @@ fun Route.bookmarks() {
     get<Bookmarks.Bookmark> { req ->
         val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull()
             ?: throw NotFoundException()
-        call.respond(Bookmark(
-            id = bookmark.id,
-            title = bookmark.title,
-            url = bookmark.url,
-            excerpt = bookmark.excerpt,
-            author = bookmark.author,
-            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
+        val archives = db.archiveQueries.findByBookmark(bookmark.id).executeAsList()
+        call.respond(ShowResponse(
+            bookmark = Bookmark(
+                id = bookmark.id,
+                title = bookmark.title,
+                url = bookmark.url,
+                excerpt = bookmark.excerpt,
+                author = bookmark.author,
+                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
+            ),
+            archives = archives.map { archive ->
+                Archive(
+                    id = archive.id,
+                    bookmarkId = archive.bookmarkId,
+                    type = archive.type,
+                    status = archive.status,
+                    path = archive.path,
+                    data = archive.data
+                )
+            }
         ))
     }
 

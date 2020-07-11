@@ -1,3 +1,64 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+pre {
+    overflow-x: auto;
+}
+
+.readability {
+    max-width: 600px;
+    @apply mx-auto py-8 text-lg;
+
+    p {
+        @apply mb-6;
+    }
+
+    a {
+        @apply text-blue-500;
+    }
+
+    img {
+        @apply mb-6;
+    }
+
+    h1 {
+        @apply text-4xl;
+    }
+
+    h2 {
+        @apply text-3xl;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+
+    h4, h5, h6 {
+        @apply text-xl;
+    }
+
+    ul {
+        @apply list-disc mb-6;
+    }
+
+    ol {
+        @apply list-decimal mb-6;
+    }
+
+    blockquote {
+        @apply bg-gray-200 border-l-4 italic p-4 mb-6;
+
+        p {
+            @apply m-0;
+        }
+    }
+
+    code {
+        @apply bg-gray-200 px-1 rounded;
+    }
+
+    pre {
+        @apply bg-gray-200 p-4 rounded mb-6;
+    }
+}

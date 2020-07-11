@@ -9,6 +9,7 @@ import react.child
 import react.dom.*
 import react.functionalComponent
 import react.key
+import react.router.dom.navLink
 import react.router.dom.routeLink
 import react.useEffect
 import react.useState
@@ -18,12 +19,11 @@ private interface BookmarkRowProps : RProps {
 }
 
 private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
-    routeLink("/bookmarks/${props.bookmark.id}") {
+    navLink<RProps>(to = "/bookmarks/${props.bookmark.id}", className = "border-b", activeClassName = "bg-gray-300") {
         div { +props.bookmark.title }
         div { +props.bookmark.url }
         div { +props.bookmark.tags.joinToString(", ") }
         div { +(props.bookmark.excerpt ?: "-") }
-        hr {}
     }
 }
 
@@ -46,7 +46,7 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
         }
     }
 
-    div("flex flex-col w-64 overflow-y-auto") {
+    div("flex flex-col flex-shrink-0 w-96 overflow-y-auto border-r") {
         when {
             isLoading -> {
                 p { +"Loading..." }
