@@ -34,11 +34,20 @@ private interface BookmarkRowProps : RProps {
 }
 
 private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
-    navLink<RProps>(to = "/bookmarks/${props.bookmark.id}", className = "border-b", activeClassName = "bg-gray-300") {
-        div { +props.bookmark.title }
-        div { +props.bookmark.url }
-        div { +props.bookmark.tags.joinToString(", ") }
-        div { +(props.bookmark.excerpt ?: "-") }
+    navLink<RProps>(to = "/bookmarks/${props.bookmark.id}", className = "block border-b p-2", activeClassName = "bg-gray-300") {
+        div("text-gray-900 text-base truncate") { +props.bookmark.title }
+        div("flex") {
+            div("w-0 flex-grow") {
+                div("text-gray-700 text-sm") {
+                    if (props.bookmark.tags.isEmpty()) {
+                        span("text-gray-500") { +"No tags" }
+                    } else {
+                        +props.bookmark.tags.joinToString(", ")
+                    }
+                }
+                div("text-gray-700 text-sm truncate") { +(props.bookmark.excerpt ?: "-") }
+            }
+        }
     }
 }
 
@@ -81,8 +90,9 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
 
     fun RBuilder.renderSearchField() {
         div("border-b") {
-            input(type = InputType.text) {
+            input(type = InputType.search, classes = "block w-full p-2 text-gray-900 placeholder-gray-500 focus:outline-none") {
                 attrs.value = search
+                attrs.placeholder = "Search"
                 attrs.onChangeFunction = {
                     val value = (it.currentTarget as HTMLInputElement).value
                     setSearch(value)

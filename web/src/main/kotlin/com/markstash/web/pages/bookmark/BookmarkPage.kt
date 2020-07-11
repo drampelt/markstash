@@ -43,7 +43,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         } else if (data == null) {
             p { +"Archive is empty :(" }
         } else {
-            div("overflow-y-auto") {
+            div("overflow-y-auto bg-white") {
                 div("readability") {
                     attrs["dangerouslySetInnerHTML"] = InnerHTML(data)
                 }
@@ -60,9 +60,16 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         }
         bookmarkResponse != null -> {
             val (bookmark, archives) = bookmarkResponse
-            div("border-b") {
-                div { +bookmark.title }
-                div { +bookmark.url }
+            div("border-b p-4") {
+                div("text-xl text-gray-900") { +bookmark.title }
+                a(bookmark.url, classes = "text-gray-700") { +bookmark.url }
+                div("text-gray-700") {
+                    if (bookmark.tags.isEmpty()) {
+                        span("text-gray-500") { +"No tags"}
+                    } else {
+                        +bookmark.tags.joinToString(", ")
+                    }
+                }
             }
             renderArchives(archives)
         }
