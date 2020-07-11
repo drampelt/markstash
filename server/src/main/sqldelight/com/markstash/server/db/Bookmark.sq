@@ -22,6 +22,46 @@ CREATE VIEW bookmarkWithTags AS
     FROM bookmark
 ;
 
+CREATE VIEW __bookmarkSearchPopulator AS
+    SELECT bookmark.id, bookmark.url, bookmark.title, bookmark.author, bookmark.excerpt, archive.data AS text, (
+        SELECT GROUP_CONCAT(name, ',')
+        FROM tagging
+        LEFT JOIN tag ON tag.id = tagging.tagId
+        WHERE tagging.taggableType = 'bookmark' AND tagging.taggableId = bookmark.id
+    ) AS tags FROM bookmark
+    LEFT JOIN archive ON archive.id = (
+        SELECT MAX(archive.id) FROM archive
+        WHERE bookmarkId = bookmark.id
+        AND type = 'PLAIN'
+        AND status = 'COMPLETED'
+    )
+;
+
+CREATE VIRTUAL TABLE bookmarkSearch USING fts5(
+    url TEXT,
+    title TEXT,
+    author TEXT,
+    excerpt TEXT,
+    text TEXT,
+    tags TEXT,
+    tokenize = 'porter'
+);
+
+CREATE TRIGGER after_bookmark_insert AFTER INSERT ON bookmark BEGIN
+    INSERT INTO bookmarkSearch (rowid, url, title, author, excerpt, text, tags)
+    SELECT * FROM __bookmarkSearchPopulator WHERE id = new.id;
+END;
+
+CREATE TRIGGER after_bookmark_update UPDATE ON bookmark BEGIN
+    DELETE FROM bookmarkSearch WHERE rowid = old.id;
+    INSERT INTO bookmarkSearch (rowid, url, title, author, excerpt, text, tags)
+    SELECT * FROM __bookmarkSearchPopulator WHERE id = new.id;
+END;
+
+CREATE TRIGGER after_bookmark_delete AFTER DELETE ON bookmark BEGIN
+    DELETE FROM bookmarkSearch WHERE rowid = old.id;
+END;
+
 insert:
 INSERT INTO bookmark (userId, title, url, createdAt, updatedAt)
 VALUES (?, ?, ?, datetime('now'), datetime('now'));
@@ -49,3 +89,9 @@ WHERE id = ?;
 deleteById:
 DELETE FROM bookmark
 WHERE userId = ? AND id = ?;
+
+search:
+SELECT bookmarkWithTags.* FROM bookmarkSearch
+LEFT JOIN bookmarkWithTags ON bookmarkWithTags.id = bookmarkSearch.rowid
+WHERE bookmarkSearch MATCH :query AND bookmarkWithTags.userId = ?
+ORDER BY bm25(bookmarkSearch);

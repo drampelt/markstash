@@ -2,6 +2,8 @@ package com.markstash.client.api
 
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
+import com.markstash.api.bookmarks.SearchRequest
+import com.markstash.api.bookmarks.SearchResponse
 import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.bookmarks.UpdateResponse
@@ -29,6 +31,13 @@ class BookmarksApi(apiClient: ApiClient) : BaseApi(apiClient) {
 
     suspend fun index(): List<Bookmark> {
         return client.get("$baseUrl/bookmarks")
+    }
+
+    suspend fun search(request: SearchRequest): SearchResponse {
+        return client.post("$baseUrl/bookmarks/search") {
+            contentType(ContentType.Application.Json)
+            body = request
+        }
     }
 
     suspend fun show(id: Long): ShowResponse {

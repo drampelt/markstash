@@ -19,7 +19,6 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
 
     fun handleInitialLogin() {
         Session.loginWithExistingToken { success ->
-            console.log("login", success)
             setShouldLogin(!success)
             setDidAuthenticate(success)
         }

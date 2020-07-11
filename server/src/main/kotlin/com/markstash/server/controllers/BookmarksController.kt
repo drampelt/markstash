@@ -2,6 +2,8 @@ package com.markstash.server.controllers
 
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.CreateResponse
+import com.markstash.api.bookmarks.SearchRequest
+import com.markstash.api.bookmarks.SearchResponse
 import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.errors.NotFoundException
@@ -28,6 +30,9 @@ import org.koin.ktor.ext.inject
 class Bookmarks {
     @Location("")
     data class Index(val parent: Bookmarks)
+
+    @Location("search")
+    data class Search(val parent: Bookmarks)
 
     @Location("/{id}")
     data class Bookmark(val parent: Bookmarks, val id: Long)
@@ -79,6 +84,21 @@ fun Route.bookmarks() {
             author = bookmark.author,
             tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
         ))
+    }
+
+    post<Bookmarks.Search> {
+        val req = call.receive<SearchRequest>()
+        val bookmarks = db.bookmarkQueries.search(""""${req.query}"""", currentUser.user.id).executeAsList()
+        call.respond(SearchResponse(bookmarks.map { bookmark ->
+            Bookmark(
+                id = bookmark.id!!,
+                title = bookmark.title!!,
+                url = bookmark.url!!,
+                excerpt = bookmark.excerpt,
+                author = bookmark.author,
+                tags = bookmark.tags!!.split(",").filter(String::isNotBlank).toSet()
+            )
+        }))
     }
 
     get<Bookmarks.Bookmark> { req ->
