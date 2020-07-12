@@ -13,8 +13,11 @@ data class Archive(
 ) {
     @Serializable
     enum class Type {
+        ORIGINAL,
         PLAIN,
         READABILITY,
+        MONOLITH,
+        MONOLITH_READABILITY,
     }
 
     @Serializable
