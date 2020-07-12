@@ -42,7 +42,7 @@ class ArchiveWorker(
     private val archivePath by lazy {
         val url = URL(bookmark.url)
         val query = url.query?.replace("&", "_")?.replace("=", "-")
-        var path = url.path.substring(1)
+        var path = url.path.substring(1).replace(Regex("![A-Za-z0-9\\-_/]"), "_")
         if (path.isBlank()) path = "index"
         var archivePrefix = "${url.host}/$path"
         if (query != null) archivePrefix += "_$query"
