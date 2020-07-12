@@ -160,7 +160,7 @@ class ArchiveWorker(
         val fileName = "${date}_screenshot.png"
         val file = File(archiveFolder, fileName)
         ImageIO.write(screenshot.image, "png", file)
-        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", null, screenshotFullArchiveId)
+        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotFullArchiveId)
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {
@@ -183,7 +183,7 @@ class ArchiveWorker(
                 val fileName = "${date}_${type.name.toLowerCase()}_${hash.substring(0, 15)}.html"
                 val file = File(archiveFolder, fileName)
                 file.writeText(content)
-                db.archiveQueries.update(status, "$archivePath/$fileName", null, id)
+                db.archiveQueries.update(status, "$archivePath/$fileName", file.length().toString(), id)
             }
         }
     }
