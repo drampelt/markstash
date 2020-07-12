@@ -18,6 +18,7 @@ data class Archive(
         READABILITY,
         MONOLITH,
         MONOLITH_READABILITY,
+        SCREENSHOT_FULL,
     }
 
     @Serializable

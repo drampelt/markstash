@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":shared:api"))
 
     implementation(Dependencies.argon2)
+    implementation(Dependencies.ashot)
     implementation(Dependencies.readability4j)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)

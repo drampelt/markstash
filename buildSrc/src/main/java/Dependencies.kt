@@ -8,6 +8,7 @@ object Versions {
 
     // Libraries
     const val argon2 = "2.7"
+    const val ashot = "1.5.4"
     const val autoprefixer = "9.8.4"
     const val cssLoader = "3.6.0"
     const val jsCookie = "2.2.1"
@@ -32,6 +33,7 @@ object Versions {
 
 object Dependencies {
     const val argon2 = "de.mkammerer:argon2-jvm:${Versions.argon2}"
+    const val ashot = "ru.yandex.qatools.ashot:ashot:${Versions.ashot}"
     const val readability4j = "net.dankito.readability4j:readability4j:${Versions.readability4j}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val kotlinCoroutinesCommon = "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:${Versions.kotlinCoroutines}"

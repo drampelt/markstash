@@ -11,12 +11,15 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.LoggerFactory
+import ru.yandex.qatools.ashot.AShot
+import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import java.io.File
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.imageio.ImageIO
 
 class ArchiveWorker(
     private val userId: Long,
@@ -32,6 +35,7 @@ class ArchiveWorker(
     private var readabilityArchiveId: Long = 0
     private var monolithArchiveId: Long = 0
     private var monolithReadabilityArchiveId: Long = 0
+    private var screenshotFullArchiveId: Long = 0
 
     private val tmpDir by lazy { Files.createTempDirectory("tmp") }
 
@@ -59,6 +63,7 @@ class ArchiveWorker(
         readabilityArchiveId = createArchive(Archive.Type.READABILITY)
         monolithArchiveId = createArchive(Archive.Type.MONOLITH)
         monolithReadabilityArchiveId = createArchive(Archive.Type.MONOLITH_READABILITY)
+        screenshotFullArchiveId = createArchive(Archive.Type.SCREENSHOT_FULL)
 
         setupDriver()
         loadPage()
@@ -69,6 +74,7 @@ class ArchiveWorker(
 
         saveBasic()
         saveMonolith()
+        saveScreenshot()
 
         driver.close()
         log.debug("Completed archive of bookmark $bookmarkId!")
@@ -144,6 +150,17 @@ class ArchiveWorker(
             }
             times++
         }
+    }
+
+    private fun saveScreenshot() {
+        log.debug("Saving screenshot of page")
+        val screenshot = AShot().shootingStrategy(ShootingStrategies.viewportPasting(100))
+            .takeScreenshot(driver)
+        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+        val fileName = "${date}_screenshot.png"
+        val file = File(archiveFolder, fileName)
+        ImageIO.write(screenshot.image, "png", file)
+        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", null, screenshotFullArchiveId)
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {
