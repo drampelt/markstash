@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Archive(
     val id: Long,
+    val key: String,
     val bookmarkId: Long,
     val type: Type,
     val status: Status,

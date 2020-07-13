@@ -17,6 +17,7 @@ import java.io.File
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
@@ -25,6 +26,10 @@ class ArchiveWorker(
     private val userId: Long,
     private val bookmarkId: Long
 ) : Worker() {
+    companion object {
+        val keyPool: List<Char> = ('a'..'f') + ('0'..'9')
+    }
+
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 
     private lateinit var bookmark: BookmarkWithTags
@@ -164,7 +169,8 @@ class ArchiveWorker(
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {
-        db.archiveQueries.insert(bookmarkId, type, Archive.Status.PROCESSING, null, null)
+        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("")
+        db.archiveQueries.insert(bookmarkId, type, Archive.Status.PROCESSING, null, null, key)
         db.archiveQueries.lastInsert().executeAsOne()
     }
 

@@ -117,6 +117,7 @@ fun Route.bookmarks() {
             archives = archives.map { archive ->
                 Archive(
                     id = archive.id,
+                    key = archive.key,
                     bookmarkId = archive.bookmarkId,
                     type = archive.type,
                     status = archive.status,

@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.markstash.api.errors.ErrorResponse
 import com.markstash.api.errors.ServerException
 import com.markstash.server.auth.CurrentUser
+import com.markstash.server.controllers.archives
 import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.users
@@ -129,6 +130,7 @@ fun Application.main() {
         route("/api") {
             sessions()
             users()
+            archives()
 
             authenticate {
                 bookmarks()

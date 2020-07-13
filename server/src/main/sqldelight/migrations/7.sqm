@@ -1,0 +1,5 @@
+ALTER TABLE archive ADD COLUMN key TEXT NOT NULL DEFAULT '';
+
+CREATE INDEX archive_key ON archive(key);
+
+UPDATE setting SET value = "8" WHERE name = "databaseVersion";
