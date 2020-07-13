@@ -1,17 +1,17 @@
 package com.markstash.server.workers
 
-import com.markstash.server.db.Database
+import io.ktor.application.Application
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 
-class JobProcessor(private val db: Database) {
+class JobProcessor(private val application: Application) {
     private val jobs = Channel<Worker>(Channel.UNLIMITED)
 
     fun start() {
         GlobalScope.launch {
             for (job in jobs) {
-                job.db = db
+                job.application = application
                 job.run()
             }
         }

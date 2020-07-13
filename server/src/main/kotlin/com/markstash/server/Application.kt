@@ -77,7 +77,8 @@ fun Application.main() {
             single(named(Constants.Jwt.REALM)) { jwtRealm }
             single(named(Constants.Jwt.SECRET)) { jwtSecret }
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
-            single { JobProcessor(get()) }
+            single { JobProcessor(this@main) }
+            single(named(Constants.Storage.ARCHIVE_DIR)) { environment.config.propertyOrNull("markstash.archive_dir")?.getString() ?: "archives" }
         })
     }
 

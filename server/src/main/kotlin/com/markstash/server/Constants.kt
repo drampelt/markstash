@@ -10,4 +10,8 @@ object Constants {
     }
 
     val JOB_CHANNEL = "job_channel"
+
+    object Storage {
+        val ARCHIVE_DIR = "storage.archive_dir"
+    }
 }

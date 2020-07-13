@@ -2,11 +2,15 @@ package com.markstash.server.workers
 
 import com.google.common.hash.Hashing
 import com.markstash.api.models.Archive
+import com.markstash.server.Constants
 import com.markstash.server.db.BookmarkWithTags
+import com.markstash.server.db.Database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.Readability4J
+import org.koin.core.qualifier.named
+import org.koin.ktor.ext.inject
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -29,6 +33,9 @@ class ArchiveWorker(
     companion object {
         val keyPool: List<Char> = ('a'..'f') + ('0'..'9')
     }
+
+    private val db: Database by application.inject()
+    private val archiveDir: String by application.inject(named(Constants.Storage.ARCHIVE_DIR))
 
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 
@@ -55,7 +62,7 @@ class ArchiveWorker(
         archivePrefix
     }
 
-    private val rootFolder by lazy { File("archives").also { it.mkdirs() } }
+    private val rootFolder by lazy { File(archiveDir).also { it.mkdirs() } }
     private val archiveFolder by lazy { File(rootFolder, archivePath).also { it.mkdirs() } }
 
     override suspend fun run() = withContext(Dispatchers.IO) {

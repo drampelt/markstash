@@ -1,8 +1,8 @@
 package com.markstash.server.workers
 
-import com.markstash.server.db.Database
+import io.ktor.application.Application
 
 abstract class Worker {
-    lateinit var db: Database
+    lateinit var application: Application
     abstract suspend fun run()
 }
