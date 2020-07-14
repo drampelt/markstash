@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.Readability4J
 import org.koin.core.qualifier.named
-import org.koin.ktor.ext.inject
+import org.koin.ktor.ext.get
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -34,8 +34,9 @@ class ArchiveWorker(
         val keyPool: List<Char> = ('a'..'f') + ('0'..'9')
     }
 
-    private val db: Database by application.inject()
-    private val archiveDir: String by application.inject(named(Constants.Storage.ARCHIVE_DIR))
+    private val db by lazy { application.get<Database>() }
+    private val archiveDir by lazy { application.get<String>(named(Constants.Storage.ARCHIVE_DIR)) }
+    private val extensionDir by lazy { application.get<String>(named(Constants.Storage.EXTENSION_DIR)) }
 
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 
@@ -88,17 +89,16 @@ class ArchiveWorker(
         saveMonolith()
         saveScreenshot()
 
-        driver.close()
+        driver.quit()
         log.debug("Completed archive of bookmark $bookmarkId!")
     }
 
     private fun setupDriver() {
         log.debug("Creating webdriver")
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver")
         // Ideally would use --headless here but extensions don't work in headless mode :(
         // See https://stackoverflow.com/questions/45372066/is-it-possible-to-run-google-chrome-in-headless-mode-with-extensions
-        val options = ChromeOptions().addArguments("--disable-gpu", "--window-size=1920,1080")
-            .addExtensions(File("src/main/resources/extensions/monolith.crx"))
+        val options = ChromeOptions().addArguments("--no-sandbox", "--disable-gpu", "--window-size=1920,1080")
+            .addExtensions(File(File(extensionDir), "monolith.crx"))
             .setExperimentalOption("prefs", mapOf(
                 "profile.default_content_settings.popups" to 0,
                 "download.default_directory" to tmpDir.toAbsolutePath().toString()
@@ -169,7 +169,8 @@ class ArchiveWorker(
         val screenshot = AShot().shootingStrategy(ShootingStrategies.viewportPasting(100))
             .takeScreenshot(driver)
         val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        val fileName = "${date}_screenshot.png"
+        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
+        val fileName = "${date}_screenshot_${key}.png"
         val file = File(archiveFolder, fileName)
         ImageIO.write(screenshot.image, "png", file)
         db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotFullArchiveId)

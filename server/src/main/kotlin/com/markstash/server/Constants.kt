@@ -9,9 +9,8 @@ object Constants {
         const val ALGORITHM = "jwt.algorithm"
     }
 
-    val JOB_CHANNEL = "job_channel"
-
     object Storage {
-        val ARCHIVE_DIR = "storage.archive_dir"
+        const val ARCHIVE_DIR = "storage.archive_dir"
+        const val EXTENSION_DIR = "storage.extension_dir"
     }
 }

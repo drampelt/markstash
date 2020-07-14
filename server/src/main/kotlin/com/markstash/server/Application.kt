@@ -42,6 +42,7 @@ import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
 import java.io.File
+import java.nio.file.Files
 
 fun Application.main() {
     val startTime = System.currentTimeMillis()
@@ -56,6 +57,9 @@ fun Application.main() {
     val dbFolder = File(dbPath)
     dbFolder.mkdirs()
     val dbFile = File(dbFolder, "markstash.db")
+
+    val chromedriver = environment.config.propertyOrNull("markstash.chromedriver_bin")?.getString() ?: "/usr/local/bin/chromedriver"
+    System.setProperty("webdriver.chrome.driver", chromedriver)
 
     install(CallLogging)
 
@@ -79,6 +83,7 @@ fun Application.main() {
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
             single { JobProcessor(this@main) }
             single(named(Constants.Storage.ARCHIVE_DIR)) { environment.config.propertyOrNull("markstash.archive_dir")?.getString() ?: "archives" }
+            single(named(Constants.Storage.EXTENSION_DIR)) { environment.config.propertyOrNull("markstash.extension_dir")?.getString() ?: "extensions" }
         })
     }
 
@@ -155,6 +160,14 @@ fun Application.main() {
         }
 
         log.info("Finished db setup in ${System.currentTimeMillis() - dbStartTime}ms")
+
+        val extensionDir = File(get<String>(named(Constants.Storage.EXTENSION_DIR))).also { it.mkdirs() }
+        val monolithExtension = File(extensionDir, "monolith.crx")
+        if (!monolithExtension.exists()) {
+            val ext = javaClass.getResourceAsStream("/extensions/monolith.crx")
+            Files.copy(ext, monolithExtension.absoluteFile.toPath())
+            ext.close()
+        }
 
         get<JobProcessor>().start()
     }
