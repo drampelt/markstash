@@ -33,6 +33,7 @@ dependencies {
     api(npm("postcss-nested", Versions.postcssNested))
     api(npm("tailwindcss", Versions.tailwindcss))
     api(npm("autoprefixer", Versions.autoprefixer))
+    api(npm("cssnano", Versions.cssnano))
 }
 
 kotlin.target.browser { }

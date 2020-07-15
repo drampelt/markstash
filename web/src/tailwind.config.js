@@ -1,4 +1,8 @@
 module.exports = {
+    purge: [
+        '../../../../shared/js/src/main/**/*',
+        '../../../../web/src/main/**/*',
+    ],
     theme: {
         extend: {
             spacing: {

@@ -12,6 +12,7 @@ object Versions {
     const val autoprefixer = "9.8.4"
     const val browserMob = "2.1.5"
     const val cssLoader = "3.6.0"
+    const val cssnano = "4.1.10"
     const val jsCookie = "2.2.1"
     const val jwarc = "0.13.0"
     const val koin = "2.1.5"
