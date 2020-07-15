@@ -25,13 +25,15 @@ dependencies {
 
     implementation(Dependencies.argon2)
     implementation(Dependencies.ashot)
-    implementation(Dependencies.readability4j)
+    implementation(Dependencies.browserMob)
+    implementation(Dependencies.jwarc)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)
     implementation(Dependencies.ktorLocations)
     implementation(Dependencies.ktorSerialization)
     implementation(Dependencies.ktorServerCio)
     implementation(Dependencies.logbackClassic)
+    implementation(Dependencies.readability4j)
     implementation(Dependencies.selenium)
     implementation(Dependencies.sqlDelightSqlite)
 }

@@ -20,6 +20,8 @@ data class Archive(
         MONOLITH,
         MONOLITH_READABILITY,
         SCREENSHOT_FULL,
+        HAR,
+        WARC,
     }
 
     @Serializable

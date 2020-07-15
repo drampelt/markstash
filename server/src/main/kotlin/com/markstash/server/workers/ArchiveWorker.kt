@@ -9,8 +9,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.Readability4J
+import net.lightbody.bmp.BrowserMobProxyServer
+import net.lightbody.bmp.proxy.CaptureType
 import org.koin.core.qualifier.named
 import org.koin.ktor.ext.get
+import org.netpreserve.jwarc.HttpRequest
+import org.netpreserve.jwarc.HttpResponse
+import org.netpreserve.jwarc.WarcRequest
+import org.netpreserve.jwarc.WarcResponse
+import org.netpreserve.jwarc.WarcWriter
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -18,6 +25,8 @@ import org.slf4j.LoggerFactory
 import ru.yandex.qatools.ashot.AShot
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import java.io.File
+import java.io.FileOutputStream
+import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
@@ -42,6 +51,11 @@ class ArchiveWorker(
 
     private lateinit var bookmark: BookmarkWithTags
     private lateinit var driver: ChromeDriver
+    private var harProxy: BrowserMobProxyServer? = null
+    private var warcWriter: WarcWriter? = null
+    private var warcRequests = mutableMapOf<String, URI>()
+    private var isWarcPaused = false
+    private var warcFile: File? = null
 
     private var originalArchiveId: Long = 0
     private var plainArchiveId: Long = 0
@@ -49,6 +63,8 @@ class ArchiveWorker(
     private var monolithArchiveId: Long = 0
     private var monolithReadabilityArchiveId: Long = 0
     private var screenshotFullArchiveId: Long = 0
+    private var harArchiveId: Long = 0
+    private var warcArchiveId: Long = 0
 
     private val tmpDir by lazy { Files.createTempDirectory("tmp") }
 
@@ -77,9 +93,13 @@ class ArchiveWorker(
         monolithArchiveId = createArchive(Archive.Type.MONOLITH)
         monolithReadabilityArchiveId = createArchive(Archive.Type.MONOLITH_READABILITY)
         screenshotFullArchiveId = createArchive(Archive.Type.SCREENSHOT_FULL)
+        harArchiveId = createArchive(Archive.Type.HAR)
+        warcArchiveId = createArchive(Archive.Type.WARC)
 
+        startProxy()
         setupDriver()
         loadPage()
+        pauseProxy()
 
         // Start the download before saving basic archives to remove the download buttons from the page
         log.debug("Starting monolith download")
@@ -90,6 +110,7 @@ class ArchiveWorker(
         saveScreenshot()
 
         driver.quit()
+        stopProxy()
         log.debug("Completed archive of bookmark $bookmarkId!")
     }
 
@@ -103,6 +124,9 @@ class ArchiveWorker(
                 "profile.default_content_settings.popups" to 0,
                 "download.default_directory" to tmpDir.toAbsolutePath().toString()
             ))
+        harProxy?.let {
+            options.addArguments("--proxy-server=127.0.0.1:${it.port}", "--ignore-certificate-errors")
+        }
         driver = ChromeDriver(options)
     }
 
@@ -128,6 +152,75 @@ class ArchiveWorker(
         delay(500)
     }
 
+    private fun startProxy() {
+        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of warc
+        val fileName = "${date}_warc_${key}.warc"
+        val file = File(archiveFolder, fileName).also { warcFile = it }
+        warcWriter = WarcWriter(FileOutputStream(file))
+
+        harProxy = BrowserMobProxyServer().also { proxy ->
+            proxy.start(0)
+            proxy.enableHarCaptureTypes(CaptureType.getAllContentCaptureTypes() + CaptureType.getHeaderCaptureTypes())
+            proxy.newHar()
+            log.debug("Started warc proxy on: ${proxy.port}")
+            proxy.addRequestFilter { request, contents, messageInfo ->
+                if (isWarcPaused) return@addRequestFilter null
+
+                val httpRequestBuilder = HttpRequest.Builder(request.method.name(), messageInfo.originalUrl)
+                request.headers().forEach { (key, value) -> httpRequestBuilder.addHeader(key, value) }
+                httpRequestBuilder.body(null, contents.binaryContents)
+
+                val warcRequest = WarcRequest.Builder(URI.create(messageInfo.originalUrl))
+                    .body(httpRequestBuilder.build())
+                    .build()
+
+                warcWriter?.write(warcRequest)
+                warcRequests[messageInfo.originalUrl] = warcRequest.id()
+
+                null
+            }
+
+            proxy.addResponseFilter { response, contents, messageInfo ->
+                if (isWarcPaused) return@addResponseFilter
+
+                val warcRequestId = warcRequests.remove(messageInfo.originalUrl) ?: return@addResponseFilter
+
+                val httpResponseBuilder = HttpResponse.Builder(response.status.code(), response.status.reasonPhrase())
+                response.headers().forEach { (key, value) -> httpResponseBuilder.addHeader(key, value) }
+                httpResponseBuilder.body(null, contents.binaryContents)
+
+                val warcResponse = WarcResponse.Builder(URI.create(messageInfo.originalUrl))
+                    .body(httpResponseBuilder.build())
+                    .concurrentTo(warcRequestId)
+                    .build()
+
+                warcWriter?.write(warcResponse)
+            }
+        }
+    }
+
+    private fun pauseProxy() {
+        isWarcPaused = true
+        warcWriter?.close()
+
+        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of har
+        val fileName = "${date}_har_${key}.har"
+        val file = File(archiveFolder, fileName)
+        harProxy?.har?.writeTo(file)
+
+        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), harArchiveId)
+        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/${warcFile?.name}", warcFile?.length().toString(), warcArchiveId)
+
+        log.debug("Saved current warc and har files")
+    }
+
+    private fun stopProxy() {
+        harProxy?.stop()
+        log.debug("Stopped har proxy")
+    }
+
     private fun saveBasic() {
         log.debug("Saving basic archives")
         val html = driver.findElementByXPath("//*").getAttribute("outerHTML")
@@ -137,7 +230,6 @@ class ArchiveWorker(
         saveArchive(plainArchiveId, Archive.Type.PLAIN, article.textContent)
         saveArchive(readabilityArchiveId, Archive.Type.READABILITY, article.content)
         db.bookmarkQueries.updateMetadata(article.excerpt, article.byline, bookmarkId)
-
     }
 
     private suspend fun saveMonolith() {
