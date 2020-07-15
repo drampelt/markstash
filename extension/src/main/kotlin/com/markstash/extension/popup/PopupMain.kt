@@ -19,6 +19,7 @@ import react.useState
 import kotlin.browser.document
 
 fun popupMain() {
+    js("require('css/main.css');")
     render(document.getElementById("main")) {
         child(popup)
     }
