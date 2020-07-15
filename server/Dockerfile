@@ -1,36 +1,31 @@
-FROM debian:buster-slim
+FROM alpine:latest
 
-RUN mkdir /usr/share/man/man1/
+RUN adduser -D markstash && addgroup markstash video
 
-RUN groupadd --system markstash && \
-    useradd --system --create-home --gid markstash --groups audio,video markstash && \
-    mkdir -p /home/markstash && \
-    chown --recursive markstash:markstash /home/markstash
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories \
+    && apk upgrade -U -a \
+    && apk add --no-cache \
+    bash \
+    libstdc++ \
+    chromium \
+    chromium-chromedriver \
+    harfbuzz \
+    nss \
+    freetype \
+    ttf-freefont \
+    wqy-zenhei \
+    xvfb \
+    xvfb-run \
+    curl \
+    tini \
+    openjdk11-jre-headless \
+    && rm -rf /var/cache/* \
+    && mkdir /var/cache/apk
 
-RUN apt-get -yqq update && \
-    apt-get install -yqq gnupg2 curl unzip xvfb fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic default-jre && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Chrome WebDriver
-RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
-    mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
-    unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    rm /tmp/chromedriver_linux64.zip && \
-    chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
-    ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
-
-# Install Google Chrome
-RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get -yqq update && \
-    apt-get -yqq install google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV TINI_VERSION v0.19.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
+ENTRYPOINT ["/sbin/tini", "--"]
 
 ADD xvfb-run-safe /usr/bin/xvfb-run-safe
 ADD xvfb-chromedriver /usr/bin/xvfb-chromedriver
@@ -44,4 +39,3 @@ ENV MARKSTASH_ENV=production
 ENV MARKSTASH_CHROMEDRIVER_BIN=/usr/bin/xvfb-chromedriver
 
 CMD ["java", "-server", "-XX:+UseContainerSupport", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "server.jar"]
-
