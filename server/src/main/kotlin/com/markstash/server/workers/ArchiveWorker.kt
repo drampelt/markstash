@@ -45,7 +45,6 @@ class ArchiveWorker(
 
     private val db by lazy { application.get<Database>() }
     private val archiveDir by lazy { application.get<String>(named(Constants.Storage.ARCHIVE_DIR)) }
-    private val extensionDir by lazy { application.get<String>(named(Constants.Storage.EXTENSION_DIR)) }
 
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 
@@ -99,17 +98,12 @@ class ArchiveWorker(
         startProxy()
         setupDriver()
         loadPage()
-        pauseProxy()
-
-        // Start the download before saving basic archives to remove the download buttons from the page
-        log.debug("Starting monolith download")
-        driver.executeScript("document.getElementById('__monolith_download').click()")
-
         saveBasic()
         saveMonolith()
         saveScreenshot()
 
         driver.quit()
+        pauseProxy()
         stopProxy()
         log.debug("Completed archive of bookmark $bookmarkId!")
     }
@@ -118,8 +112,7 @@ class ArchiveWorker(
         log.debug("Creating webdriver")
         // Ideally would use --headless here but extensions don't work in headless mode :(
         // See https://stackoverflow.com/questions/45372066/is-it-possible-to-run-google-chrome-in-headless-mode-with-extensions
-        val options = ChromeOptions().addArguments("--no-sandbox", "--disable-gpu", "--window-size=1920,1080")
-            .addExtensions(File(File(extensionDir), "monolith.crx"))
+        val options = ChromeOptions().addArguments("--no-sandbox", "--disable-gpu", "--window-size=1920,1080", "--disable-dev-shm-usage", "--headless")
             .setExperimentalOption("prefs", mapOf(
                 "profile.default_content_settings.popups" to 0,
                 "download.default_directory" to tmpDir.toAbsolutePath().toString()
@@ -233,27 +226,34 @@ class ArchiveWorker(
     }
 
     private suspend fun saveMonolith() {
-        log.debug("Waiting for monolith download")
-        var times = 0
-        while (true) {
-            if (times >= 60) break
+        val originalArchive = db.archiveQueries.findById(originalArchiveId).executeAsOne()
+        val originalFile = File(File(archiveDir), originalArchive.path!!)
+        val monolithFile = File.createTempFile("monolith", ".html")
+        log.info("Starting monolith archive")
+        val monolith = ProcessBuilder("monolith", originalFile.absolutePath, "-o", monolithFile.absolutePath)
+            .start()
 
-            val files = tmpDir.toFile().listFiles { _, name -> name.endsWith(".html") } ?: emptyArray()
-            val htmlFile = files.firstOrNull()
-            if (htmlFile == null) {
-                delay(500)
-            } else {
-                log.debug("Saving monolith archives")
-                val html = htmlFile.readText()
+        var time = 0
+        while (time < 60) {
+            if (monolith.isAlive) {
+                delay(1000)
+                time++
+            } else if (monolith.exitValue() == 0) {
+                val html = monolithFile.readText()
                 saveArchive(monolithArchiveId, Archive.Type.MONOLITH, html)
 
                 val article = Readability4J(driver.currentUrl, html).parse()
                 saveArchive(monolithReadabilityArchiveId, Archive.Type.MONOLITH_READABILITY, article.content)
-
-                break
+                log.info("Completed monolith archive")
+                return
+            } else {
+                log.error("Could not generate monolith: exit code ${monolith.exitValue()}")
+                return
             }
-            times++
         }
+
+        log.error("Timeout waiting for monolith, killing process")
+        monolith.destroyForcibly()
     }
 
     private fun saveScreenshot() {

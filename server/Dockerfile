@@ -1,3 +1,8 @@
+FROM ekidd/rust-musl-builder:latest AS builder
+
+RUN git clone https://github.com/Y2Z/monolith.git .
+RUN cargo build --release
+
 FROM alpine:latest
 
 RUN adduser -D markstash && addgroup markstash video
@@ -8,7 +13,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     && echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories \
     && apk upgrade -U -a \
     && apk add --no-cache \
-    bash \
     libstdc++ \
     chromium \
     chromium-chromedriver \
@@ -17,9 +21,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     freetype \
     ttf-freefont \
     wqy-zenhei \
-    xvfb \
-    xvfb-run \
-    curl \
     tini \
     openjdk11-jre-headless \
     && rm -rf /var/cache/* \
@@ -27,8 +28,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
-ADD xvfb-run-safe /usr/bin/xvfb-run-safe
-ADD xvfb-chromedriver /usr/bin/xvfb-chromedriver
+COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/monolith /usr/bin/monolith
 
 USER markstash
 WORKDIR /home/markstash
@@ -36,6 +36,6 @@ WORKDIR /home/markstash
 ADD build/libs/server.jar /home/markstash/server.jar
 
 ENV MARKSTASH_ENV=production
-ENV MARKSTASH_CHROMEDRIVER_BIN=/usr/bin/xvfb-chromedriver
+ENV MARKSTASH_CHROMEDRIVER_BIN=/usr/bin/chromedriver
 
-CMD ["java", "-server", "-XX:+UseContainerSupport", "-XX:InitialRAMFraction=2", "-XX:MinRAMFraction=2", "-XX:MaxRAMFraction=2", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "server.jar"]
+CMD ["java", "-server", "-XX:+UseContainerSupport", "-Xms256m", "-Xmx256m", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "server.jar"]

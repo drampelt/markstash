@@ -1,3 +1,0 @@
-#!/bin/bash
-
-/usr/bin/xvfb-run-safe chromedriver --whitelisted-ips --disable-dev-shm-usage "$@"

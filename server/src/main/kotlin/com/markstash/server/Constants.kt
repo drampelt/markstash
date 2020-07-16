@@ -11,6 +11,5 @@ object Constants {
 
     object Storage {
         const val ARCHIVE_DIR = "storage.archive_dir"
-        const val EXTENSION_DIR = "storage.extension_dir"
     }
 }

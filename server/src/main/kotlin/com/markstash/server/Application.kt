@@ -107,7 +107,6 @@ fun Application.main() {
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
             single { JobProcessor(this@main) }
             single(named(Constants.Storage.ARCHIVE_DIR)) { environment.config.propertyOrNull("markstash.archive_dir")?.getString() ?: "archives" }
-            single(named(Constants.Storage.EXTENSION_DIR)) { environment.config.propertyOrNull("markstash.extension_dir")?.getString() ?: "extensions" }
         })
     }
 
@@ -189,14 +188,6 @@ fun Application.main() {
         }
 
         log.info("Finished db setup in ${System.currentTimeMillis() - dbStartTime}ms")
-
-        val extensionDir = File(get<String>(named(Constants.Storage.EXTENSION_DIR))).also { it.mkdirs() }
-        val monolithExtension = File(extensionDir, "monolith.crx")
-        if (!monolithExtension.exists()) {
-            val ext = javaClass.getResourceAsStream("/extensions/monolith.crx")
-            Files.copy(ext, monolithExtension.absoluteFile.toPath())
-            ext.close()
-        }
 
         get<JobProcessor>().start()
     }
