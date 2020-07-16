@@ -23,6 +23,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     wqy-zenhei \
     tini \
     openjdk11-jre-headless \
+    argon2-dev \
     && rm -rf /var/cache/* \
     && mkdir /var/cache/apk
 

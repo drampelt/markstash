@@ -35,7 +35,7 @@ object Versions {
 }
 
 object Dependencies {
-    const val argon2 = "de.mkammerer:argon2-jvm:${Versions.argon2}"
+    const val argon2 = "de.mkammerer:argon2-jvm-nolibs:${Versions.argon2}"
     const val ashot = "ru.yandex.qatools.ashot:ashot:${Versions.ashot}"
     const val browserMob = "net.lightbody.bmp:browsermob-core:2.1.5"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
