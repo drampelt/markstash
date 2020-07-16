@@ -33,7 +33,7 @@ ADD xvfb-chromedriver /usr/bin/xvfb-chromedriver
 USER markstash
 WORKDIR /home/markstash
 
-ADD build/libs/server-1.0-SNAPSHOT-all.jar /home/markstash/server.jar
+ADD build/libs/server.jar /home/markstash/server.jar
 
 ENV MARKSTASH_ENV=production
 ENV MARKSTASH_CHROMEDRIVER_BIN=/usr/bin/xvfb-chromedriver

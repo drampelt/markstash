@@ -8,7 +8,7 @@ plugins {
 group = "com.markstash.server"
 version = "1.0-SNAPSHOT"
 
-val main = "io.ktor.server.cio.EngineMain"
+val main = "com.markstash.server.ApplicationKt"
 
 application {
     mainClassName = main
@@ -44,6 +44,17 @@ tasks {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = Versions.jvm
+    }
+
+    shadowJar {
+        dependsOn(":web:assemble")
+
+        archiveFileName.set("${archiveBaseName.get()}.${archiveExtension.get()}")
+
+        into("/assets") {
+            from(fileTree("${project(":web").buildDir}/distributions"))
+            exclude("*.map", "css")
+        }
     }
 }
 

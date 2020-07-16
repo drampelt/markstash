@@ -28,11 +28,23 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.default
+import io.ktor.http.content.defaultResource
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.route
 import io.ktor.serialization.json
+import io.ktor.server.cio.CIO
+import io.ktor.server.cio.CIOApplicationEngine
+import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.ApplicationEngineEnvironment
+import io.ktor.server.engine.addShutdownHook
+import io.ktor.server.engine.commandLineEnvironment
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.engine.loadCommonConfiguration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -41,10 +53,22 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
+import sun.misc.Signal
 import java.io.File
 import java.nio.file.Files
+import kotlin.system.exitProcess
+
+val mainStartTime: Long = System.currentTimeMillis()
+
+fun main(args: Array<String>) {
+    val applicationEnvironment = commandLineEnvironment(args)
+    val server = embeddedServer(CIO, applicationEnvironment)
+        .start(wait = true)
+    server.addShutdownHook { server.stop(3000, 5000) }
+}
 
 fun Application.main() {
+    log.info("Started server in ${System.currentTimeMillis() - mainStartTime}ms")
     val startTime = System.currentTimeMillis()
 
     val jwtIssuer = environment.config.property("jwt.issuer").getString()
@@ -142,6 +166,11 @@ fun Application.main() {
                 bookmarks()
             }
         }
+
+        static {
+            resources("assets")
+            defaultResource("index.html", "assets")
+        }
     }
 
     GlobalScope.launch(Dispatchers.IO) {
@@ -172,12 +201,14 @@ fun Application.main() {
         get<JobProcessor>().start()
     }
 
+    Signal.handle(Signal("INT")) { exitProcess(0) }
     Runtime.getRuntime().addShutdownHook(Thread {
         log.info("Shutting down...")
         val sqlDriver = get<SqlDriver>()
         sqlDriver.close()
         get<JobProcessor>().stop()
         log.info("Goodbye")
+        (environment as? ApplicationEngineEnvironment)?.stop()
     })
 
     log.info("Finished configuration in ${System.currentTimeMillis() - startTime}ms")
