@@ -144,9 +144,9 @@ class ArchiveWorker(
         while (true) {
             val height = driver.executeScript("return document.body.scrollHeight") as? Long ?: 1000
             if (scrolled > height) break
-            driver.executeScript("window.scrollBy(0, 250)")
-            scrolled += 250
-            delay(100)
+            driver.executeScript("window.scrollBy(0, 500)")
+            scrolled += 500
+            delay(750)
         }
 
         delay(500)
@@ -258,7 +258,7 @@ class ArchiveWorker(
 
     private fun saveScreenshot() {
         log.debug("Saving screenshot of page")
-        val screenshot = AShot().shootingStrategy(ShootingStrategies.viewportPasting(100))
+        val screenshot = AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000))
             .takeScreenshot(driver)
         val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
         val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
