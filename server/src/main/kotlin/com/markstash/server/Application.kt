@@ -3,6 +3,7 @@ package com.markstash.server
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.markstash.api.errors.ErrorResponse
+import com.markstash.api.errors.NotFoundException
 import com.markstash.api.errors.ServerException
 import com.markstash.server.auth.CurrentUser
 import com.markstash.server.controllers.archives
@@ -28,23 +29,18 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.default
-import io.ktor.http.content.defaultResource
-import io.ktor.http.content.resources
-import io.ktor.http.content.static
+import io.ktor.http.content.resolveResource
 import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.Routing
+import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.serialization.json
 import io.ktor.server.cio.CIO
-import io.ktor.server.cio.CIOApplicationEngine
-import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.ApplicationEngineEnvironment
 import io.ktor.server.engine.addShutdownHook
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.engine.loadCommonConfiguration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -55,7 +51,6 @@ import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.get
 import sun.misc.Signal
 import java.io.File
-import java.nio.file.Files
 import kotlin.system.exitProcess
 
 val mainStartTime: Long = System.currentTimeMillis()
@@ -166,9 +161,14 @@ fun Application.main() {
             }
         }
 
-        static {
-            resources("assets")
-            defaultResource("index.html", "assets")
+        get("{slug...}") {
+            val relativePath = (call.parameters.getAll("slug")?.joinToString(File.separator) ?: "")
+                .ifBlank { "index.html" }
+                .replace("..", "")
+            val content = call.resolveResource(relativePath, "assets")
+                ?: call.resolveResource("index.html", "assets")
+                ?: throw NotFoundException()
+            call.respond(content)
         }
     }
 
