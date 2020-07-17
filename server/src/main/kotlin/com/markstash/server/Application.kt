@@ -28,10 +28,13 @@ import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resolveResource
+import io.ktor.http.defaultForFilePath
 import io.ktor.locations.Locations
 import io.ktor.response.respond
+import io.ktor.response.respondOutputStream
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.route
@@ -41,6 +44,7 @@ import io.ktor.server.engine.ApplicationEngineEnvironment
 import io.ktor.server.engine.addShutdownHook
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
+import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -162,13 +166,17 @@ fun Application.main() {
         }
 
         get("{slug...}") {
-            val relativePath = (call.parameters.getAll("slug")?.joinToString(File.separator) ?: "")
+            var relativePath = (call.parameters.getAll("slug")?.joinToString(File.separator) ?: "")
                 .ifBlank { "index.html" }
                 .replace("..", "")
-            val content = call.resolveResource(relativePath, "assets")
-                ?: call.resolveResource("index.html", "assets")
+
+            val stream = javaClass.getResourceAsStream("/assets/$relativePath")
+                ?: javaClass.getResourceAsStream("/assets/index.html")?.also { relativePath = "index.html" }
                 ?: throw NotFoundException()
-            call.respond(content)
+
+            stream.use { assetStream ->
+                call.respondOutputStream(ContentType.defaultForFilePath(relativePath)) { assetStream.copyTo(this) }
+            }
         }
     }
 

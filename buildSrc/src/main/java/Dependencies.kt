@@ -1,6 +1,7 @@
 object Versions {
     const val jvm = "1.8"
     const val kotlin = "1.3.72"
+    const val graal = "20.1.0"
 
     // Gradle plugins
     const val shadow = "5.2.0"
@@ -29,6 +30,7 @@ object Versions {
     const val reactRouter = "5.1.2"
     const val readability4j = "1.0.3"
     const val selenium = "3.8.1"
+    const val sqlite = "3.21.0.1"
     const val styleLoader = "1.2.1"
     const val tailwindcss = "1.4.6"
     const val webextensionPolyfill = "0.6.0"
@@ -61,4 +63,6 @@ object Dependencies {
     const val selenium = "org.seleniumhq.selenium:selenium-java:${Versions.selenium}"
     const val sqlDelightGradle = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"
     const val sqlDelightSqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
+    const val sqlite = "org.xerial:sqlite-jdbc:${Versions.sqlite}"
+    const val svm = "org.graalvm.nativeimage:svm:${Versions.graal}"
 }

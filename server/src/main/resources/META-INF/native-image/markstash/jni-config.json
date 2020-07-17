@@ -1,0 +1,50 @@
+[
+{
+  "name":"com.apple.eawt._AppEventHandler",
+  "methods":[{"name":"handleNativeNotification","parameterTypes":["int"] }]
+},
+{
+  "name":"com.apple.eawt._AppMenuBarHandler",
+  "methods":[{"name":"initMenuStates","parameterTypes":["boolean","boolean","boolean","boolean"] }]
+},
+{
+  "name":"java.lang.ClassLoader",
+  "methods":[
+    {"name":"getPlatformClassLoader","parameterTypes":[] }, 
+    {"name":"loadClass","parameterTypes":["java.lang.String"] }
+  ]
+},
+{
+  "name":"java.lang.ClassNotFoundException"
+},
+{
+  "name":"java.lang.NoSuchMethodError"
+},
+{
+  "name":"org.sqlite.core.NativeDB",
+  "fields":[
+    {"name":"pointer"}, 
+    {"name":"udfdatalist"}
+  ]
+},
+{
+  "name":"sun.awt.AWTAutoShutdown",
+  "methods":[
+    {"name":"notifyToolkitThreadBusy","parameterTypes":[] }, 
+    {"name":"notifyToolkitThreadFree","parameterTypes":[] }
+  ]
+},
+{
+  "name":"sun.java2d.opengl.OGLSurfaceData",
+  "fields":[
+    {"name":"isBIOpShaderEnabled"}, 
+    {"name":"isFBObjectEnabled"}, 
+    {"name":"isGradShaderEnabled"}, 
+    {"name":"isLCDShaderEnabled"}
+  ]
+},
+{
+  "name":"sun.lwawt.macosx.LWCToolkit",
+  "methods":[{"name":"installToolkitThreadInJava","parameterTypes":[] }]
+}
+]

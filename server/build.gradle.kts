@@ -36,6 +36,9 @@ dependencies {
     implementation(Dependencies.readability4j)
     implementation(Dependencies.selenium)
     implementation(Dependencies.sqlDelightSqlite)
+    implementation(Dependencies.sqlite)
+
+    compileOnly(Dependencies.svm)
 }
 
 tasks {
