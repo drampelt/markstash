@@ -1,9 +1,21 @@
-FROM ekidd/rust-musl-builder:latest AS builder
+FROM ekidd/rust-musl-builder:latest AS monolith
 
 RUN git clone https://github.com/Y2Z/monolith.git .
 RUN cargo build --release
 
-FROM alpine:latest
+FROM oracle/graalvm-ce:latest AS builder
+
+RUN gu install native-image
+
+ADD build/libs/server.jar /server.jar
+RUN native-image \
+    --no-server \
+    --no-fallback \
+    -H:IncludeResources='org/sqlite/native/Linux/x86_64/.*' \
+    -H:+ReportExceptionStackTraces \
+    -jar /server.jar
+
+FROM frolvlad/alpine-glibc:latest
 
 RUN adduser -D markstash && addgroup markstash video
 
@@ -22,7 +34,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     ttf-freefont \
     wqy-zenhei \
     tini \
-    openjdk11-jre-headless \
     argon2-dev \
     imagemagick \
     && rm -rf /var/cache/* \
@@ -30,14 +41,11 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
 
 ENTRYPOINT ["/sbin/tini", "--"]
 
-COPY --from=builder /home/rust/src/target/x86_64-unknown-linux-musl/release/monolith /usr/bin/monolith
+COPY --from=monolith /home/rust/src/target/x86_64-unknown-linux-musl/release/monolith /usr/bin/monolith
 
 USER markstash
 WORKDIR /home/markstash
 
-ADD build/libs/server.jar /home/markstash/server.jar
+COPY --from=builder --chown=markstash:markstash /server /home/markstash/server
 
-ENV MARKSTASH_ENV=production
-ENV MARKSTASH_CHROMEDRIVER_BIN=/usr/bin/chromedriver
-
-CMD ["java", "-server", "-XX:+UseContainerSupport", "-Xms256m", "-Xmx256m", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-jar", "server.jar"]
+CMD ["/home/markstash/server"]

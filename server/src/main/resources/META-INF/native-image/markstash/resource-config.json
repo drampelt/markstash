@@ -106,8 +106,7 @@
     {"pattern":"\\Qorg/slf4j/impl\\E"}, 
     {"pattern":"\\Qorg/slf4j/spi\\E"}, 
     {"pattern":"\\Qorg/slf4j\\E"}, 
-    {"pattern":"\\Qorg/sqlite/native/Mac/x86_64/libsqlitejdbc.jnilib\\E"}, 
-    {"pattern":"\\Qorg\\E"}, 
+    {"pattern":"\\Qorg\\E"},
     {"pattern":"\\QsslSupport/ca-keystore-rsa.p12\\E"}
   ],
   "bundles":[]
