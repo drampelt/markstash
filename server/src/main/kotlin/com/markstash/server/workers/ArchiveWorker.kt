@@ -18,22 +18,21 @@ import org.netpreserve.jwarc.HttpResponse
 import org.netpreserve.jwarc.WarcRequest
 import org.netpreserve.jwarc.WarcResponse
 import org.netpreserve.jwarc.WarcWriter
+import org.openqa.selenium.OutputType
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.LoggerFactory
-import ru.yandex.qatools.ashot.AShot
-import ru.yandex.qatools.ashot.shooting.ShootingStrategies
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import javax.imageio.ImageIO
 
 class ArchiveWorker(
     private val userId: Long,
@@ -229,7 +228,7 @@ class ArchiveWorker(
         val originalArchive = db.archiveQueries.findById(originalArchiveId).executeAsOne()
         val originalFile = File(File(archiveDir), originalArchive.path!!)
         val monolithFile = File.createTempFile("monolith", ".html")
-        log.info("Starting monolith archive")
+        log.debug("Starting monolith archive")
         val monolith = ProcessBuilder("monolith", originalFile.absolutePath, "-o", monolithFile.absolutePath)
             .start()
 
@@ -244,7 +243,7 @@ class ArchiveWorker(
 
                 val article = Readability4J(driver.currentUrl, html).parse()
                 saveArchive(monolithReadabilityArchiveId, Archive.Type.MONOLITH_READABILITY, article.content)
-                log.info("Completed monolith archive")
+                log.debug("Completed monolith archive")
                 return
             } else {
                 log.error("Could not generate monolith: exit code ${monolith.exitValue()}")
@@ -256,16 +255,62 @@ class ArchiveWorker(
         monolith.destroyForcibly()
     }
 
-    private fun saveScreenshot() {
+    private suspend fun saveScreenshot() {
         log.debug("Saving screenshot of page")
-        val screenshot = AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000))
-            .takeScreenshot(driver)
-        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
-        val fileName = "${date}_screenshot_${key}.png"
-        val file = File(archiveFolder, fileName)
-        ImageIO.write(screenshot.image, "png", file)
-        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotFullArchiveId)
+        driver.executeScript("window.scrollTo(0, 0)")
+        delay(1000)
+
+        val pageHeight = (driver.executeScript("""
+            var body = document.body, html = document.documentElement;
+            return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
+        """.trimIndent()) as Number).toInt()
+        val viewportHeight = (driver.executeScript("return window.innerHeight || documentElement.clientHeight|| body.clientHeight") as Number).toInt()
+        val dpi = (driver.executeScript("return window.devicePixelRatio || 1") as Number).toDouble()
+
+        log.debug("Page height: $pageHeight, viewportHeight: $viewportHeight")
+
+        val screenshots = mutableListOf<File>()
+        var capturedHeight = 0
+        while (capturedHeight < pageHeight) {
+            screenshots += driver.getScreenshotAs(OutputType.FILE)
+            driver.executeScript("window.scrollBy(0, ${viewportHeight})")
+            capturedHeight += viewportHeight
+            delay(1000)
+        }
+
+        val extraHeight = ((viewportHeight - (pageHeight % viewportHeight)).takeIf { it < pageHeight } ?: 0) * dpi
+        log.debug("Finished scrolling, saved ${screenshots.size} screenshots. Starting imagemagick merge, cutting off extra height: $extraHeight")
+
+        val mergedScreenshot = File.createTempFile("screenshot", ".png")
+        val convertProcess = ProcessBuilder(
+            listOf("convert")
+                + screenshots.map { it.absolutePath }
+                + listOf("-set", "page", "+0+%[fx:u[t-1]page.y+u[t-1].h-(t==${screenshots.size - 1}?${extraHeight.toInt()}:0)]", "-layers", "merge", "+repage", mergedScreenshot.absolutePath)
+        )
+            .start()
+
+        var time = 0
+        while (time < 60) {
+            if (convertProcess.isAlive) {
+                delay(1000)
+                time++
+            } else if (convertProcess.exitValue() == 0) {
+                log.debug("Completed screenshot archive")
+                val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
+                val fileName = "${date}_screenshot_${key}.png"
+                val file = File(archiveFolder, fileName)
+                Files.copy(mergedScreenshot.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotFullArchiveId)
+                return
+            } else {
+                log.error("Could not generate screenshot: exit code ${convertProcess.exitValue()}")
+                return
+            }
+        }
+
+        log.error("Timeout waiting for imagemagick, killing process")
+        convertProcess.destroyForcibly()
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {

@@ -24,7 +24,6 @@ dependencies {
     implementation(project(":shared:api"))
 
     implementation(Dependencies.argon2)
-    implementation(Dependencies.ashot)
     implementation(Dependencies.browserMob)
     implementation(Dependencies.jwarc)
     implementation(Dependencies.koinKtor)

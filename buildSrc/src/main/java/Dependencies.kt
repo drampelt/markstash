@@ -9,7 +9,6 @@ object Versions {
 
     // Libraries
     const val argon2 = "2.7"
-    const val ashot = "1.5.4"
     const val autoprefixer = "9.8.4"
     const val browserMob = "2.1.5"
     const val cssLoader = "3.6.0"
@@ -38,7 +37,6 @@ object Versions {
 
 object Dependencies {
     const val argon2 = "de.mkammerer:argon2-jvm-nolibs:${Versions.argon2}"
-    const val ashot = "ru.yandex.qatools.ashot:ashot:${Versions.ashot}"
     const val browserMob = "net.lightbody.bmp:browsermob-core:2.1.5"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
