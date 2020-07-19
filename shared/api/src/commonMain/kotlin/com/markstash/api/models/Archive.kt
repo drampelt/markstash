@@ -19,6 +19,7 @@ data class Archive(
         READABILITY,
         MONOLITH,
         MONOLITH_READABILITY,
+        SCREENSHOT,
         SCREENSHOT_FULL,
         HAR,
         WARC,

@@ -60,6 +60,7 @@ class ArchiveWorker(
     private var readabilityArchiveId: Long = 0
     private var monolithArchiveId: Long = 0
     private var monolithReadabilityArchiveId: Long = 0
+    private var screenshotArchiveId: Long = 0
     private var screenshotFullArchiveId: Long = 0
     private var harArchiveId: Long = 0
     private var warcArchiveId: Long = 0
@@ -90,6 +91,7 @@ class ArchiveWorker(
         readabilityArchiveId = createArchive(Archive.Type.READABILITY)
         monolithArchiveId = createArchive(Archive.Type.MONOLITH)
         monolithReadabilityArchiveId = createArchive(Archive.Type.MONOLITH_READABILITY)
+        screenshotArchiveId = createArchive(Archive.Type.SCREENSHOT)
         screenshotFullArchiveId = createArchive(Archive.Type.SCREENSHOT_FULL)
         harArchiveId = createArchive(Archive.Type.HAR)
         warcArchiveId = createArchive(Archive.Type.WARC)
@@ -278,6 +280,19 @@ class ArchiveWorker(
             delay(1000)
         }
 
+        if (screenshots.isEmpty()) {
+            log.error("Could not save any screenshots")
+            return
+        }
+
+        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
+        val fileName = "${date}_screenshot_${key}.png"
+        val file = File(archiveFolder, fileName)
+        Files.copy(screenshots.first().toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotArchiveId)
+        log.debug("Completed screenshot archive")
+
         val extraHeight = ((viewportHeight - (pageHeight % viewportHeight)).takeIf { it < pageHeight } ?: 0) * dpi
         log.debug("Finished scrolling, saved ${screenshots.size} screenshots. Starting imagemagick merge, cutting off extra height: $extraHeight")
 
@@ -295,13 +310,12 @@ class ArchiveWorker(
                 delay(1000)
                 time++
             } else if (convertProcess.exitValue() == 0) {
-                log.debug("Completed screenshot archive")
-                val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-                val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
-                val fileName = "${date}_screenshot_${key}.png"
-                val file = File(archiveFolder, fileName)
-                Files.copy(mergedScreenshot.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotFullArchiveId)
+                val fullKey = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
+                val fullFileName = "${date}_screenshot_full_${fullKey}.png"
+                val fullFile = File(archiveFolder, fullFileName)
+                Files.copy(mergedScreenshot.toPath(), fullFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fullFileName", fullFile.length().toString(), screenshotFullArchiveId)
+                log.debug("Completed full screenshot archive")
                 return
             } else {
                 log.error("Could not generate screenshot: exit code ${convertProcess.exitValue()}")
