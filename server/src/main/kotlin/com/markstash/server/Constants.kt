@@ -12,4 +12,8 @@ object Constants {
     object Storage {
         const val ARCHIVE_DIR = "storage.archive_dir"
     }
+
+    object Binaries {
+        const val CHROME_BIN = "binaries.chrome_bin"
+    }
 }

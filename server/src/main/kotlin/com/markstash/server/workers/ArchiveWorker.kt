@@ -40,10 +40,13 @@ class ArchiveWorker(
 ) : Worker() {
     companion object {
         val keyPool: List<Char> = ('a'..'f') + ('0'..'9')
+
+        private val chromeArgs = listOf("--no-sandbox", "--disable-gpu", "--window-size=1920,1080", "--disable-dev-shm-usage", "--headless")
     }
 
     private val db by lazy { application.get<Database>() }
     private val archiveDir by lazy { application.get<String>(named(Constants.Storage.ARCHIVE_DIR)) }
+    private val chromeBin by lazy { application.get<String>(named(Constants.Binaries.CHROME_BIN)) }
 
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 
@@ -64,6 +67,7 @@ class ArchiveWorker(
     private var screenshotFullArchiveId: Long = 0
     private var harArchiveId: Long = 0
     private var warcArchiveId: Long = 0
+    private var pdfArchiveId: Long = 0
 
     private val tmpDir by lazy { Files.createTempDirectory("tmp") }
 
@@ -95,6 +99,7 @@ class ArchiveWorker(
         screenshotFullArchiveId = createArchive(Archive.Type.SCREENSHOT_FULL)
         harArchiveId = createArchive(Archive.Type.HAR)
         warcArchiveId = createArchive(Archive.Type.WARC)
+        pdfArchiveId = createArchive(Archive.Type.PDF)
 
         startProxy()
         setupDriver()
@@ -106,6 +111,7 @@ class ArchiveWorker(
         driver.quit()
         pauseProxy()
         stopProxy()
+        savePdf()
         log.debug("Completed archive of bookmark $bookmarkId!")
     }
 
@@ -113,7 +119,8 @@ class ArchiveWorker(
         log.debug("Creating webdriver")
         // Ideally would use --headless here but extensions don't work in headless mode :(
         // See https://stackoverflow.com/questions/45372066/is-it-possible-to-run-google-chrome-in-headless-mode-with-extensions
-        val options = ChromeOptions().addArguments("--no-sandbox", "--disable-gpu", "--window-size=1920,1080", "--disable-dev-shm-usage", "--headless")
+        val options = ChromeOptions().addArguments(chromeArgs)
+            .setBinary(chromeBin)
             .setExperimentalOption("prefs", mapOf(
                 "profile.default_content_settings.popups" to 0,
                 "download.default_directory" to tmpDir.toAbsolutePath().toString()
@@ -325,6 +332,45 @@ class ArchiveWorker(
 
         log.error("Timeout waiting for imagemagick, killing process")
         convertProcess.destroyForcibly()
+    }
+
+    private suspend fun savePdf() {
+        val htmlArchive = db.archiveQueries.findById(monolithArchiveId).executeAsOneOrNull()
+            ?: db.archiveQueries.findById(originalArchiveId).executeAsOneOrNull()
+            ?: return
+
+        log.debug("Starting pdf archive")
+
+        val port = application.environment.config.propertyOrNull("ktor.deployment.port")?.getString()?.toIntOrNull() ?: 8080
+        val pdfFile = File.createTempFile("pdf", ".pdf")
+        val chromeProcess = ProcessBuilder(
+            listOf(chromeBin)
+                + chromeArgs
+                + listOf("--print-to-pdf=${pdfFile.absolutePath}", "http://localhost:$port/api/archives/${htmlArchive.key}")
+        ).start()
+
+        var time = 0
+        while (time < 30) {
+            if (chromeProcess.isAlive) {
+                delay(1000)
+                time++
+            } else if (chromeProcess.exitValue() == 0) {
+                val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of pdf
+                val fileName = "${date}_pdf_${key}.pdf"
+                val file = File(archiveFolder, fileName)
+                Files.copy(pdfFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), pdfArchiveId)
+                log.debug("Completed pdf archive")
+                return
+            } else {
+                log.error("Could not generate pdf: exit code ${chromeProcess.exitValue()}")
+                return
+            }
+        }
+
+        log.error("Timeout waiting for chrome, killing process")
+        chromeProcess.destroyForcibly()
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {

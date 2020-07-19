@@ -58,6 +58,10 @@ tasks {
             exclude("*.map", "css")
         }
     }
+
+    named<JavaExec>("run") {
+        args("-config=application.dev.conf")
+    }
 }
 
 sqldelight {

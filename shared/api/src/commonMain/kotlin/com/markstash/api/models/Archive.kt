@@ -23,6 +23,7 @@ data class Archive(
         SCREENSHOT_FULL,
         HAR,
         WARC,
+        PDF,
     }
 
     @Serializable
