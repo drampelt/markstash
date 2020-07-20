@@ -253,15 +253,18 @@ class ArchiveWorker(
                 val article = Readability4J(driver.currentUrl, html).parse()
                 saveArchive(monolithReadabilityArchiveId, Archive.Type.MONOLITH_READABILITY, article.content)
                 log.debug("Completed monolith archive")
+                monolithFile.delete()
                 return
             } else {
                 log.error("Could not generate monolith: exit code ${monolith.exitValue()}")
+                monolithFile.delete()
                 return
             }
         }
 
         log.error("Timeout waiting for monolith, killing process")
         monolith.destroyForcibly()
+        monolithFile.delete()
     }
 
     private suspend fun saveScreenshot() {
@@ -299,6 +302,7 @@ class ArchiveWorker(
         Files.copy(screenshots.first().toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
         db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotArchiveId)
         log.debug("Completed screenshot archive")
+        file.delete()
 
         val extraHeight = ((viewportHeight - (pageHeight % viewportHeight)).takeIf { it < pageHeight } ?: 0) * dpi
         log.debug("Finished scrolling, saved ${screenshots.size} screenshots. Starting imagemagick merge, cutting off extra height: $extraHeight")
@@ -323,15 +327,21 @@ class ArchiveWorker(
                 Files.copy(mergedScreenshot.toPath(), fullFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fullFileName", fullFile.length().toString(), screenshotFullArchiveId)
                 log.debug("Completed full screenshot archive")
+                mergedScreenshot.delete()
+                screenshots.forEach { it.delete() }
                 return
             } else {
                 log.error("Could not generate screenshot: exit code ${convertProcess.exitValue()}")
+                mergedScreenshot.delete()
+                screenshots.forEach { it.delete() }
                 return
             }
         }
 
         log.error("Timeout waiting for imagemagick, killing process")
         convertProcess.destroyForcibly()
+        mergedScreenshot.delete()
+        screenshots.forEach { it.delete() }
     }
 
     private suspend fun savePdf() {
@@ -362,14 +372,17 @@ class ArchiveWorker(
                 Files.copy(pdfFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), pdfArchiveId)
                 log.debug("Completed pdf archive")
+                pdfFile.delete()
                 return
             } else {
                 log.error("Could not generate pdf: exit code ${chromeProcess.exitValue()}")
+                pdfFile.delete()
                 return
             }
         }
 
         log.error("Timeout waiting for chrome, killing process")
+        pdfFile.delete()
         chromeProcess.destroyForcibly()
     }
 
