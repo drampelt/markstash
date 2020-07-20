@@ -37,7 +37,7 @@ jobs:
 
     # Runs a set of commands using the runners shell
     - name: Compile server
-      run: NODE_ENV=production ./gradlew :server:shadowJar
+      run: NODE_ENV=production ./gradlew :server:minimizedJar
     
     - name: Save server jar
       uses: actions/upload-artifact@v2

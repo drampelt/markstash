@@ -10,6 +10,7 @@ buildscript {
     }
 
     dependencies {
+        classpath(Dependencies.proguard)
         classpath(Dependencies.sqlDelightGradle)
     }
 }

@@ -6,6 +6,7 @@ object Versions {
     // Gradle plugins
     const val shadow = "5.2.0"
     const val sqlDelight = "1.4.0"
+    const val proguard = "7.0.0"
 
     // Libraries
     const val argon2 = "2.7"
@@ -57,6 +58,7 @@ object Dependencies {
     const val ktorSerialization = "io.ktor:ktor-serialization:${Versions.ktor}"
     const val ktorServerCio = "io.ktor:ktor-server-cio:${Versions.ktor}"
     const val logbackClassic = "ch.qos.logback:logback-classic:${Versions.logback}"
+    const val proguard = "com.guardsquare:proguard-gradle:${Versions.proguard}"
     const val readability4j = "net.dankito.readability4j:readability4j:${Versions.readability4j}"
     const val selenium = "org.seleniumhq.selenium:selenium-java:${Versions.selenium}"
     const val sqlDelightGradle = "com.squareup.sqldelight:gradle-plugin:${Versions.sqlDelight}"

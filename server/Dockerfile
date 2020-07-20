@@ -7,7 +7,7 @@ FROM oracle/graalvm-ce:latest AS builder
 
 RUN gu install native-image
 
-ADD build/libs/server.jar /server.jar
+ADD build/libs/server.min.jar /server.jar
 RUN native-image \
     --no-server \
     --no-fallback \

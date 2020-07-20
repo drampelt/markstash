@@ -1,3 +1,5 @@
+import proguard.gradle.ProGuardTask
+
 plugins {
     application
     kotlin("jvm")
@@ -61,6 +63,17 @@ tasks {
 
     named<JavaExec>("run") {
         args("-config=application.dev.conf")
+    }
+
+    register("minimizedJar", ProGuardTask::class.java) {
+        dependsOn("shadowJar")
+
+        injars("$buildDir/libs/server.jar")
+        outjars("$buildDir/libs/server.min.jar")
+        libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
+        libraryjars("${System.getProperty("java.home")}/lib/jce.jar")
+
+        configuration("proguard.pro")
     }
 }
 
