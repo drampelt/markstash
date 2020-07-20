@@ -38,6 +38,7 @@
 -keep public class ch.qos.logback.** { *; }
 -keep public class org.slf4j.** { *; }
 -keep class net.lightbody.bmp.** { *; }
+-keep class org.xbill.DNS.spi.DNSJavaNameServiceDescriptor { *; }
 
 -keep class com.fasterxml.jackson.databind.ObjectMapper {
     public <methods>;
