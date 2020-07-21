@@ -33,6 +33,7 @@ object Versions {
     const val sqlite = "3.21.0.1"
     const val styleLoader = "1.2.1"
     const val tailwindcss = "1.4.6"
+    const val tailwindUi = "0.3.1"
     const val webextensionPolyfill = "0.6.0"
 }
 

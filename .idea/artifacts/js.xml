@@ -1,8 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="js">
     <output-path>$PROJECT_DIR$/shared/js/build/libs</output-path>
-    <root id="archive" name="js.jar">
-      <element id="module-output" name="markstash.shared.js.main" />
-    </root>
+    <root id="archive" name="js.jar" />
   </artifact>
 </component>

@@ -32,6 +32,7 @@ dependencies {
     api(npm("postcss-import", Versions.postcssImport))
     api(npm("postcss-nested", Versions.postcssNested))
     api(npm("tailwindcss", Versions.tailwindcss))
+    api(npm("@tailwindcss/ui", Versions.tailwindUi))
     api(npm("autoprefixer", Versions.autoprefixer))
     api(npm("cssnano", Versions.cssnano))
 }

@@ -13,5 +13,7 @@ module.exports = {
         },
     },
     variants: {},
-    plugins: [],
+    plugins: [
+        require('../../build/js/node_modules/@tailwindcss/ui'),
+    ],
 }

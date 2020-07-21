@@ -65,8 +65,15 @@ val popup = functionalComponent<RProps> {
             p { +"Loading..." }
         }
         user == null -> {
-            child(loginForm) {
-                attrs.onLogIn = { handleLogIn(it) }
+            div("w-full max-w-md px-4 py-4") {
+                h1("text-center text-xl font-extrabold text-gray-900") {
+                    +"Sign in to Markstash"
+                }
+                div("mt-8") {
+                    child(loginForm) {
+                        attrs.onLogIn = { handleLogIn(it) }
+                    }
+                }
             }
         }
         else -> {

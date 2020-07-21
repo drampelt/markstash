@@ -40,6 +40,8 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
     useEffect(listOf()) {
         if (!Session.isAuthenticated && Session.isInitialLoad && apiClient.authToken != null) {
             handleInitialLogin()
+        } else {
+            setShouldLogin(true)
         }
     }
 
