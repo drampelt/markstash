@@ -1,6 +1,7 @@
 package com.markstash.web.layout
 
 import com.markstash.shared.js.api.apiClient
+import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.Session
 import react.RBuilder
 import react.RProps
@@ -16,10 +17,21 @@ import react.useState
 private interface SidebarLinkProps : RProps {
     var label: String
     var path: String
+    var icon: String
+    var exact: Boolean?
 }
 
 private val sidebarLink = functionalComponent<SidebarLinkProps> { props ->
-    navLink<RProps>(to = props.path, className = "w-full p-2 mb-1 font-medium text-gray-600 rounded hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:bg-gray-300", activeClassName = "text-gray-900 bg-gray-200") {
+    // group flex items-center px-2 py-2 text-sm leading-5 font-medium text-white rounded-md bg-gray-900 focus:outline-none focus:bg-gray-700 transition ease-in-out duration-150
+    navLink<RProps>(
+        to = props.path,
+        className = "mt-1 group flex items-center p-2 text-sm leading-5 font-medium text-gray-300 rounded-md hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700 transition ease-in-out duration-150",
+        activeClassName = "text-white bg-gray-900",
+        exact = props.exact ?: false
+    ) {
+        rawHtml("mr-3 h06 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150") {
+            props.icon
+        }
         +props.label
     }
 }
@@ -46,17 +58,24 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
     }
 
     fun RBuilder.renderSidebar() {
-        div("hidden md:flex md:flex-shrink-0 border-r") {
-            div("flex flex-col w-64") {
-                div("text-center text-2xl bold mt-4") { +"Markstash" }
-                nav("flex flex-col w-full p-2 mt-4") {
-                    child(sidebarLink) {
-                        attrs.label = "Everything"
-                        attrs.path = "/"
-                    }
-                    child(sidebarLink) {
-                        attrs.label = "Bookmarks"
-                        attrs.path = "/bookmarks"
+        div("hidden md:flex md:flex-shrink-0") {
+            div("flex flex-col w-64 bg-gray-800") {
+                div("flex items-center justify-center h-16 flex-shrink-0 px-4") {
+                    div("text-white text-2xl bold") { +"Markstash" }
+                }
+                div("flex-1 flex flex-col overflow-y-auto") {
+                    nav("flex-1 px-2 py-4") {
+                        child(sidebarLink) {
+                            attrs.label = "Everything"
+                            attrs.path = "/"
+                            attrs.icon = "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z\"></path></svg>"
+                            attrs.exact = true
+                        }
+                        child(sidebarLink) {
+                            attrs.label = "Bookmarks"
+                            attrs.path = "/bookmarks"
+                            attrs.icon = "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z\"></path></svg>"
+                        }
                     }
                 }
             }
