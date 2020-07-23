@@ -11,6 +11,7 @@ import com.markstash.api.errors.ValidationException
 import com.markstash.api.models.Archive
 import com.markstash.api.models.Bookmark
 import com.markstash.server.auth.currentUser
+import com.markstash.server.db.BookmarkWithTags
 import com.markstash.server.db.Database
 import com.markstash.server.workers.ArchiveWorker
 import com.markstash.server.workers.JobProcessor
@@ -45,7 +46,7 @@ fun Route.bookmarks() {
     val tagRegex by lazy { Regex("[a-z0-9\\-]+") }
 
     get<Bookmarks.Index> {
-        val bookmarks = db.bookmarkQueries.findByUserId(currentUser.user.id).executeAsList()
+        val bookmarks = db.bookmarkQueries.indexCreatedDesc(currentUser.user.id).executeAsList()
         call.respond(bookmarks.map { bookmark ->
             Bookmark(
                 id = bookmark.id,
@@ -53,7 +54,9 @@ fun Route.bookmarks() {
                 url = bookmark.url,
                 excerpt = bookmark.excerpt,
                 author = bookmark.author,
-                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
+                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet(),
+                createdAt = bookmark.createdAt,
+                updateAt = bookmark.updatedAt
             )
         })
     }
@@ -82,7 +85,9 @@ fun Route.bookmarks() {
             url = bookmark.url,
             excerpt = bookmark.excerpt,
             author = bookmark.author,
-            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
+            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet(),
+            createdAt = bookmark.createdAt,
+            updateAt = bookmark.updatedAt
         ))
     }
 
@@ -96,7 +101,9 @@ fun Route.bookmarks() {
                 url = bookmark.url!!,
                 excerpt = bookmark.excerpt,
                 author = bookmark.author,
-                tags = bookmark.tags!!.split(",").filter(String::isNotBlank).toSet()
+                tags = bookmark.tags!!.split(",").filter(String::isNotBlank).toSet(),
+                createdAt = bookmark.createdAt!!,
+                updateAt = bookmark.updatedAt!!
             )
         }))
     }
@@ -112,7 +119,9 @@ fun Route.bookmarks() {
                 url = bookmark.url,
                 excerpt = bookmark.excerpt,
                 author = bookmark.author,
-                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet()
+                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet(),
+                createdAt = bookmark.createdAt,
+                updateAt = bookmark.updatedAt
             ),
             archives = archives.map { archive ->
                 Archive(
@@ -137,7 +146,7 @@ fun Route.bookmarks() {
         if (!tagsValid) throw ValidationException("tags", "must be alphanumeric (may include dashes)")
 
         val currentTags = bookmark.tags.split(",").toSet()
-        db.transaction {
+        val newBookmark = db.transactionWithResult<BookmarkWithTags> {
             (newTags - currentTags).forEach { newTag ->
                 db.tagQueries.insert(currentUser.user.id, newTag)
                 db.tagQueries.tagByName("bookmark", bookmark.id, currentUser.user.id, newTag)
@@ -146,14 +155,18 @@ fun Route.bookmarks() {
             (currentTags - newTags).forEach { oldTag ->
                 db.tagQueries.untagByName("bookmark", bookmark.id, currentUser.user.id, oldTag)
             }
+
+            db.bookmarkQueries.findById(currentUser.user.id, bookmark.id).executeAsOne()
         }
         call.respond(Bookmark(
-            id = bookmark.id,
-            title = bookmark.title,
-            url = bookmark.url,
-            excerpt = bookmark.excerpt,
-            author = bookmark.author,
-            tags = newTags.toSet()
+            id = newBookmark.id,
+            title = newBookmark.title,
+            url = newBookmark.url,
+            excerpt = newBookmark.excerpt,
+            author = newBookmark.author,
+            tags = newTags.toSet(),
+            createdAt = newBookmark.createdAt,
+            updateAt = newBookmark.updatedAt
         ))
     }
 

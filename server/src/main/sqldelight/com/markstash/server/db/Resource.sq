@@ -1,0 +1,13 @@
+indexCreatedDesc:
+SELECT * FROM (
+    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, createdAt, updatedAt FROM bookmarkWithTags
+    WHERE userId = :userId
+    ORDER BY createdAt DESC
+)
+UNION
+SELECT * FROM (
+    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, createdAt, updatedAt FROM simpleNoteWithTags
+    WHERE userId = :userId
+    ORDER BY createdAt DESC
+)
+ORDER BY createdAt DESC;

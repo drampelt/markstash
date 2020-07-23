@@ -77,6 +77,11 @@ findByUserId:
 SELECT * FROM bookmarkWithTags
 WHERE userId = ?;
 
+indexCreatedDesc:
+SELECT * FROM bookmarkWithTags
+WHERE userId = ?
+ORDER BY createdAt DESC;
+
 findByUrl:
 SELECT * FROM bookmarkWithTags
 WHERE userId = ? AND url = ?;

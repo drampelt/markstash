@@ -64,8 +64,14 @@ SELECT * FROM noteWithTags
 WHERE userId = ? AND id = ?;
 
 indexByUserId:
-SELECT id, userId, title, excerpt, tags, createdAt, updatedAt FROM simpleNoteWithTags
+SELECT * FROM simpleNoteWithTags
 WHERE userId = ?;
+
+indexCreatedAtDesc:
+SELECT * FROM simpleNoteWithTags
+WHERE userId = ?
+ORDER BY createdAt DESC
+;
 
 update:
 UPDATE note

@@ -1,16 +1,16 @@
 package com.markstash.web.pages.index
 
-import com.markstash.api.bookmarks.SearchRequest
 import com.markstash.api.models.Bookmark
+import com.markstash.api.models.Note
+import com.markstash.api.models.Resource
 import com.markstash.shared.js.api.bookmarksApi
+import com.markstash.shared.js.api.notesApi
+import com.markstash.shared.js.api.resourcesApi
 import com.markstash.shared.js.helpers.rawHtml
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
@@ -18,35 +18,34 @@ import kotlinx.html.js.onChangeFunction
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
-import react.RCleanup
 import react.RProps
 import react.child
 import react.dom.*
 import react.functionalComponent
 import react.key
 import react.router.dom.navLink
-import react.router.dom.routeLink
 import react.useEffect
 import react.useEffectWithCleanup
-import react.useMemo
 import react.useState
 
-private interface BookmarkRowProps : RProps {
-    var bookmark: Bookmark
+private interface ResourceRowProps : RProps {
+    var listResourceType: Resource.Type?
+    var resource: Resource
     var onTagClick: ((String) -> Unit)?
 }
 
-private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
-    navLink<RProps>(to = "/bookmarks/${props.bookmark.id}", className = "block px-4 py-4 whitespace-no-wrap border-b border-gray-200", activeClassName = "bg-indigo-50") {
+private val resourceRow = functionalComponent<ResourceRowProps> { props ->
+    val link = "${if (props.listResourceType == null) "/everything" else ""}/${props.resource.type.name.toLowerCase()}s/${props.resource.id}"
+    navLink<RProps>(to = link, className = "block px-4 py-4 whitespace-no-wrap border-b border-gray-200", activeClassName = "bg-indigo-50") {
         div("flex items-center") {
             div("w-0 flex-grow") {
-                div("text-sm leading-5 font-medium text-gray-900 truncate") { +props.bookmark.title }
-                div("text-sm text-gray-500 truncate") { +(props.bookmark.excerpt ?: "No description") }
+                div("text-sm leading-5 font-medium text-gray-900 truncate") { +(props.resource.title ?: "Untitled") }
+                div("text-sm text-gray-500 truncate") { +(props.resource.excerpt ?: "No description") }
                 div("overflow-hidden") {
-                    if (props.bookmark.tags.isEmpty()) {
+                    if (props.resource.tags.isEmpty()) {
                         span("text-sm text-gray-500") { +"No tags" }
                     } else {
-                        props.bookmark.tags.forEach { tag ->
+                        props.resource.tags.forEach { tag ->
                             span("inline-flex items-center mr-1 px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800 hover:bg-indigo-100") {
                                 +tag
                                 attrs.onClickFunction = { e ->
@@ -64,13 +63,15 @@ private val bookmarkRow = functionalComponent<BookmarkRowProps> { props ->
     }
 }
 
-interface BookmarkListProps : RProps
+interface ResourceListProps : RProps {
+    var resourceType: Resource.Type?
+}
 
 private val searchInput = Channel<String>()
 
-val bookmarkList = functionalComponent<BookmarkListProps> { props ->
+val resourceList = functionalComponent<ResourceListProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
-    val (bookmarks, setBookmarks) = useState<List<Bookmark>>(emptyList())
+    val (resources, setResources) = useState<List<Resource>>(emptyList())
     val (error, setError) = useState<String?>(null)
     val (search, setSearch) = useState("")
 
@@ -78,7 +79,7 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
         val job = GlobalScope.launch {
             searchInput.receiveAsFlow().debounce(150).collect { input ->
                 try {
-                    setBookmarks(if (input.isBlank()) bookmarksApi.index() else bookmarksApi.search(SearchRequest(input)).results)
+                    // TODO: fix search
                     setError(null)
                 } catch (e: Throwable) {
                     setError(e.message ?: "Error loading bookmarks")
@@ -92,7 +93,14 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
     useEffect(listOf()) {
         GlobalScope.launch {
             try {
-                setBookmarks(bookmarksApi.index())
+                setIsLoading(true)
+                setError(null)
+                val newResources = when (props.resourceType) {
+                    Resource.Type.BOOKMARK -> bookmarksApi.index().map(Bookmark::toResource)
+                    Resource.Type.NOTE -> notesApi.index().map(Note::toResource)
+                    else -> resourcesApi.index()
+                }
+                setResources(newResources)
                 setIsLoading(false)
             } catch (e: Throwable) {
                 setError(e.message ?: "Error loading bookmarks")
@@ -147,15 +155,16 @@ val bookmarkList = functionalComponent<BookmarkListProps> { props ->
             error != null -> {
                 p { +"Error: $error" }
             }
-            bookmarks.isEmpty() -> {
+            resources.isEmpty() -> {
                 p { +"No bookmarks found" }
             }
             else -> {
                 div("flex-1 overflow-y-auto bg-white") {
-                    bookmarks.forEach { bookmark ->
-                        child(bookmarkRow) {
-                            attrs.key = bookmark.id.toString()
-                            attrs.bookmark = bookmark
+                    resources.forEach { resource ->
+                        child(resourceRow) {
+                            attrs.key = "${resource.type}-${resource.id}"
+                            attrs.listResourceType = props.resourceType
+                            attrs.resource = resource
                             attrs.onTagClick = { tag ->
                                 setSearch(tag)
                                 GlobalScope.launch {

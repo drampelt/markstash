@@ -11,4 +11,15 @@ data class Note(
     val tags: Set<String>,
     val createdAt: String,
     val updatedAt: String
-)
+) {
+    fun toResource() = Resource(
+        type = Resource.Type.NOTE,
+        id = id,
+        title = title,
+        excerpt = excerpt,
+        tags = tags,
+        url = null,
+        createdAt = createdAt,
+        updatedAt = updatedAt
+    )
+}

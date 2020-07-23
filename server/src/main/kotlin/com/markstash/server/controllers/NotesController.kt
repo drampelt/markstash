@@ -37,7 +37,7 @@ fun Route.notes() {
     val tagRegex by lazy { Regex("[a-z0-9\\-]+") }
 
     get<Notes.Index> {
-        val notes = db.noteQueries.indexByUserId(currentUser.user.id).executeAsList()
+        val notes = db.noteQueries.indexCreatedAtDesc(currentUser.user.id).executeAsList()
         call.respond(notes.map { note ->
             Note(
                 id = note.id,
