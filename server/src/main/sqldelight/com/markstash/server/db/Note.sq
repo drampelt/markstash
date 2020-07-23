@@ -1,0 +1,77 @@
+CREATE TABLE note (
+    id INTEGER PRIMARY KEY ASC,
+    userId INTEGER NOT NULL,
+    title TEXT,
+    excerpt TEXT,
+    content TEXT,
+    createdAt TEXT NOT NULL,
+    updatedAt TEXT NOT NULL
+);
+
+CREATE INDEX note_userId ON note(userId);
+
+CREATE VIEW simpleNoteWithTags AS
+    SELECT id, userId, title, excerpt, createdAt, updatedAt, (
+        SELECT COALESCE(GROUP_CONCAT(name, ','), '')
+        FROM tagging
+        LEFT JOIN tag ON tag.id = tagging.tagId
+        WHERE tagging.taggableType = 'note' AND tagging.taggableId = note.id
+    ) AS tags
+    FROM note
+;
+
+CREATE VIEW noteWithTags AS
+    SELECT *, (
+        SELECT COALESCE(GROUP_CONCAT(name, ','), '')
+        FROM tagging
+        LEFT JOIN tag ON tag.id = tagging.tagId
+        WHERE tagging.taggableType = 'note' AND tagging.taggableId = note.id
+    ) AS tags
+    FROM note
+;
+
+CREATE VIRTUAL TABLE noteSearch USING fts5(
+    title TEXT,
+    content TEXT,
+    tags TEXT,
+    tokenize = 'porter'
+);
+
+CREATE TRIGGER after_note_insert AFTER INSERT ON note BEGIN
+    INSERT INTO noteSearch (rowid, title, tags)
+    SELECT id, title, tags FROM noteWithTags WHERE id = new.id;
+END;
+
+CREATE TRIGGER after_note_update UPDATE ON note BEGIN
+    DELETE FROM noteSearch WHERE rowid = old.id;
+    INSERT INTO noteSearch (rowid, title, tags)
+    SELECT id, title, tags FROM noteWithTags WHERE id = new.id;
+END;
+
+CREATE TRIGGER after_note_delete AFTER DELETE ON note BEGIN
+    DELETE FROM noteSearch WHERE rowid = old.id;
+END;
+
+insert:
+INSERT INTO note (userId, title, createdAt, updatedAt)
+VALUES (?, ?, datetime('now'), datetime('now'));
+
+lastInsert:
+SELECT last_insert_rowid();
+
+findById:
+SELECT * FROM note
+WHERE userId = ? AND id = ?;
+
+indexByUserId:
+SELECT id, userId, title, excerpt, tags, createdAt, updatedAt FROM simpleNoteWithTags
+WHERE userId = ?;
+
+update:
+UPDATE note
+SET title = ?, excerpt = ?, content = ?, updatedAt = datetime('now')
+WHERE id = ?;
+
+deleteById:
+DELETE FROM note
+WHERE userId = ? AND id = ?;
