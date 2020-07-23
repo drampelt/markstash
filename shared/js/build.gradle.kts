@@ -4,10 +4,6 @@ plugins {
 
 version = "unspecified"
 
-repositories {
-    jcenter()
-}
-
 dependencies {
     implementation(kotlin("stdlib-js"))
 

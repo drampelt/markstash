@@ -16,10 +16,6 @@ application {
     mainClassName = main
 }
 
-repositories {
-    jcenter()
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 

@@ -5,10 +5,6 @@ plugins {
 
 version = "unspecified"
 
-repositories {
-    jcenter()
-}
-
 kotlin {
     jvm {
         val main by compilations.getting {

@@ -4,10 +4,6 @@ plugins {
 
 version = "unspecified"
 
-repositories {
-    jcenter()
-}
-
 kotlin {
     js {
         browser()

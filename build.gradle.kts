@@ -14,3 +14,10 @@ buildscript {
         classpath(Dependencies.sqlDelightGradle)
     }
 }
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
