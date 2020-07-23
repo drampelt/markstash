@@ -81,3 +81,9 @@ WHERE id = ?;
 deleteById:
 DELETE FROM note
 WHERE userId = ? AND id = ?;
+
+searchNotes:
+SELECT simpleNoteWithTags.* FROM noteSearch
+LEFT JOIN simpleNoteWithTags ON simpleNoteWithTags.id = noteSearch.rowid
+WHERE noteSearch MATCH :query AND simpleNoteWithTags.userId = ?
+ORDER BY bm25(noteSearch);

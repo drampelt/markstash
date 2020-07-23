@@ -11,3 +11,41 @@ SELECT * FROM (
     ORDER BY createdAt DESC
 )
 ORDER BY createdAt DESC;
+
+search:
+SELECT resourceType, resourceId, title, excerpt, tags, url, createdAt, updatedAt FROM (
+    SELECT * FROM (
+        SELECT
+            'bookmark' AS resourceType,
+            bookmarkWithTags.id AS resourceId,
+            bookmarkWithTags.title AS title,
+            bookmarkWithTags.excerpt AS excerpt,
+            bookmarkWithTags.tags AS tags,
+            bookmarkWithTags.url AS url,
+            bookmarkWithTags.createdAt AS createdAt,
+            bookmarkWithTags.updatedAt AS updatedAt,
+            bm25(bookmarkSearch) AS score
+        FROM bookmarkSearch
+        LEFT JOIN bookmarkWithTags ON bookmarkWithTags.id = bookmarkSearch.rowid
+        WHERE bookmarkSearch MATCH :query AND bookmarkWithTags.userId = :userId
+        ORDER BY bm25(bookmarkSearch)
+    )
+    UNION
+    SELECT * FROM (
+        SELECT
+            'note' AS resourceType,
+            simpleNoteWithTags.id AS resourceId,
+            simpleNoteWithTags.title AS title,
+            simpleNoteWithTags.excerpt AS excerpt,
+            simpleNoteWithTags.tags AS tags,
+            NULL AS url,
+            simpleNoteWithTags.createdAt AS createdAt,
+            simpleNoteWithTags.updatedAt AS updatedAt,
+            bm25(noteSearch) AS score
+        FROM noteSearch
+        LEFT JOIN simpleNoteWithTags ON simpleNoteWithTags.id = noteSearch.rowid
+        WHERE noteSearch MATCH :query AND simpleNoteWithTags.userId = :userId
+        ORDER BY bm25(noteSearch)
+    )
+    ORDER BY score DESC
+);

@@ -93,7 +93,7 @@ fun Route.bookmarks() {
 
     post<Bookmarks.Search> {
         val req = call.receive<SearchRequest>()
-        val bookmarks = db.bookmarkQueries.search(""""${req.query}"""", currentUser.user.id).executeAsList()
+        val bookmarks = db.bookmarkQueries.searchBookmarks(""""${req.query}"""", currentUser.user.id).executeAsList()
         call.respond(SearchResponse(bookmarks.map { bookmark ->
             Bookmark(
                 id = bookmark.id!!,

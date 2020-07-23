@@ -4,6 +4,8 @@ import com.markstash.api.errors.NotFoundException
 import com.markstash.api.errors.ValidationException
 import com.markstash.api.models.Note
 import com.markstash.api.notes.CreateRequest
+import com.markstash.api.notes.SearchRequest
+import com.markstash.api.notes.SearchResponse
 import com.markstash.api.notes.UpdateRequest
 import com.markstash.api.notes.UpdateResponse
 import com.markstash.server.auth.currentUser
@@ -24,6 +26,9 @@ import org.koin.ktor.ext.inject
 class Notes {
     @Location("")
     data class Index(val parent: Notes)
+
+    @Location("/search")
+    data class Search(val parent: Notes)
 
     @Location("/{id}")
     data class Note(val parent: Notes, val id: Long)
@@ -94,6 +99,22 @@ fun Route.notes() {
             )
         }
         call.respond(note)
+    }
+
+    post<Notes.Search> {
+        val searchRequest = call.receive<SearchRequest>()
+        val notes = db.noteQueries.searchNotes(""""${searchRequest.query}"""", currentUser.user.id).executeAsList()
+        call.respond(SearchResponse(notes.map { note ->
+            Note(
+                id = note.id!!,
+                title = note.title,
+                excerpt = note.excerpt,
+                content = null,
+                tags = note.tags!!.split(",").filter(String::isNotBlank).toSet(),
+                createdAt = note.createdAt!!,
+                updatedAt = note.updatedAt!!
+            )
+        }))
     }
 
     patch<Notes.Note> { req ->

@@ -95,7 +95,7 @@ deleteById:
 DELETE FROM bookmark
 WHERE userId = ? AND id = ?;
 
-search:
+searchBookmarks:
 SELECT bookmarkWithTags.* FROM bookmarkSearch
 LEFT JOIN bookmarkWithTags ON bookmarkWithTags.id = bookmarkSearch.rowid
 WHERE bookmarkSearch MATCH :query AND bookmarkWithTags.userId = ?

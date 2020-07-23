@@ -27,6 +27,9 @@ import react.router.dom.navLink
 import react.useEffect
 import react.useEffectWithCleanup
 import react.useState
+import com.markstash.api.bookmarks.SearchRequest as BookmarksSearchRequest
+import com.markstash.api.notes.SearchRequest as NotesSearchRequest
+import com.markstash.api.resources.SearchRequest as ResourcesSearchRequest
 
 private interface ResourceRowProps : RProps {
     var listResourceType: Resource.Type?
@@ -75,11 +78,38 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
     val (error, setError) = useState<String?>(null)
     val (search, setSearch) = useState("")
 
+    suspend fun loadResources() {
+        try {
+            setIsLoading(true)
+            setError(null)
+            val newResources = when (props.resourceType) {
+                Resource.Type.BOOKMARK -> bookmarksApi.index().map(Bookmark::toResource)
+                Resource.Type.NOTE -> notesApi.index().map(Note::toResource)
+                else -> resourcesApi.index()
+            }
+            setResources(newResources)
+            setIsLoading(false)
+        } catch (e: Throwable) {
+            setError(e.message ?: "Error loading bookmarks")
+            setIsLoading(false)
+        }
+    }
+
     useEffectWithCleanup(listOf()) {
         val job = GlobalScope.launch {
             searchInput.receiveAsFlow().debounce(150).collect { input ->
                 try {
-                    // TODO: fix search
+                    if (input.isBlank()) return@collect loadResources()
+
+                    setError(null)
+                    val newResources = when (props.resourceType) {
+                        Resource.Type.BOOKMARK ->
+                            bookmarksApi.search(BookmarksSearchRequest(input)).results.map(Bookmark::toResource)
+                        Resource.Type.NOTE ->
+                            notesApi.search(NotesSearchRequest(input)).results.map(Note::toResource)
+                        else -> resourcesApi.search(ResourcesSearchRequest(input)).results
+                    }
+                    setResources(newResources)
                     setError(null)
                 } catch (e: Throwable) {
                     setError(e.message ?: "Error loading bookmarks")
@@ -91,22 +121,7 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
     }
 
     useEffect(listOf()) {
-        GlobalScope.launch {
-            try {
-                setIsLoading(true)
-                setError(null)
-                val newResources = when (props.resourceType) {
-                    Resource.Type.BOOKMARK -> bookmarksApi.index().map(Bookmark::toResource)
-                    Resource.Type.NOTE -> notesApi.index().map(Note::toResource)
-                    else -> resourcesApi.index()
-                }
-                setResources(newResources)
-                setIsLoading(false)
-            } catch (e: Throwable) {
-                setError(e.message ?: "Error loading bookmarks")
-                setIsLoading(false)
-            }
-        }
+        GlobalScope.launch { loadResources() }
     }
 
     fun RBuilder.renderSearchField() {
