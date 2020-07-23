@@ -8,6 +8,7 @@ import com.markstash.api.errors.ServerException
 import com.markstash.server.auth.CurrentUser
 import com.markstash.server.controllers.archives
 import com.markstash.server.controllers.bookmarks
+import com.markstash.server.controllers.notes
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.users
 import com.markstash.server.db.Archive
@@ -163,6 +164,7 @@ fun Application.main() {
 
             authenticate {
                 bookmarks()
+                notes()
             }
         }
 

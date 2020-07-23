@@ -60,7 +60,7 @@ lastInsert:
 SELECT last_insert_rowid();
 
 findById:
-SELECT * FROM note
+SELECT * FROM noteWithTags
 WHERE userId = ? AND id = ?;
 
 indexByUserId:
