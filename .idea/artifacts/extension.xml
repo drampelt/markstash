@@ -1,6 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="extension">
-    <output-path>$PROJECT_DIR$/extension/build/libs</output-path>
-    <root id="archive" name="extension.jar" />
-  </artifact>
-</component>
