@@ -23,8 +23,9 @@ val routes = functionalComponent<RProps> {
             route("/login", strict = true) {
                 child(loginPage)
             }
-            route("/") {
+            route<RProps>("/") { layoutProps ->
                 child(authenticatedLayout) {
+                    attrs.history = layoutProps.history
                     route("/", exact = true) {
                         redirect(to = "/everything")
                     }

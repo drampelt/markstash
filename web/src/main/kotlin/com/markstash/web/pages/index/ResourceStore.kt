@@ -42,6 +42,10 @@ object ResourceStore {
         }
         state = state.copy(resources = newResources)
     }
+
+    fun addResource(newResource: Resource) {
+        state = state.copy(resources = listOf(newResource) + state.resources)
+    }
 }
 
 fun <T> useResourceStore(getter: (ResourceStoreState) -> T): T {

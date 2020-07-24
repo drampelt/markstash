@@ -52,8 +52,8 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                 }
             }
             div("w-0 flex-grow") {
-                div("text-sm leading-5 font-medium text-gray-900 truncate") { +(props.resource.title ?: "Untitled") }
-                div("text-sm text-gray-500 truncate") { +(props.resource.excerpt ?: "No description") }
+                div("text-sm leading-5 font-medium text-gray-900 truncate") { +(props.resource.title.takeUnless { it.isNullOrBlank() } ?: "Untitled") }
+                div("text-sm text-gray-500 truncate") { +(props.resource.excerpt.takeUnless { it.isNullOrBlank() } ?: "No description") }
                 div("overflow-hidden") {
                     if (props.resource.tags.isEmpty()) {
                         span("text-sm text-gray-500") { +"No tags" }

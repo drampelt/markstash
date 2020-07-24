@@ -1,16 +1,23 @@
 package com.markstash.web.layout
 
+import com.markstash.api.notes.CreateRequest
 import com.markstash.shared.js.api.apiClient
+import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.Session
+import com.markstash.web.pages.index.ResourceStore
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.html.js.onClickFunction
 import react.RBuilder
 import react.RProps
 import react.child
 import react.dom.*
 import react.functionalComponent
-import react.router.dom.RouteResultProps
+import react.router.dom.RouteResultHistory
 import react.router.dom.navLink
 import react.router.dom.redirect
+import react.router.dom.useRouteMatch
 import react.useEffect
 import react.useState
 
@@ -29,18 +36,24 @@ private val sidebarLink = functionalComponent<SidebarLinkProps> { props ->
         activeClassName = "text-white bg-gray-900",
         exact = props.exact ?: false
     ) {
-        rawHtml("mr-3 h06 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150") {
+        rawHtml("flex-no-shrink mr-3 h06 w-6 text-gray-400 group-hover:text-gray-300 group-focus:text-gray-300 transition ease-in-out duration-150") {
             props.icon
         }
-        +props.label
+        div("flex-grow") {
+            +props.label
+        }
+        props.children()
     }
 }
 
-interface AuthenticatedLayoutProps : RouteResultProps<RProps>
+interface AuthenticatedLayoutProps : RProps {
+    var history: RouteResultHistory
+}
 
 val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props ->
     val (shouldLogin, setShouldLogin) = useState(false)
     val (didAuthenticate, setDidAuthenticate) = useState(Session.isAuthenticated)
+    val everythingMatch = useRouteMatch<RProps>("/everything")
 
     fun handleInitialLogin() {
         Session.loginWithExistingToken { success ->
@@ -55,6 +68,12 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
         } else {
             setShouldLogin(true)
         }
+    }
+
+    fun createNote() = GlobalScope.launch {
+        val note = notesApi.create(CreateRequest(null, emptySet()))
+        ResourceStore.addResource(note.toResource())
+        props.history.push("${if (everythingMatch == null) "" else "/everything"}/notes/${note.id}")
     }
 
     fun RBuilder.renderSidebar() {
@@ -79,6 +98,16 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
                             attrs.label = "Notes"
                             attrs.path = "/notes"
                             attrs.icon = "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z\"></path></svg>"
+                            div("w-6 h-6 p-1 rounded hover:bg-gray-900 cursor-pointer") {
+                                attrs.onClickFunction = { e ->
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    createNote()
+                                }
+                                rawHtml {
+                                    "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z\" clip-rule=\"evenodd\"></path></svg>"
+                                }
+                            }
                         }
                     }
                 }

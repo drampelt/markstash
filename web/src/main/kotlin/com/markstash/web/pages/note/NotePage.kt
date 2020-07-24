@@ -31,8 +31,9 @@ val notePage = functionalComponent<NotePageProps> { props ->
     val (error, setError) = useState<String?>(null)
     val saveChannel = js("require('react').useRef()").unsafeCast<RMutableRef<Channel<Note>>>()
 
-    useEffect(listOf()) {
+    useEffect(listOf(props.id)) {
         GlobalScope.launch {
+            setNote(null)
             setIsLoading(true)
             setError(null)
             try {

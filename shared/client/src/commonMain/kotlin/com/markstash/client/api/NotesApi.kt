@@ -1,5 +1,7 @@
 package com.markstash.client.api
 
+import com.markstash.api.notes.CreateRequest
+import com.markstash.api.notes.CreateResponse
 import com.markstash.api.notes.IndexResponse
 import com.markstash.api.notes.SearchRequest
 import com.markstash.api.notes.SearchResponse
@@ -30,6 +32,13 @@ class NotesApi(apiClient: ApiClient) : BaseApi(apiClient) {
 
     suspend fun update(id: Long, request: UpdateRequest): UpdateResponse {
         return client.patch("$baseUrl/notes/$id") {
+            contentType(ContentType.Application.Json)
+            body = request
+        }
+    }
+
+    suspend fun create(request: CreateRequest): CreateResponse {
+        return client.post("$baseUrl/notes") {
             contentType(ContentType.Application.Json)
             body = request
         }
