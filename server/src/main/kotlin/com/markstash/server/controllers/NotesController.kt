@@ -69,17 +69,7 @@ fun Route.notes() {
 
             val content = createRequest.content
             if (content != null) {
-                var title: String? = null
-                var excerpt: String? = null
-                for (line in content.lineSequence()) {
-                    if (line.isBlank()) continue
-                    if (title == null) {
-                        title = line.replace(headingRegex, "")
-                    } else {
-                        excerpt = line.replace(nonAlphaRegex, "")
-                        break
-                    }
-                }
+                val (title, excerpt) = Note.parseMetadata(content)
                 db.noteQueries.update(title, excerpt, content, rowId)
             }
 
@@ -153,17 +143,7 @@ fun Route.notes() {
 
         val content = updateRequest.content
         if (content != null && content != note.content) {
-            var title: String? = null
-            var excerpt: String? = null
-            for (line in content.lineSequence()) {
-                if (line.isBlank()) continue
-                if (title == null) {
-                    title = line.replace(headingRegex, "")
-                } else {
-                    excerpt = line.replace(nonAlphaRegex, "")
-                    break
-                }
-            }
+            val (title, excerpt) = Note.parseMetadata(content)
             db.noteQueries.update(title, excerpt, content, note.id)
         }
 

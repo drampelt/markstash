@@ -1,16 +1,23 @@
 package com.markstash.web.pages.note
 
+import com.markstash.api.models.Note
 import com.markstash.api.notes.ShowResponse
+import com.markstash.api.notes.UpdateRequest
 import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.helpers.rawHtml
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.html.id
+import react.RMutableRef
 import react.RProps
 import react.child
 import react.dom.*
 import react.functionalComponent
 import react.useEffect
+import react.useEffectWithCleanup
 import react.useState
 
 interface NotePageProps : RProps {
@@ -21,6 +28,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
     val (note, setNote) = useState<ShowResponse?>(null)
     val (error, setError) = useState<String?>(null)
+    val saveChannel = js("require('react').useRef()").unsafeCast<RMutableRef<Channel<Note>>>()
 
     useEffect(listOf()) {
         GlobalScope.launch {
@@ -33,6 +41,35 @@ val notePage = functionalComponent<NotePageProps> { props ->
                 setError(e.message ?: "Error loading note")
                 setIsLoading(false)
             }
+        }
+    }
+
+    useEffectWithCleanup(listOf()) {
+        saveChannel.current = Channel()
+        val job = GlobalScope.launch {
+            saveChannel.current.receiveAsFlow().debounce(3000).collect { noteToSave ->
+                try {
+                    notesApi.update(noteToSave.id, UpdateRequest(noteToSave.content, noteToSave.tags))
+                } catch (e: Throwable) {
+                    // TODO: handle this
+                    console.log(e)
+                }
+            }
+        }
+
+        return@useEffectWithCleanup  {
+            job.cancel()
+            saveChannel.current.close()
+        }
+    }
+
+    fun handleContentChange(content: String) {
+        note ?: return
+        if (content != note.content) {
+            val (title, excerpt) = Note.parseMetadata(content)
+            val newNote = note.copy(content = content, title = title, excerpt = excerpt)
+            setNote(newNote)
+            GlobalScope.launch { saveChannel.current.send(newNote) }
         }
     }
 
@@ -67,7 +104,10 @@ val notePage = functionalComponent<NotePageProps> { props ->
                     }
                 }
             }
-            child(noteEditor)
+            child(noteEditor) {
+                attrs.content = note.content
+                attrs.onContentChange = { handleContentChange(it) }
+            }
         }
     }
 }

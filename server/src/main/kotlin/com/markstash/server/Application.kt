@@ -31,6 +31,7 @@ import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.resolveResource
 import io.ktor.http.defaultForFilePath
@@ -154,6 +155,8 @@ fun Application.main() {
         host("*", schemes = listOf("chrome-extension", "http", "https"))
         allowCredentials = true
         allowNonSimpleContentTypes = true
+        methods.add(HttpMethod.Patch)
+        methods.add(HttpMethod.Delete)
     }
 
     install(Locations)

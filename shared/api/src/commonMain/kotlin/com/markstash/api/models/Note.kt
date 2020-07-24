@@ -12,6 +12,29 @@ data class Note(
     val createdAt: String,
     val updatedAt: String
 ) {
+    companion object {
+        private val headingRegex = Regex("^#+ ?")
+        private val nonAlphaRegex = Regex("[^A-Za-z0-9 .,;-]")
+
+        fun parseMetadata(content: String?): Pair<String?, String?> {
+            if (content == null) return Pair(null, null)
+
+            var title: String? = null
+            var excerpt: String? = null
+            for (line in content.lineSequence()) {
+                if (line.isBlank()) continue
+                if (title == null) {
+                    title = line.replace(headingRegex, "")
+                } else {
+                    excerpt = line.replace(nonAlphaRegex, "")
+                    break
+                }
+            }
+
+            return Pair(title, excerpt)
+        }
+    }
+
     fun toResource() = Resource(
         type = Resource.Type.NOTE,
         id = id,
