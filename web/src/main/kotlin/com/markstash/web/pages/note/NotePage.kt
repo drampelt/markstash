@@ -5,6 +5,7 @@ import com.markstash.api.notes.ShowResponse
 import com.markstash.api.notes.UpdateRequest
 import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.helpers.rawHtml
+import com.markstash.web.pages.index.ResourceStore
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -70,6 +71,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
             val newNote = note.copy(content = content, title = title, excerpt = excerpt)
             setNote(newNote)
             GlobalScope.launch { saveChannel.current.send(newNote) }
+            ResourceStore.updateResource(newNote.toResource())
         }
     }
 

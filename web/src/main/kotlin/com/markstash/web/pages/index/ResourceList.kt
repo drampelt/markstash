@@ -84,7 +84,7 @@ private val searchInput = Channel<String>()
 
 val resourceList = functionalComponent<ResourceListProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
-    val (resources, setResources) = useState<List<Resource>>(emptyList())
+    val resources = useResourceStore(ResourceStoreState::resources)
     val (error, setError) = useState<String?>(null)
     val (search, setSearch) = useState("")
 
@@ -97,7 +97,7 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
                 Resource.Type.NOTE -> notesApi.index().map(Note::toResource)
                 else -> resourcesApi.index()
             }
-            setResources(newResources)
+            ResourceStore.setResources(newResources)
             setIsLoading(false)
         } catch (e: Throwable) {
             setError(e.message ?: "Error loading bookmarks")
@@ -119,7 +119,7 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
                             notesApi.search(NotesSearchRequest(input)).results.map(Note::toResource)
                         else -> resourcesApi.search(ResourcesSearchRequest(input)).results
                     }
-                    setResources(newResources)
+                    ResourceStore.setResources(newResources)
                     setError(null)
                 } catch (e: Throwable) {
                     setError(e.message ?: "Error loading bookmarks")
@@ -131,6 +131,7 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
     }
 
     useEffect(listOf()) {
+        ResourceStore.clearResources()
         GlobalScope.launch { loadResources() }
     }
 
