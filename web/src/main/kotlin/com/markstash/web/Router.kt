@@ -6,6 +6,8 @@ import com.markstash.web.pages.bookmark.BookmarkPageProps
 import com.markstash.web.pages.bookmark.bookmarkPage
 import com.markstash.web.pages.index.indexPage
 import com.markstash.web.pages.loginPage
+import com.markstash.web.pages.note.NotePageProps
+import com.markstash.web.pages.note.notePage
 import react.RProps
 import react.child
 import react.dom.*
@@ -33,6 +35,11 @@ val routes = functionalComponent<RProps> {
                                     attrs.id = props.match.params.id
                                 }
                             }
+                            route<NotePageProps>("/everything/notes/:id") { props ->
+                                child(notePage) {
+                                    attrs.id = props.match.params.id
+                                }
+                            }
                         }
                     }
                     route("/bookmarks") {
@@ -49,6 +56,12 @@ val routes = functionalComponent<RProps> {
                     route("/notes") {
                         child(indexPage) {
                             attrs.resourceType = Resource.Type.NOTE
+
+                            route<NotePageProps>("/notes/:id") { props ->
+                                child(notePage) {
+                                    attrs.id = props.match.params.id
+                                }
+                            }
                         }
                     }
                 }

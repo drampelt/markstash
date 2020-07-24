@@ -6,6 +6,7 @@ import com.markstash.api.models.Note
 import com.markstash.api.notes.CreateRequest
 import com.markstash.api.notes.SearchRequest
 import com.markstash.api.notes.SearchResponse
+import com.markstash.api.notes.ShowResponse
 import com.markstash.api.notes.UpdateRequest
 import com.markstash.api.notes.UpdateResponse
 import com.markstash.server.auth.currentUser
@@ -115,6 +116,19 @@ fun Route.notes() {
                 updatedAt = note.updatedAt!!
             )
         }))
+    }
+
+    get<Notes.Note> { req ->
+        val note = db.noteQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
+        call.respond(ShowResponse(
+            id = note.id,
+            title = note.title,
+            excerpt = note.excerpt,
+            content = note.content,
+            tags = note.tags.split(",").filter(String::isNotBlank).toSet(),
+            createdAt = note.createdAt,
+            updatedAt = note.updatedAt
+        ))
     }
 
     patch<Notes.Note> { req ->
