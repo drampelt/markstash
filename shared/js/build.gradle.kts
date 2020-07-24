@@ -22,8 +22,15 @@ dependencies {
     api(npm("js-cookie", Versions.jsCookie))
     api(npm("webextension-polyfill", Versions.webextensionPolyfill))
 
+    // Muya Dependencies
+    api(npm("snapsvg", Versions.snapsvg))
+    api(npm("marktext", Versions.markText))
+
     api(npm("css-loader", Versions.cssLoader))
     api(npm("style-loader", Versions.styleLoader))
+    api(npm("url-loader", Versions.urlLoader))
+    api(npm("file-loader", Versions.fileLoader))
+    api(npm("svg-sprite-loader", Versions.svgSpriteLoader))
     api(npm("postcss-loader", Versions.postcssLoader))
     api(npm("postcss-import", Versions.postcssImport))
     api(npm("postcss-nested", Versions.postcssNested))
@@ -31,6 +38,10 @@ dependencies {
     api(npm("@tailwindcss/ui", Versions.tailwindUi))
     api(npm("autoprefixer", Versions.autoprefixer))
     api(npm("cssnano", Versions.cssnano))
+    api(npm("babel-loader", Versions.babelLoader))
+    api(npm("@babel/core", Versions.babel))
+    api(npm("@babel/plugin-proposal-class-properties", Versions.babelPluginClassProperties))
+    api(npm("@babel/preset-env", Versions.babelPresetEnv))
 }
 
 kotlin.target.browser { }

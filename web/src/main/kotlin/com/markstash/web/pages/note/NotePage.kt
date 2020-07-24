@@ -5,7 +5,9 @@ import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.helpers.rawHtml
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.html.id
 import react.RProps
+import react.child
 import react.dom.*
 import react.functionalComponent
 import react.useEffect
@@ -42,7 +44,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
             p { +"Error: $error" }
         }
         note != null -> {
-            div("flex items-center h-16 bg-white shadow p-4") {
+            div("flex items-center h-16 z-10 bg-white shadow p-4") {
                 div("flex-grow w-0") {
                     div("flex items-center") {
                         div("text-sm font-medium text-gray-900") { +(note.title ?: "Untitled") }
@@ -65,6 +67,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
                     }
                 }
             }
+            child(noteEditor)
         }
     }
 }
