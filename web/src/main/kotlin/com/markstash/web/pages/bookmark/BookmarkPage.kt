@@ -20,7 +20,7 @@ interface BookmarkPageProps : RProps {
 
 val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
-    val (bookmarkResponse, setBookmarkResponse) = useState<ShowResponse?>(null)
+    val (bookmark, setBookmarkResponse) = useState<ShowResponse?>(null)
     val (error, setError) = useState<String?>(null)
     val (selectedArchive, setSelectedArchive) = useState<Archive?>(null)
 
@@ -80,8 +80,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         error != null -> {
             p { +"Error: $error" }
         }
-        bookmarkResponse != null -> {
-            val (bookmark, archives) = bookmarkResponse
+        bookmark != null -> {
             div("flex items-center h-16 bg-white shadow p-4") {
                 div("flex-grow w-0") {
                     div("flex items-center") {

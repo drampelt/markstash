@@ -11,7 +11,8 @@ data class Bookmark(
     val author: String?,
     val tags: Set<String>,
     val createdAt: String,
-    val updateAt: String
+    val updateAt: String,
+    val archives: List<Archive>? = null
 ) {
     fun toResource() = Resource(
         type = Resource.Type.BOOKMARK,

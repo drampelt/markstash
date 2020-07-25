@@ -111,29 +111,29 @@ fun Route.bookmarks() {
     get<Bookmarks.Bookmark> { req ->
         val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull()
             ?: throw NotFoundException()
-        val archives = db.archiveQueries.findByBookmark(bookmark.id).executeAsList()
+
+        val archives = db.archiveQueries.findByBookmark(bookmark.id).executeAsList().map { archive ->
+            Archive(
+                id = archive.id,
+                key = archive.key,
+                bookmarkId = archive.bookmarkId,
+                type = archive.type,
+                status = archive.status,
+                path = archive.path,
+                data = archive.data
+            )
+        }
+
         call.respond(ShowResponse(
-            bookmark = Bookmark(
-                id = bookmark.id,
-                title = bookmark.title,
-                url = bookmark.url,
-                excerpt = bookmark.excerpt,
-                author = bookmark.author,
-                tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet(),
-                createdAt = bookmark.createdAt,
-                updateAt = bookmark.updatedAt
-            ),
-            archives = archives.map { archive ->
-                Archive(
-                    id = archive.id,
-                    key = archive.key,
-                    bookmarkId = archive.bookmarkId,
-                    type = archive.type,
-                    status = archive.status,
-                    path = archive.path,
-                    data = archive.data
-                )
-            }
+            id = bookmark.id,
+            title = bookmark.title,
+            url = bookmark.url,
+            excerpt = bookmark.excerpt,
+            author = bookmark.author,
+            tags = bookmark.tags.split(",").filter(String::isNotBlank).toSet(),
+            createdAt = bookmark.createdAt,
+            updateAt = bookmark.updatedAt,
+            archives = archives
         ))
     }
 

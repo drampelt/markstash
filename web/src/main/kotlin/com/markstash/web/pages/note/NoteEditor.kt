@@ -46,7 +46,7 @@ val noteEditor = functionalComponent<NoteEditorProps> { props ->
         }
     }
 
-    div("editor-wrapper flex-grow overflow-y-auto bg-white") {
+    div("editor-wrapper w-full h-full overflow-y-auto bg-white") {
         ref = editorWrapper
     }
 }

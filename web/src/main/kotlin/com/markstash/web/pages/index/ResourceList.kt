@@ -7,6 +7,7 @@ import com.markstash.shared.js.api.bookmarksApi
 import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.api.resourcesApi
 import com.markstash.shared.js.helpers.rawHtml
+import com.markstash.web.useStore
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
@@ -84,7 +85,7 @@ private val searchInput = Channel<String>()
 
 val resourceList = functionalComponent<ResourceListProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
-    val resources = useResourceStore(ResourceStoreState::resources)
+    val resources = useStore(ResourceStore, ResourceStoreState::resources)
     val (error, setError) = useState<String?>(null)
     val (search, setSearch) = useState("")
 
