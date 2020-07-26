@@ -33,6 +33,7 @@ object Versions {
     const val postcssImport = "12.0.1"
     const val postcssNested = "4.2.3"
     const val react = "16.13.1"
+    const val reactModal = "3.11.2"
     const val reactRouter = "5.1.2"
     const val readability4j = "1.0.3"
     const val selenium = "3.8.1"
