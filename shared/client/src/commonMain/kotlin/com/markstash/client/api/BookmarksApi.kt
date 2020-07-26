@@ -8,6 +8,7 @@ import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.bookmarks.UpdateResponse
 import com.markstash.api.models.Bookmark
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -42,5 +43,9 @@ class BookmarksApi(apiClient: ApiClient) : BaseApi(apiClient) {
 
     suspend fun show(id: Long): ShowResponse {
         return client.get("$baseUrl/bookmarks/$id")
+    }
+
+    suspend fun delete(id: Long) {
+        return client.delete("$baseUrl/bookmarks/$id")
     }
 }

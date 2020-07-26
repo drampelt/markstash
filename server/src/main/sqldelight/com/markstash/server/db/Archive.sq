@@ -53,3 +53,7 @@ WHERE id = ?;
 findByKey:
 SELECT * FROM archive
 WHERE key = ?;
+
+deleteByBookmark:
+DELETE FROM archive
+WHERE bookmarkId = ?;

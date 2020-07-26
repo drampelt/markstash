@@ -34,6 +34,7 @@ val routes = functionalComponent<RProps> {
                             route<BookmarkPageProps>("/everything/bookmarks/:id") { props ->
                                 child(bookmarkPage) {
                                     attrs.id = props.match.params.id
+                                    attrs.history = props.history
                                 }
                             }
                             route<NotePageProps>("/everything/notes/:id") { props ->
@@ -51,6 +52,7 @@ val routes = functionalComponent<RProps> {
                             route<BookmarkPageProps>("/bookmarks/:id") { props ->
                                 child(bookmarkPage) {
                                     attrs.id = props.match.params.id
+                                    attrs.history = props.history
                                 }
                             }
                         }

@@ -171,8 +171,12 @@ fun Route.bookmarks() {
     }
 
     delete<Bookmarks.Bookmark> { req ->
-        db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
-        db.bookmarkQueries.deleteById(currentUser.user.id, req.id)
+        val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
+        db.transaction {
+            db.bookmarkQueries.deleteById(currentUser.user.id, bookmark.id)
+            db.tagQueries.untagByResource("bookmark", bookmark.id)
+            db.archiveQueries.deleteByBookmark(bookmark.id)
+        }
         call.response.status(HttpStatusCode.NoContent)
         call.respond(HttpStatusCode.NoContent, Unit)
     }
