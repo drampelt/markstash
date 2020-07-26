@@ -105,8 +105,8 @@ interface NotePageProps : RProps {
 
 val notePage = functionalComponent<NotePageProps> { props ->
     val noteId = props.id.toLong()
-    val cachedNote = useStore(NoteStore, listOf(noteId)) { it.notes[noteId] }
-    val cachedResource = useStore(ResourceStore, listOf(noteId)) { state ->
+    val cachedNote = useStore(NoteStore, listOf(props.id)) { it.notes[noteId] }
+    val cachedResource = useStore(ResourceStore, listOf(props.id)) { state ->
         state.resources.firstOrNull { it.type == Resource.Type.NOTE && it.id == noteId }
     }
     val (isLoading, setIsLoading) = useState(cachedNote == null)
@@ -116,11 +116,13 @@ val notePage = functionalComponent<NotePageProps> { props ->
     val saveChannel = js("require('react').useRef()").unsafeCast<RMutableRef<Channel<Note>>>()
     val everythingMatch = useRouteMatch<RProps>("/everything")
 
-    useEffect(listOf(noteId)) {
+    useEffect(listOf(props.id)) {
         setError(null)
     }
 
-    useEffect(listOf(noteId, cachedNote)) {
+    useEffect(listOf(props.id, cachedNote)) {
+        if (note != null && note.id == noteId) return@useEffect
+
         if (cachedNote != null) {
             setNote(cachedNote)
             return@useEffect
