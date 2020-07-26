@@ -39,6 +39,7 @@ val routes = functionalComponent<RProps> {
                             route<NotePageProps>("/everything/notes/:id") { props ->
                                 child(notePage) {
                                     attrs.id = props.match.params.id
+                                    attrs.history = props.history
                                 }
                             }
                         }
@@ -61,6 +62,7 @@ val routes = functionalComponent<RProps> {
                             route<NotePageProps>("/notes/:id") { props ->
                                 child(notePage) {
                                     attrs.id = props.match.params.id
+                                    attrs.history = props.history
                                 }
                             }
                         }

@@ -160,8 +160,11 @@ fun Route.notes() {
     }
 
     delete<Notes.Note> { req ->
-        db.noteQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
-        db.noteQueries.deleteById(currentUser.user.id, req.id)
+        val note = db.noteQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull() ?: throw NotFoundException()
+        db.transaction {
+            db.noteQueries.deleteById(currentUser.user.id, note.id)
+            db.tagQueries.untagByResource("note", note.id)
+        }
         call.respond(HttpStatusCode.NoContent, Unit)
     }
 }

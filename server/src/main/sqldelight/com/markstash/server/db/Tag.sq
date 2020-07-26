@@ -39,6 +39,10 @@ untagByName:
 DELETE FROM tagging
 WHERE taggableType = ? AND taggableId = ? AND tagId = (SELECT id FROM tag WHERE userId = ? AND name = ?);
 
+untagByResource:
+DELETE FROM tagging
+WHERE taggableType = ? AND taggableId = ?;
+
 list:
 SELECT tag.id, tag.name
 FROM tagging

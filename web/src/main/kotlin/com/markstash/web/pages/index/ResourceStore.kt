@@ -26,4 +26,11 @@ object ResourceStore : Store<ResourceStoreState>(ResourceStoreState()) {
     fun addResource(newResource: Resource) {
         state = state.copy(resources = listOf(newResource) + state.resources)
     }
+
+    fun deleteResource(resource: Resource): Resource? {
+        val index = state.resources.indexOfFirst { it.type == resource.type && it.id == resource.id }
+        val newResources = state.resources.filterNot { it.type == resource.type && it.id == resource.id }
+        state = state.copy(resources = newResources)
+        return newResources.getOrNull(index) ?: newResources.getOrNull(index - 1)
+    }
 }

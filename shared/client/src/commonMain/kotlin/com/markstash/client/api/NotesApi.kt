@@ -8,6 +8,7 @@ import com.markstash.api.notes.SearchResponse
 import com.markstash.api.notes.ShowResponse
 import com.markstash.api.notes.UpdateRequest
 import com.markstash.api.notes.UpdateResponse
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -42,5 +43,9 @@ class NotesApi(apiClient: ApiClient) : BaseApi(apiClient) {
             contentType(ContentType.Application.Json)
             body = request
         }
+    }
+
+    suspend fun delete(id: Long) {
+        return client.delete("$baseUrl/notes/$id")
     }
 }
