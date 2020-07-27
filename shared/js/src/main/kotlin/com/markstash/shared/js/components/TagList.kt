@@ -32,7 +32,6 @@ interface TagListProps : RProps {
     var onAddTag: (String) -> Boolean
     var onRemoveTag: (String) -> Boolean
     var showSuggestionsInline: Boolean?
-    var isPopup: Boolean?
 }
 
 val tagList = functionalComponent<TagListProps> { props ->
@@ -44,6 +43,7 @@ val tagList = functionalComponent<TagListProps> { props ->
     val (suggestionListHovered, setSuggestionListHovered) = useState(false)
     val (selectedSuggestionIndex, setSelectedSuggestionIndex) = useState(-1)
     val selectedSuggestionRef = js("require('react').useRef()").unsafeCast<RMutableRef<Element?>>()
+    val inputRef = js("require('react').useRef()").unsafeCast<RMutableRef<HTMLInputElement?>>()
 
     val useMemo = js("require('react').useMemo")
     val filteredTagList = useMemo({
@@ -127,8 +127,8 @@ val tagList = functionalComponent<TagListProps> { props ->
 
     fun RBuilder.renderTagList() {
         if (filteredTagList == null || filteredTagList.isEmpty() || !showSuggestionList) return
-        val sizeClasses = if (props.showSuggestionsInline == true) "w-56" else "left-2 right-2 mb-2"
-        div("absolute mt-2 $sizeClasses max-h-64 rounded-md shadow-lg") {
+        val sizeClasses = if (props.showSuggestionsInline == true) "w-56 mt-2" else "left-0 right-0 mb-2"
+        div("absolute $sizeClasses max-h-64 rounded-md shadow-lg") {
             div("rounded-md bg-white shadow-xs max-h-64 overflow-y-auto py-1") {
                 attrs.onMouseOverFunction = { setSuggestionListHovered(true) }
                 attrs.onMouseOutFunction = {
@@ -140,7 +140,10 @@ val tagList = functionalComponent<TagListProps> { props ->
                     div("flex items-center px-4 py-2 text-sm leading-5 text-gray-700 cursor-pointer $selectedClass hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900") {
                         if (index == selectedSuggestionIndex) ref = selectedSuggestionRef
                         attrs.key = tag.name
-                        attrs.onClickFunction = { props.onAddTag(tag.name) }
+                        attrs.onClickFunction = {
+                            it.stopPropagation()
+                            props.onAddTag(tag.name)
+                        }
                         div("flex-grow truncate") {
                             +tag.name
                         }
@@ -154,17 +157,22 @@ val tagList = functionalComponent<TagListProps> { props ->
     }
 
     div("flex items-center flex-wrap relative") {
+        attrs.onClickFunction = { inputRef.current?.focus() }
         props.tags.forEachIndexed { index, tag ->
             attrs.key = tag
             child(resourceTag) {
                 attrs.tag = tag
-                attrs.onDelete = { props.onRemoveTag(tag) }
+                attrs.onDelete = {
+                    it.stopPropagation()
+                    props.onRemoveTag(tag)
+                }
                 attrs.isSelected = isLastSelected && index == props.tags.size - 1
                 attrs.classes = "mb-1"
             }
         }
         div("ml-1 ${if (props.showSuggestionsInline == true) "relative" else ""}") {
             input(type = InputType.text, classes = "bg-none ml-1 focus:outline-none py-1") {
+                ref = inputRef
                 attrs.autoFocus = true
                 attrs.value = text
                 if (props.tags.isEmpty()) attrs.placeholder = "Add tags..."
