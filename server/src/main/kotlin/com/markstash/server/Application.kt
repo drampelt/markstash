@@ -11,6 +11,7 @@ import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.notes
 import com.markstash.server.controllers.resources
 import com.markstash.server.controllers.sessions
+import com.markstash.server.controllers.tags
 import com.markstash.server.controllers.users
 import com.markstash.server.db.Archive
 import com.markstash.server.db.Database
@@ -170,6 +171,7 @@ fun Application.main() {
                 bookmarks()
                 notes()
                 resources()
+                tags()
             }
         }
 

@@ -48,3 +48,11 @@ SELECT tag.id, tag.name
 FROM tagging
 LEFT JOIN tag ON tag.id = tagging.tagId
 WHERE tagging.taggableType = ? AND tagging.taggableId = ?;
+
+indexByUser:
+SELECT tag.name, COUNT(tag.name) AS count
+FROM tag
+JOIN tagging ON tag.id = tagging.tagId
+WHERE tag.userId = ?
+GROUP BY tag.name
+ORDER BY count DESC;

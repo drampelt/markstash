@@ -3,6 +3,8 @@ package com.markstash.web.pages.bookmark
 import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.models.Archive
 import com.markstash.shared.js.api.bookmarksApi
+import com.markstash.shared.js.components.resourceTag
+import com.markstash.shared.js.components.tagList
 import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.components.modal
 import com.markstash.web.pages.index.ResourceStore
@@ -95,7 +97,7 @@ interface BookmarkPageProps : RProps {
 val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
     val bookmarkId = props.id.toLong()
     val (isLoading, setIsLoading) = useState(true)
-    val (bookmark, setBookmarkResponse) = useState<ShowResponse?>(null)
+    val (bookmark, setBookmark) = useState<ShowResponse?>(null)
     val (error, setError) = useState<String?>(null)
     val (selectedArchive, setSelectedArchive) = useState<Archive?>(null)
     val (isDeleteModalOpen, setIsDeleteModalOpen) = useState(false)
@@ -107,7 +109,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         setError(null)
         GlobalScope.launch {
             try {
-                setBookmarkResponse(bookmarksApi.show(bookmarkId))
+                setBookmark(bookmarksApi.show(bookmarkId))
                 setIsLoading(false)
             } catch (e: Throwable) {
                 setError(e.message ?: "Error loading bookmark")
@@ -183,8 +185,8 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                             span("text-sm text-gray-500") { +"No tags"}
                         } else {
                             bookmark.tags.forEach { tag ->
-                                span("inline-flex items-center mr-1 px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800 hover:bg-indigo-100") {
-                                    +tag
+                                child(resourceTag) {
+                                    attrs.tag = tag
                                 }
                             }
                         }

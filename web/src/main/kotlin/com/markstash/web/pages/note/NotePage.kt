@@ -4,6 +4,7 @@ import com.markstash.api.models.Note
 import com.markstash.api.models.Resource
 import com.markstash.api.notes.UpdateRequest
 import com.markstash.shared.js.api.notesApi
+import com.markstash.shared.js.components.resourceTag
 import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.components.modal
 import com.markstash.web.pages.index.ResourceStore
@@ -203,8 +204,8 @@ val notePage = functionalComponent<NotePageProps> { props ->
                         span("text-sm text-gray-500") { +"No tags"}
                     } else {
                         tags.forEach { tag ->
-                            span("inline-flex items-center mr-1 px-2.5 py-0.5 rounded-full text-xs font-medium leading-4 bg-gray-200 text-gray-800 hover:bg-indigo-100") {
-                                +tag
+                            child(resourceTag) {
+                                attrs.tag = tag
                             }
                         }
                     }
