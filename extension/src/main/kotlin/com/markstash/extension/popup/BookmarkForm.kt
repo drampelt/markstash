@@ -11,6 +11,8 @@ import com.markstash.shared.js.helpers.rawHtml
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asDeferred
 import kotlinx.coroutines.launch
+import kotlinx.html.js.onClickFunction
+import kotlinx.html.title
 import react.RProps
 import react.child
 import react.dom.*
@@ -23,6 +25,7 @@ val bookmarkForm = functionalComponent<RProps> {
     val (bookmark, setBookmark) = useState<Bookmark?>(null)
     val (error, setError) = useState<String?>(null)
     val (title, setTitle) = useState<String?>(null)
+    val (isDeleted, setIsDeleted) = useState(false)
 
     useEffect(listOf()) {
         GlobalScope.launch {
@@ -66,11 +69,18 @@ val bookmarkForm = functionalComponent<RProps> {
         return true
     }
 
+    fun handleDelete() = GlobalScope.launch {
+        bookmark ?: return@launch
+        bookmarksApi.delete(bookmark.id)
+        setIsDeleted(true)
+    }
+
     div("flex items-start m-2") {
         rawHtml("w-6 h-6 text-gray-700 flex-no-shrink") {
             when {
                 isLoading -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z\" clip-rule=\"evenodd\"></path></svg>"
                 error != null -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z\" clip-rule=\"evenodd\"></path></svg>"
+                isDeleted -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z\" clip-rule=\"evenodd\"></path></svg>"
                 else -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z\"></path></svg>"
             }
         }
@@ -90,20 +100,41 @@ val bookmarkForm = functionalComponent<RProps> {
             if (bookmark != null) {
                 div("text-sm text-gray-500 flex items-center") {
                     rawHtml("w-3 h-3") {
-                        "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg>"
+                        if (isDeleted) {
+                            "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z\" clip-rule=\"evenodd\"></path></svg>"
+                        } else {
+                            "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg>"
+                        }
                     }
-                    div("ml-1") { +"Bookmark saved" }
+                    div("ml-1") { +(if (isDeleted) "Bookmark deleted" else "Bookmark saved") }
                 }
             }
         }
     }
-    if (bookmark != null) {
+    if (bookmark != null && !isDeleted) {
         div("mx-2 mt-4 mb-2") {
             child(tagList) {
                 attrs {
                     tags = bookmark.tags
                     onAddTag = ::handleAddTag
                     onRemoveTag = ::handleRemoveTag
+                }
+            }
+        }
+    }
+    div("flex items-center px-2 border-t h-8") {
+        div("cursor-pointer text-gray-500 hover:text-gray-900") {
+            rawHtml("w-4 h-4") {
+                "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z\" clip-rule=\"evenodd\"></path></svg>"
+            }
+        }
+        div("flex-grow") {}
+        if (!isDeleted) {
+            div("cursor-pointer text-gray-500 hover:text-gray-900") {
+                attrs.title = "Delete Bookmark"
+                attrs.onClickFunction = { handleDelete() }
+                rawHtml("w-4 h-4") {
+                    "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z\" clip-rule=\"evenodd\"></path></svg>"
                 }
             }
         }

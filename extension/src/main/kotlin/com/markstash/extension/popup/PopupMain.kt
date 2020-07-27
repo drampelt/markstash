@@ -78,12 +78,6 @@ val popup = functionalComponent<RProps> {
         }
         else -> {
             child(bookmarkForm)
-            hr {}
-            p { +user.email }
-            button {
-                +"Log Out"
-                attrs.onClickFunction = { handleLogOut() }
-            }
         }
     }
 }
