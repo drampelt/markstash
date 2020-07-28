@@ -1,5 +1,7 @@
 package com.markstash.server
 
+import at.favre.lib.crypto.bcrypt.BCrypt
+import at.favre.lib.crypto.bcrypt.LongPasswordStrategies
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.markstash.api.errors.ErrorResponse
@@ -19,7 +21,6 @@ import com.markstash.server.workers.JobProcessor
 import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
-import de.mkammerer.argon2.Argon2Factory
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -34,7 +35,6 @@ import io.ktor.features.StatusPages
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.resolveResource
 import io.ktor.http.defaultForFilePath
 import io.ktor.locations.Locations
 import io.ktor.response.respond
@@ -48,7 +48,6 @@ import io.ktor.server.engine.ApplicationEngineEnvironment
 import io.ktor.server.engine.addShutdownHook
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
-import io.ktor.utils.io.jvm.javaio.copyTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -102,7 +101,8 @@ fun Application.main() {
                     ))
             }
             single { Settings(get()) }
-            single { Argon2Factory.create() }
+            single { BCrypt.with(LongPasswordStrategies.truncate(BCrypt.Version.VERSION_2A)) }
+            single { BCrypt.verifyer(BCrypt.Version.VERSION_2A, LongPasswordStrategies.truncate(BCrypt.Version.VERSION_2A)) }
             single(named(Constants.Jwt.ISSUER)) { jwtIssuer }
             single(named(Constants.Jwt.AUDIENCE)) { jwtAudience }
             single(named(Constants.Jwt.REALM)) { jwtRealm }

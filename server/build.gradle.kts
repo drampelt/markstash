@@ -21,7 +21,7 @@ dependencies {
 
     implementation(project(":shared:api"))
 
-    implementation(Dependencies.argon2)
+    implementation(Dependencies.bcrypt)
     implementation(Dependencies.browserMob)
     implementation(Dependencies.jwarc)
     implementation(Dependencies.koinKtor)

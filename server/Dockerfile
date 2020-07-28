@@ -34,7 +34,6 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     ttf-freefont \
     wqy-zenhei \
     tini \
-    argon2-dev \
     imagemagick \
     && rm -rf /var/cache/* \
     && mkdir /var/cache/apk

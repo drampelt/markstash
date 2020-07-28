@@ -1,5 +1,7 @@
 package com.markstash.server.controllers
 
+import at.favre.lib.crypto.bcrypt.BCrypt
+import at.favre.lib.crypto.bcrypt.LongPasswordStrategies
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.markstash.api.errors.ValidationException
@@ -10,7 +12,6 @@ import com.markstash.server.Constants
 import com.markstash.server.auth.ApiKeyGenerator
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
-import de.mkammerer.argon2.Argon2
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.locations.Location
@@ -33,7 +34,7 @@ class Users {
 
 fun Route.users() {
     val db: Database by inject()
-    val argon2: Argon2 by inject()
+    val bcrypt: BCrypt.Hasher by inject()
     val jwtIssuer: String by inject(named(Constants.Jwt.ISSUER))
     val jwtAudience: String by inject(named(Constants.Jwt.AUDIENCE))
     val jwtAlgorithm: Algorithm by inject(named(Constants.Jwt.ALGORITHM))
@@ -43,7 +44,7 @@ fun Route.users() {
         if (request.password.length < 8) throw ValidationException("password", "must be at least 8 characters")
         if (request.password != request.passwordConfirmation) throw ValidationException("password confirmation", "must match password")
 
-        val hashed = argon2.hash(8, 65536, 8, request.password.toCharArray())
+        val hashed = bcrypt.hashToString(12, request.password.toCharArray())
         db.userQueries.insert(request.email, hashed, ApiKeyGenerator.generate())
         val user = db.userQueries.findByEmail(request.email).executeAsOne()
 

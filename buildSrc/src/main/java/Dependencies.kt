@@ -9,12 +9,12 @@ object Versions {
     const val proguard = "7.0.0"
 
     // Libraries
-    const val argon2 = "2.7"
     const val autoprefixer = "9.8.4"
     const val babel = "7.2.0"
     const val babelLoader = "8.1.0"
     const val babelPluginClassProperties = "7.10.1"
     const val babelPresetEnv = "7.2.0"
+    const val bcrypt = "0.9.0"
     const val browserMob = "2.1.5"
     const val cssLoader = "3.6.0"
     const val cssnano = "4.1.10"
@@ -48,7 +48,7 @@ object Versions {
 }
 
 object Dependencies {
-    const val argon2 = "de.mkammerer:argon2-jvm-nolibs:${Versions.argon2}"
+    const val bcrypt = "at.favre.lib:bcrypt:${Versions.bcrypt}"
     const val browserMob = "net.lightbody.bmp:browsermob-core:2.1.5"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
