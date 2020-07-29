@@ -11,7 +11,7 @@ class Settings(
 ) {
     var databaseVersion: Int by setting(defaultValue = 1)
 
-    private val json = Json(JsonConfiguration.Stable)
+    private val json = Json
 
     private inline fun <reified R: Any> setting(name: String? = null, defaultValue: R) = SettingDelegateProvider(R::class, name, defaultValue)
     private inline fun <reified R: Any> settingNullable(name: String? = null, defaultValue: R? = null) = NullableSettingDelegate(R::class, name, defaultValue)
@@ -21,13 +21,13 @@ class Settings(
         override fun getValue(thisRef: Settings, property: KProperty<*>): R? {
             val value = thisRef.db.settingQueries.findByName(name ?: property.name).executeAsOneOrNull() ?: return defaultValue
 
-            val obj = thisRef.json.parseJson(value)
-            if (obj.isNull) return defaultValue
+            val obj = thisRef.json.parseToJsonElement(value)
+            if (obj is JsonNull) return defaultValue
 
             return when (clazz) {
-                String::class -> obj.contentOrNull as? R? ?: defaultValue
-                Int::class -> obj.intOrNull as? R? ?: defaultValue
-                Boolean::class -> obj.booleanOrNull as? R? ?: defaultValue
+                String::class -> obj.jsonPrimitive.contentOrNull as? R? ?: defaultValue
+                Int::class -> obj.jsonPrimitive.intOrNull as? R? ?: defaultValue
+                Boolean::class -> obj.jsonPrimitive.booleanOrNull as? R? ?: defaultValue
                 else -> defaultValue
             }
         }
@@ -39,7 +39,7 @@ class Settings(
                 Boolean::class -> JsonPrimitive(value as? Boolean?)
                 else -> JsonNull
             }
-            val obj = thisRef.json.stringify(JsonElementSerializer, elem)
+            val obj = thisRef.json.encodeToString(JsonElementSerializer, elem)
             thisRef.db.settingQueries.update(name ?: property.name, obj)
         }
     }

@@ -12,8 +12,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-
                 api(project(":shared:api"))
 
                 implementation(Dependencies.ktorClientCore)
@@ -30,17 +28,8 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
-
                 api(Dependencies.ktorClientJs)
                 api(Dependencies.ktorClientSerializationJs)
-
-                // Required for ktor client
-                api(npm("bufferutil"))
-                api(npm("utf-8-validate"))
-                api(npm("abort-controller"))
-                api(npm("text-encoding"))
-                api(npm("fs"))
             }
         }
     }

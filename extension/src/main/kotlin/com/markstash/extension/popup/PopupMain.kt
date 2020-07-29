@@ -16,7 +16,7 @@ import react.dom.*
 import react.functionalComponent
 import react.useEffect
 import react.useState
-import kotlin.browser.document
+import kotlinx.browser.document
 
 fun popupMain() {
     js("require('css/main.css');")

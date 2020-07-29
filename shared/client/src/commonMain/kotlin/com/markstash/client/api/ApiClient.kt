@@ -15,14 +15,15 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.readBytes
 import io.ktor.utils.io.core.String
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 class ApiClient(
     var baseUrl: String = "",
     var authToken: String? = null
 ) {
     val httpClient = HttpClient { configure() }
-    val json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 
     private fun HttpClientConfig<*>.configure() {
         expectSuccess = false
@@ -41,7 +42,7 @@ class ApiClient(
 
                 val errorResponse = try {
                     val responseString = String(response.readBytes())
-                    json.parse(ErrorResponse.serializer(), responseString)
+                    json.decodeFromString(ErrorResponse.serializer(), responseString)
                 } catch (e: Throwable) {
                     when (status) {
                         400 -> throw ValidationException()

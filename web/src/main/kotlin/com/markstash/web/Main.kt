@@ -18,8 +18,8 @@ import muya.plugins.Transformer
 import react.child
 import react.dom.*
 import react.modal.ReactModal
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 fun main() {
     js("require('css/main.css');")

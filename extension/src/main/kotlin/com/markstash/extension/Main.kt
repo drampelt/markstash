@@ -4,10 +4,10 @@ import browser.browser
 import com.markstash.extension.background.backgroundMain
 import com.markstash.extension.popup.popupMain
 import com.markstash.shared.js.api.apiClient
-import kotlin.browser.window
+import kotlinx.browser.window
 
 fun main() {
-    apiClient.baseUrl = "http://localhost:8080/api"
+    apiClient.baseUrl = "https://markstash.0x.ee/api"
 
     val getBackgroundPage = browser.extension.getBackgroundPage
     when {

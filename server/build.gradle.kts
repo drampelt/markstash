@@ -17,8 +17,6 @@ application {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-
     implementation(project(":shared:api"))
 
     implementation(Dependencies.bcrypt)

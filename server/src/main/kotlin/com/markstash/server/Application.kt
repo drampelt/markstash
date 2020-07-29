@@ -51,7 +51,7 @@ import io.ktor.server.engine.embeddedServer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.serialization.MissingFieldException
+import kotlinx.serialization.SerializationException
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.ktor.ext.Koin
@@ -121,7 +121,7 @@ fun Application.main() {
             throw cause
         }
 
-        exception<MissingFieldException> { cause ->
+        exception<SerializationException> { cause ->
             call.respond(HttpStatusCode.BadRequest, ErrorResponse.simple(cause.message ?: "Missing field"))
         }
 

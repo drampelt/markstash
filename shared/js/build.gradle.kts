@@ -5,44 +5,34 @@ plugins {
 version = "unspecified"
 
 dependencies {
-    implementation(kotlin("stdlib-js"))
+    api(project(":shared:api"))
+    api(project(":shared:client"))
 
-    implementation(project(":shared:api"))
-    implementation(project(":shared:client"))
-
-    // All dependencies have to specified in the shared module, even if they aren't used in some
-    api(Dependencies.kotlinCoroutinesJs)
+    api(Dependencies.kotlinCoroutines)
     api(Dependencies.kotlinReact)
     api(Dependencies.kotlinReactDom)
-    api(Dependencies.kotlinReactRouterDom)
 
     api(npm("react", Versions.react))
     api(npm("react-dom", Versions.react))
-    api(npm("react-router-dom", Versions.reactRouter))
-    api(npm("react-modal", Versions.reactModal))
-    api(npm("js-cookie", Versions.jsCookie))
-    api(npm("webextension-polyfill", Versions.webextensionPolyfill))
 
-    // Muya Dependencies
-    api(npm("snapsvg", Versions.snapsvg))
-    api(npm("marktext", Versions.markText))
-
-    api(npm("css-loader", Versions.cssLoader))
-    api(npm("style-loader", Versions.styleLoader))
-    api(npm("url-loader", Versions.urlLoader))
-    api(npm("file-loader", Versions.fileLoader))
-    api(npm("svg-sprite-loader", Versions.svgSpriteLoader))
-    api(npm("postcss-loader", Versions.postcssLoader))
-    api(npm("postcss-import", Versions.postcssImport))
-    api(npm("postcss-nested", Versions.postcssNested))
-    api(npm("tailwindcss", Versions.tailwindcss))
-    api(npm("@tailwindcss/ui", Versions.tailwindUi))
-    api(npm("autoprefixer", Versions.autoprefixer))
-    api(npm("cssnano", Versions.cssnano))
-    api(npm("babel-loader", Versions.babelLoader))
-    api(npm("@babel/core", Versions.babel))
-    api(npm("@babel/plugin-proposal-class-properties", Versions.babelPluginClassProperties))
-    api(npm("@babel/preset-env", Versions.babelPresetEnv))
+    api(devNpm("css-loader", Versions.cssLoader))
+    api(devNpm("style-loader", Versions.styleLoader))
+    api(devNpm("url-loader", Versions.urlLoader))
+    api(devNpm("file-loader", Versions.fileLoader))
+    api(devNpm("svg-sprite-loader", Versions.svgSpriteLoader))
+    api(devNpm("postcss-loader", Versions.postcssLoader))
+    api(devNpm("postcss-import", Versions.postcssImport))
+    api(devNpm("postcss-nested", Versions.postcssNested))
+    api(devNpm("tailwindcss", Versions.tailwindcss))
+    api(devNpm("@tailwindcss/ui", Versions.tailwindUi))
+    api(devNpm("autoprefixer", Versions.autoprefixer))
+    api(devNpm("cssnano", Versions.cssnano))
+    api(devNpm("babel-loader", Versions.babelLoader))
+    api(devNpm("@babel/core", Versions.babel))
+    api(devNpm("@babel/plugin-proposal-class-properties", Versions.babelPluginClassProperties))
+    api(devNpm("@babel/preset-env", Versions.babelPresetEnv))
 }
 
-kotlin.target.browser { }
+kotlin.js {
+    browser()
+}

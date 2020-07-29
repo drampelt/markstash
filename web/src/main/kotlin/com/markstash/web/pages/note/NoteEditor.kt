@@ -10,8 +10,8 @@ import react.RProps
 import react.dom.*
 import react.functionalComponent
 import react.useLayoutEffectWithCleanup
-import kotlin.browser.document
-import kotlin.browser.window
+import kotlinx.browser.document
+import kotlinx.browser.window
 
 interface NoteEditorProps : RProps {
     var content: String?

@@ -21,9 +21,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-
-                implementation(Dependencies.kotlinSerializationCommon)
+                implementation(Dependencies.kotlinSerialization)
             }
         }
 
@@ -36,17 +34,11 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-
-                implementation(Dependencies.kotlinSerializationJvm)
             }
         }
 
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
-
-                implementation(Dependencies.kotlinSerializationJs)
             }
         }
     }
