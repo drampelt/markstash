@@ -41,12 +41,15 @@ class ArchiveWorker(
     companion object {
         val keyPool: List<Char> = ('a'..'f') + ('0'..'9')
 
-        private val chromeArgs = listOf("--no-sandbox", "--disable-gpu", "--window-size=1920,1080", "--disable-dev-shm-usage", "--headless")
+        private val defaultChromeArgs = listOf("--no-sandbox", "--disable-gpu", "--window-size=1920,1080", "--headless")
     }
 
     private val db by lazy { application.get<Database>() }
     private val archiveDir by lazy { application.get<String>(named(Constants.Storage.ARCHIVE_DIR)) }
     private val chromeBin by lazy { application.get<String>(named(Constants.Binaries.CHROME_BIN)) }
+    private val chromeUseDevShm by lazy { application.get<Boolean>(named(Constants.Settings.CHROME_USE_DEV_SHM)) }
+
+    private val chromeArgs by lazy { defaultChromeArgs + if (chromeUseDevShm) emptyList() else listOf("--disable-dev-shm-usage") }
 
     private val log = LoggerFactory.getLogger(ArchiveWorker::class.java)
 

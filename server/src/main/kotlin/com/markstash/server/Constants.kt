@@ -16,4 +16,8 @@ object Constants {
     object Binaries {
         const val CHROME_BIN = "binaries.chrome_bin"
     }
+
+    object Settings {
+        const val CHROME_USE_DEV_SHM = "settings.chrome_use_dev_shm"
+    }
 }
