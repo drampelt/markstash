@@ -17,6 +17,9 @@ config.module.rules.push({
             options: {
                 config: {
                     path: '../../../../web/src/',
+                    ctx: {
+                        mode: config.mode,
+                    },
                 },
             },
         }

@@ -35,14 +35,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Install dependencies
-      run: ./gradlew :web:packageJson :kotlinNpmInstall
-
     - name: Compile server
-      run: NODE_ENV=production ./gradlew :server:minimizedJar
+      run: ./gradlew :server:minimizedJar
 
     - name: Save server jar
       uses: actions/upload-artifact@v2
       with:
         name: jar
-        path: server/build/libs/server.jar
+        path: server/build/libs/server.min.jar
