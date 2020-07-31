@@ -1,12 +1,18 @@
 object Versions {
     const val jvm = "1.8"
     const val kotlin = "1.4.0-rc"
+    const val kotlinCompose = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
+    const val kotlinComposeExtension = "0.1.0-dev15"
     const val graal = "20.1.0"
+    const val androidMinSdk = 21
+    const val androidTargetSdk = 29
+    const val androidCompileSdk = 29
 
     // Gradle plugins
     const val shadow = "5.2.0"
     const val sqlDelight = "1.4.0"
     const val proguard = "7.0.0"
+    const val androidGradle = "4.2.0-alpha06"
 
     // Libraries
     const val autoprefixer = "9.8.4"
@@ -16,6 +22,7 @@ object Versions {
     const val babelPresetEnv = "7.2.0"
     const val bcrypt = "0.9.0"
     const val browserMob = "2.1.5"
+    const val compose = "0.1.0-dev15"
     const val cssLoader = "3.6.0"
     const val cssnano = "4.1.10"
     const val fileLoader = "6.0.0"
@@ -45,11 +52,18 @@ object Versions {
     const val tailwindUi = "0.3.1"
     const val urlLoader = "4.1.0"
     const val webextensionPolyfill = "0.6.0"
+    const val xAppCompat = "1.1.0"
 }
 
 object Dependencies {
+    const val androidGradle = "com.android.tools.build:gradle:${Versions.androidGradle}"
     const val bcrypt = "at.favre.lib:bcrypt:${Versions.bcrypt}"
     const val browserMob = "net.lightbody.bmp:browsermob-core:2.1.5"
+    const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
+    const val composeFoundationLayout = "androidx.compose.foundation:foundation-layout:${Versions.compose}"
+    const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
+    const val composeTooling = "androidx.ui:ui-tooling:${Versions.compose}"
+    const val composeTest = "androidx.ui:ui-test:${Versions.compose}"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}"
@@ -73,4 +87,5 @@ object Dependencies {
     const val sqlDelightSqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
     const val sqlite = "org.xerial:sqlite-jdbc:${Versions.sqlite}"
     const val svm = "org.graalvm.nativeimage:svm:${Versions.graal}"
+    const val xAppCompat = "androidx.appcompat:appcompat:${Versions.xAppCompat}"
 }

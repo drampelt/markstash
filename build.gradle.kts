@@ -12,6 +12,7 @@ buildscript {
     dependencies {
         classpath(Dependencies.proguard)
         classpath(Dependencies.sqlDelightGradle)
+        classpath(Dependencies.androidGradle)
     }
 }
 
