@@ -37,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerVersion = Versions.kotlinCompose
+        kotlinCompilerVersion = Versions.kotlin
         kotlinCompilerExtensionVersion = Versions.kotlinComposeExtension
     }
 }
@@ -52,15 +52,19 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
 repositories {
     google()
     jcenter()
-    maven(url = "https://dl.bintray.com/kotlin/kotlin-eap/")
+    maven(url = "https://jitpack.io")
 }
 
 dependencies {
     implementation(kotlin("stdlib", Versions.kotlin))
 
+    implementation(project(":shared:api"))
+    implementation(project(":shared:client"))
+
     implementation(Dependencies.composeFoundation)
     implementation(Dependencies.composeFoundationLayout)
     implementation(Dependencies.composeMaterial)
+    implementation(Dependencies.composeRouter)
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
     implementation(Dependencies.xAppCompat)

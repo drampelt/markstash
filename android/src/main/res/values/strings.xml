@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Markstash</string>
+    <string name="app_label_name">Markstash</string>
+
+    <!-- Login -->
+    <string name="login_label_email">Email Address</string>
+    <string name="login_label_password">Password</string>
+    <string name="login_label_logging_in">Logging in…</string>
+
+    <string name="login_action_log_in">Log In</string>
 </resources>

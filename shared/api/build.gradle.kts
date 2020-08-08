@@ -1,9 +1,14 @@
 plugins {
+    id("com.android.library")
     kotlin("multiplatform")
     kotlin("plugin.serialization")
 }
 
 version = "unspecified"
+
+android {
+    compileSdkVersion(Versions.androidCompileSdk)
+}
 
 kotlin {
     jvm {
@@ -16,6 +21,14 @@ kotlin {
 
     js {
         browser()
+    }
+
+    android {
+        compilations.configureEach {
+            kotlinOptions {
+                jvmTarget = Versions.jvm
+            }
+        }
     }
 
     sourceSets {
@@ -38,6 +51,11 @@ kotlin {
         }
 
         val jsMain by getting {
+            dependencies {
+            }
+        }
+
+        val androidMain by getting {
             dependencies {
             }
         }

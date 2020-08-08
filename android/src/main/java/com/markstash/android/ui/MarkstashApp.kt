@@ -1,12 +1,15 @@
 package com.markstash.android.ui
 
-import androidx.compose.Composable
-import androidx.ui.foundation.Text
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.ui.tooling.preview.Preview
+import com.markstash.android.ui.login.LoginScreen
 
 @Composable
 fun MarkstashApp() {
-    Text(text = "Hello, world!")
+    MaterialTheme {
+        LoginScreen()
+    }
 }
 
 @Preview

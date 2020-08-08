@@ -15,17 +15,19 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.readBytes
 import io.ktor.utils.io.core.String
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonBuilder
 
 class ApiClient(
     var baseUrl: String = "",
     var authToken: String? = null
 ) {
     val httpClient = HttpClient { configure() }
-    val json = Json {
-        ignoreUnknownKeys = true
-    }
 
     private fun HttpClientConfig<*>.configure() {
+        val json = Json {
+            ignoreUnknownKeys = true
+        }
+
         expectSuccess = false
         install(JsonFeature) {
             serializer = KotlinxSerializer(json)

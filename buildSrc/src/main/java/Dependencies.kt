@@ -1,8 +1,7 @@
 object Versions {
     const val jvm = "1.8"
     const val kotlin = "1.4.0-rc"
-    const val kotlinCompose = "1.4.0-dev-withExperimentalGoogleExtensions-20200720"
-    const val kotlinComposeExtension = "0.1.0-dev15"
+    const val kotlinComposeExtension = "0.1.0-dev16"
     const val graal = "20.1.0"
     const val androidMinSdk = 21
     const val androidTargetSdk = 29
@@ -22,7 +21,8 @@ object Versions {
     const val babelPresetEnv = "7.2.0"
     const val bcrypt = "0.9.0"
     const val browserMob = "2.1.5"
-    const val compose = "0.1.0-dev15"
+    const val compose = "0.1.0-dev16"
+    const val composeRouter = "0.15.1"
     const val cssLoader = "3.6.0"
     const val cssnano = "4.1.10"
     const val fileLoader = "6.0.0"
@@ -62,6 +62,7 @@ object Dependencies {
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
     const val composeFoundationLayout = "androidx.compose.foundation:foundation-layout:${Versions.compose}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
+    const val composeRouter = "com.github.zsoltk:compose-router:${Versions.composeRouter}"
     const val composeTooling = "androidx.ui:ui-tooling:${Versions.compose}"
     const val composeTest = "androidx.ui:ui-test:${Versions.compose}"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
@@ -74,8 +75,10 @@ object Dependencies {
     const val ktorAuthJwt = "io.ktor:ktor-auth-jwt:${Versions.ktor}"
     const val ktorClientCore = "io.ktor:ktor-client-core:${Versions.ktor}"
     const val ktorClientJs = "io.ktor:ktor-client-js:${Versions.ktor}"
+    const val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:${Versions.ktor}"
     const val ktorClientSerialization = "io.ktor:ktor-client-serialization:${Versions.ktor}"
     const val ktorClientSerializationJs = "io.ktor:ktor-client-serialization-js:${Versions.ktor}"
+    const val ktorClientSerializationJvm = "io.ktor:ktor-client-serialization-jvm:${Versions.ktor}"
     const val ktorLocations = "io.ktor:ktor-locations:${Versions.ktor}"
     const val ktorSerialization = "io.ktor:ktor-serialization:${Versions.ktor}"
     const val ktorServerCio = "io.ktor:ktor-server-cio:${Versions.ktor}"
