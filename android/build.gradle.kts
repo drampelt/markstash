@@ -64,7 +64,8 @@ dependencies {
     implementation(Dependencies.composeFoundation)
     implementation(Dependencies.composeFoundationLayout)
     implementation(Dependencies.composeMaterial)
-    implementation(Dependencies.composeRouter)
+    implementation(Dependencies.composeMaterialIcons)
+//    implementation(Dependencies.composeRouter) // Not updated for dev 16 yet
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
     implementation(Dependencies.xAppCompat)

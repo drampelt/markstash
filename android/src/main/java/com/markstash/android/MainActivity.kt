@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val session = Session()
+        val session = Session(applicationContext)
         setContent {
             Providers(Session.ambient provides session) {
                 MarkstashApp()

@@ -1,6 +1,7 @@
 package com.markstash.android.ui.login
 
 import android.widget.Toast
+import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,11 +36,12 @@ import androidx.ui.tooling.preview.Preview
 import com.markstash.android.R
 import com.markstash.android.Session
 import com.markstash.api.sessions.LoginRequest
+import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.SessionsApi
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val session = Session.ambient.current
@@ -50,6 +55,7 @@ fun LoginScreen() {
                 val response = sessionsApi.login(LoginRequest(email, password))
                 session.login(response)
                 Toast.makeText(context, "Logged in as $response", Toast.LENGTH_LONG).show()
+                onLogIn(response)
             } catch (e: Throwable) {
                 isLoading = false
                 Toast.makeText(context, e.message ?: "Error logging in", Toast.LENGTH_LONG).show()
@@ -58,6 +64,10 @@ fun LoginScreen() {
     }
 
     ScrollableColumn {
+        IconButton(onClick = onShowSettings) {
+            Icon(Icons.Default.Settings)
+        }
+
         Spacer(Modifier.height(32.dp))
 
         Row(

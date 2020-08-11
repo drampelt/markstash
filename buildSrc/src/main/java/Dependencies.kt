@@ -62,6 +62,7 @@ object Dependencies {
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
     const val composeFoundationLayout = "androidx.compose.foundation:foundation-layout:${Versions.compose}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
+    const val composeMaterialIcons = "androidx.compose.material:material-icons-core:${Versions.compose}"
     const val composeRouter = "com.github.zsoltk:compose-router:${Versions.composeRouter}"
     const val composeTooling = "androidx.ui:ui-tooling:${Versions.compose}"
     const val composeTest = "androidx.ui:ui-test:${Versions.compose}"

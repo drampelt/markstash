@@ -7,4 +7,11 @@
     <string name="login_label_logging_in">Logging in…</string>
 
     <string name="login_action_log_in">Log In</string>
+
+    <!-- Settings -->
+    <string name="settings_default_server_address">https://app.markstash.com/api</string>
+
+    <string name="settings_label_name">Settings</string>
+    <string name="settings_label_server_address">Server Address</string>
+    <string name="settings_label_server_address_description">Enter the address of your self-hosted server, or leave it blank to use markstash.com. In most cases, you should include /api at the end.</string>
 </resources>
