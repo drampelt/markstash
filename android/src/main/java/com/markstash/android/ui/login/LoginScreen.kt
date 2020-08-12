@@ -54,7 +54,6 @@ fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
             try {
                 val response = sessionsApi.login(LoginRequest(email, password))
                 session.login(response)
-                Toast.makeText(context, "Logged in as $response", Toast.LENGTH_LONG).show()
                 onLogIn(response)
             } catch (e: Throwable) {
                 isLoading = false

@@ -14,4 +14,9 @@
     <string name="settings_label_name">Settings</string>
     <string name="settings_label_server_address">Server Address</string>
     <string name="settings_label_server_address_description">Enter the address of your self-hosted server, or leave it blank to use markstash.com. In most cases, you should include /api at the end.</string>
+
+    <!-- Main -->
+    <string name="main_label_logged_in">Logged in as: %1$s</string>
+
+    <string name="main_action_log_out">Log Out</string>
 </resources>

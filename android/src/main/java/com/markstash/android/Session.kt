@@ -7,12 +7,17 @@ import androidx.core.content.ContextCompat
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.ApiClient
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlin.math.log
 
 class Session(context: Context) {
     companion object {
         val ambient = ambientOf<Session>()
 
         private const val KEY_BASE_URL = "base_url"
+        private const val KEY_USER = "user"
     }
 
     private val sharedPreferences = context.getSharedPreferences("default", Context.MODE_PRIVATE)
@@ -43,14 +48,30 @@ class Session(context: Context) {
 
     val apiClient = ApiClient(baseUrl = baseUrl)
 
+    init {
+        sharedPreferences.getString(KEY_USER, null)?.let { userString ->
+            val loginResponse = Json.decodeFromString<LoginResponse>(userString)
+            user = loginResponse.user
+            authToken = loginResponse.authToken
+        }
+    }
+
     fun login(loginResponse: LoginResponse) {
         user = loginResponse.user
         authToken = loginResponse.authToken
+        sharedPreferences.edit().apply {
+            putString(KEY_USER, Json.encodeToString(loginResponse) )
+            apply()
+        }
     }
 
     fun logout() {
         user = null
         authToken = null
+        sharedPreferences.edit().apply {
+            remove(KEY_USER)
+            apply()
+        }
     }
 
     fun requireUser() = user ?: throw IllegalStateException("Not logged in")
