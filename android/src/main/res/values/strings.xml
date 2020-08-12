@@ -19,4 +19,9 @@
     <string name="main_label_logged_in">Logged in as: %1$s</string>
 
     <string name="main_action_log_out">Log Out</string>
+
+    <!-- Resources -->
+    <string name="resource_label_loading">Loading…</string>
+    <string name="resource_label_untitled">Untitled</string>
+    <string name="resource_label_no_description">No Description</string>
 </resources>
