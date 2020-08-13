@@ -21,18 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
 import com.markstash.android.Session
+import com.markstash.android.inject
 import com.markstash.api.models.Resource
 import com.markstash.client.api.ResourcesApi
-import com.markstash.client.api.SessionsApi
 
 @Composable
 fun MainScreen(onLogOut: () -> Unit) {
-    val session = Session.ambient.current
+    val session: Session by inject()
     val scaffoldState = rememberScaffoldState()
 
     fun handleLogOut() {
@@ -60,7 +59,8 @@ fun MainScreen(onLogOut: () -> Unit) {
 
 @Composable
 fun DrawerContent(onLogOut: () -> Unit) {
-    val session = Session.ambient.current
+    val session: Session by inject()
+
     ScrollableColumn {
         Row(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(stringResource(R.string.main_label_logged_in, session.requireUser().email))
@@ -76,8 +76,7 @@ fun DrawerContent(onLogOut: () -> Unit) {
 
 @Composable
 fun IndexScreen() {
-    val session = Session.ambient.current
-    val resourcesApi = remember { ResourcesApi(session.apiClient) }
+    val resourcesApi: ResourcesApi by inject()
 
     var resources: List<Resource> by remember { mutableStateOf(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }

@@ -1,21 +1,15 @@
 package com.markstash.android
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.compose.runtime.ambientOf
-import androidx.core.content.ContextCompat
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.ApiClient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlin.math.log
 
 class Session(context: Context) {
     companion object {
-        val ambient = ambientOf<Session>()
-
         private const val KEY_BASE_URL = "base_url"
         private const val KEY_USER = "user"
     }

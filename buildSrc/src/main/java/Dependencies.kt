@@ -67,6 +67,7 @@ object Dependencies {
     const val composeTooling = "androidx.ui:ui-tooling:${Versions.compose}"
     const val composeTest = "androidx.ui:ui-test:${Versions.compose}"
     const val jwarc = "org.netpreserve:jwarc:${Versions.jwarc}"
+    const val koinAndroid = "org.koin:koin-android:${Versions.koin}"
     const val koinKtor = "org.koin:koin-ktor:${Versions.koin}"
     const val kotlinCoroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.kotlinCoroutines}"
     const val kotlinReact = "org.jetbrains:kotlin-react:${Versions.kotlinReact}"

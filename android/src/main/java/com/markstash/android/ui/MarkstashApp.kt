@@ -4,15 +4,18 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ambientOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.ui.tooling.preview.Preview
 import com.markstash.android.Session
+import com.markstash.android.inject
 import com.markstash.android.ui.login.LoginScreen
 import com.markstash.android.ui.login.LoginSettingsScreen
 import com.markstash.android.ui.main.MainScreen
+import org.koin.core.Koin
 
 @Composable
 fun MarkstashApp() {
@@ -29,7 +32,7 @@ sealed class RootScreen {
 
 @Composable
 private fun AppContent() {
-    val session = Session.ambient.current
+    val session: Session by inject()
     var screen by remember { mutableStateOf(if (session.isLoggedIn) RootScreen.Main else RootScreen.Login) }
 
     Crossfade(screen) { currentScreen ->

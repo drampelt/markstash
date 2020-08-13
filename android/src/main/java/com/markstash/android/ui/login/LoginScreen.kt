@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.markstash.android.R
 import com.markstash.android.Session
+import com.markstash.android.inject
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.SessionsApi
@@ -42,11 +43,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
-    var isLoading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-    val session = Session.ambient.current
+    val session: Session by inject()
+    val sessionsApi: SessionsApi by inject()
     val context = ContextAmbient.current
-    val sessionsApi = remember { SessionsApi(session.apiClient) }
+
+    val scope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(false) }
 
     fun handleLogIn(email: String, password: String) {
         isLoading = true

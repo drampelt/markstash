@@ -25,10 +25,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
 import com.markstash.android.Session
+import com.markstash.android.inject
 
 @Composable
 fun LoginSettingsScreen(onBackPressed: () -> Unit) {
-    val session = Session.ambient.current
+    val session: Session by inject()
     var baseUrl by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue(text = session.baseUrl) }
 
     fun handleBackPress() {

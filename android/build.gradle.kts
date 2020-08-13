@@ -68,5 +68,6 @@ dependencies {
 //    implementation(Dependencies.composeRouter) // Not updated for dev 16 yet
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
+    implementation(Dependencies.koinAndroid)
     implementation(Dependencies.xAppCompat)
 }
