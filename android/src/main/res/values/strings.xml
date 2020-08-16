@@ -1,6 +1,8 @@
 <resources>
     <string name="app_label_name">Markstash</string>
 
+    <string name="app_action_bookmark">Bookmark</string>
+
     <!-- Login -->
     <string name="login_label_email">Email Address</string>
     <string name="login_label_password">Password</string>
@@ -24,4 +26,11 @@
     <string name="resource_label_loading">Loading…</string>
     <string name="resource_label_untitled">Untitled</string>
     <string name="resource_label_no_description">No Description</string>
+    <string name="resource_label_no_tags">No Tags</string>
+
+    <!-- Bookmark -->
+    <string name="bookmark_label_saving">Bookmarking…</string>
+    <string name="bookmark_label_saved">Bookmark saved!</string>
+    <string name="bookmark_label_not_saved">Could not save bookmark</string>
+    <string name="bookmark_label_not_url">Whoops! That doesn\'t look like a link, try bookmarking something else.</string>
 </resources>
