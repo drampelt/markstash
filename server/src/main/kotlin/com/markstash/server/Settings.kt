@@ -39,7 +39,7 @@ class Settings(
                 Boolean::class -> JsonPrimitive(value as? Boolean?)
                 else -> JsonNull
             }
-            val obj = thisRef.json.encodeToString(JsonElementSerializer, elem)
+            val obj = thisRef.json.encodeToString(JsonPrimitive.serializer(), elem)
             thisRef.db.settingQueries.update(name ?: property.name, obj)
         }
     }
