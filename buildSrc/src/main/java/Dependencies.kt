@@ -8,7 +8,7 @@ object Versions {
     const val androidCompileSdk = 29
 
     // Gradle plugins
-    const val shadow = "5.2.0"
+    const val shadow = "6.0.0"
     const val sqlDelight = "1.4.1"
     const val proguard = "7.0.0"
     const val androidGradle = "4.2.0-alpha06"
@@ -43,7 +43,7 @@ object Versions {
     const val react = "16.13.1"
     const val reactModal = "3.11.2"
     const val reactRouter = "5.1.2"
-    const val readability4j = "1.0.3"
+    const val readability4j = "1.0.5"
     const val selenium = "3.8.1"
     const val snapsvg = "0.5.1"
     const val sqlite = "3.21.0.1"
