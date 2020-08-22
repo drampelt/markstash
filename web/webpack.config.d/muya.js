@@ -23,3 +23,7 @@ config.module.rules.push({
         ],
     }
 });
+
+config.externals = Object.assign({}, config.externals, {
+    'fs': 'fs',
+});
