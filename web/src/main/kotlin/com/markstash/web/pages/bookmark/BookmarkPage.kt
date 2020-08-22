@@ -4,7 +4,6 @@ import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.models.Archive
 import com.markstash.shared.js.api.bookmarksApi
 import com.markstash.shared.js.components.resourceTag
-import com.markstash.shared.js.components.tagList
 import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.components.modal
 import com.markstash.web.pages.index.ResourceStore
@@ -109,7 +108,9 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         setError(null)
         GlobalScope.launch {
             try {
-                setBookmark(bookmarksApi.show(bookmarkId))
+                val fullBookmark = bookmarksApi.show(bookmarkId)
+                setBookmark(fullBookmark)
+                setSelectedArchive(fullBookmark.archives?.firstOrNull { it.type == Archive.Type.MONOLITH_READABILITY })
                 setIsLoading(false)
             } catch (e: Throwable) {
                 setError(e.message ?: "Error loading bookmark")
@@ -155,13 +156,21 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
     }
 
     fun RBuilder.renderSelectedArchive(archive: Archive?) {
-        if (archive == null) {
-            p { +"Select an archive" }
-            return
-        }
-
-        iframe(classes = "w-full h-full") {
-            attrs.src = "/api/archives/${archive.key}"
+        when (archive?.status) {
+            null -> {
+                p { +"No archives available" }
+            }
+            Archive.Status.PROCESSING -> {
+                p { +"Archive processing, please try again later" }
+            }
+            Archive.Status.FAILED -> {
+                p { +"Archive processing failed" }
+            }
+            Archive.Status.COMPLETED -> {
+                iframe(classes = "w-full h-full") {
+                    attrs.src = "/api/archives/${archive.key}"
+                }
+            }
         }
     }
 
@@ -173,7 +182,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
             p { +"Error: $error" }
         }
         bookmark != null -> {
-            div("flex items-center h-16 bg-white shadow p-4") {
+            div("flex items-center h-16 bg-white shadow p-4 z-10") {
                 div("flex-grow w-0") {
                     div("flex items-center") {
                         div("text-sm font-medium text-gray-900") { +bookmark.title }
