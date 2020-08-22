@@ -58,3 +58,5 @@
 -dontwarn io.netty.**
 -dontwarn org.apache.**
 -dontwarn net.bytebuddy.**
+-dontwarn kotlinx.coroutines.debug.AgentPremain
+-dontwarn org.koin.core.time.MeasureKt
