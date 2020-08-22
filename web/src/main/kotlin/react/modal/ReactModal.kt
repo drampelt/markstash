@@ -13,7 +13,7 @@ external interface ReactModalProps : RProps {
     var onAfterOpen: () -> Unit
     var onAfterClose: () -> Unit
     var onRequestClose: () -> Unit
-    var closeTimeoutMS: Long
+    var closeTimeoutMS: Int
     var contentLabel: String
     var portalClassName: String
     var overlayClassName: ModalTransitionClasses
