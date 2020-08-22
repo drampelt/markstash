@@ -12,6 +12,7 @@ object Versions {
     const val sqlDelight = "1.4.0"
     const val proguard = "7.0.0"
     const val androidGradle = "4.2.0-alpha06"
+    const val versions = "0.29.0"
 
     // Libraries
     const val autoprefixer = "9.8.4"
