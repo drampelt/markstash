@@ -13,17 +13,18 @@ SELECT * FROM (
 ORDER BY createdAt DESC;
 
 search:
-SELECT resourceType, resourceId, title, excerpt, tags, url, createdAt, updatedAt FROM (
+SELECT resourceType, resourceId, title, excerpt, tags, url, snippet, createdAt, updatedAt FROM (
     SELECT * FROM (
         SELECT
             'bookmark' AS resourceType,
             bookmarkWithTags.id AS resourceId,
-            bookmarkWithTags.title AS title,
+            highlight(bookmarkSearch, 1, '<b>', '</b>') AS title,
             bookmarkWithTags.excerpt AS excerpt,
             bookmarkWithTags.tags AS tags,
             bookmarkWithTags.url AS url,
             bookmarkWithTags.createdAt AS createdAt,
             bookmarkWithTags.updatedAt AS updatedAt,
+            snippet(bookmarkSearch, -1, '<b>', '</b>', '...', 25) AS snippet,
             bm25(bookmarkSearch) AS score
         FROM bookmarkSearch
         LEFT JOIN bookmarkWithTags ON bookmarkWithTags.id = bookmarkSearch.rowid
@@ -35,12 +36,13 @@ SELECT resourceType, resourceId, title, excerpt, tags, url, createdAt, updatedAt
         SELECT
             'note' AS resourceType,
             simpleNoteWithTags.id AS resourceId,
-            simpleNoteWithTags.title AS title,
+            highlight(noteSearch, 1, '<b>', '</b>') AS title,
             simpleNoteWithTags.excerpt AS excerpt,
             simpleNoteWithTags.tags AS tags,
             NULL AS url,
             simpleNoteWithTags.createdAt AS createdAt,
             simpleNoteWithTags.updatedAt AS updatedAt,
+            snippet(noteSearch, -1, '<b>', '</b>', '...', 25) AS snippet,
             bm25(noteSearch) AS score
         FROM noteSearch
         LEFT JOIN simpleNoteWithTags ON simpleNoteWithTags.id = noteSearch.rowid

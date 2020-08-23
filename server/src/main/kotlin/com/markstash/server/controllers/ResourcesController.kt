@@ -49,7 +49,7 @@ fun Route.resources() {
                 type = Resource.Type.valueOf(resource.resourceType.toUpperCase()),
                 id = resource.resourceId!!,
                 title = resource.title,
-                excerpt = resource.excerpt,
+                excerpt = resource.snippet,
                 tags = resource.tags!!.split(",").filter(String::isNotBlank).toSet(),
                 url = resource.url,
                 createdAt = resource.createdAt!!,

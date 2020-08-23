@@ -37,11 +37,12 @@ private interface ResourceRowProps : RProps {
     var listResourceType: Resource.Type?
     var resource: Resource
     var onTagClick: ((String) -> Unit)?
+    var showFullExcerpt: Boolean
 }
 
 private val resourceRow = functionalComponent<ResourceRowProps> { props ->
     val link = "${if (props.listResourceType == null) "/everything" else ""}/${props.resource.type.name.toLowerCase()}s/${props.resource.id}"
-    navLink<RProps>(to = link, className = "block px-4 py-4 whitespace-no-wrap border-b border-gray-200", activeClassName = "bg-indigo-50") {
+    navLink<RProps>(to = link, className = "resource-row block px-4 py-4 border-b border-gray-200", activeClassName = "bg-indigo-50") {
         div("flex items-center") {
             if (props.listResourceType == null) {
                 div("flex-no-shrink mr-4") {
@@ -54,8 +55,12 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                 }
             }
             div("w-0 flex-grow") {
-                div("text-sm leading-5 font-medium text-gray-900 truncate") { +(props.resource.title.takeUnless { it.isNullOrBlank() } ?: "Untitled") }
-                div("text-sm text-gray-500 truncate") { +(props.resource.excerpt.takeUnless { it.isNullOrBlank() } ?: "No description") }
+                rawHtml("text-sm leading-5 font-medium text-gray-900 truncate") {
+                    props.resource.title.takeUnless { it.isNullOrBlank() } ?: "Untitled"
+                }
+                rawHtml("text-sm text-gray-500 ${if (props.showFullExcerpt) "" else "truncate"}") {
+                    props.resource.excerpt.takeUnless { it.isNullOrBlank() } ?: "No description"
+                }
                 div("overflow-hidden") {
                     if (props.resource.tags.isEmpty()) {
                         span("text-sm text-gray-500") { +"No tags" }
@@ -193,6 +198,7 @@ val resourceList = functionalComponent<ResourceListProps> { props ->
                             attrs.key = "${resource.type}-${resource.id}"
                             attrs.listResourceType = props.resourceType
                             attrs.resource = resource
+                            attrs.showFullExcerpt = search.isNotBlank()
                             attrs.onTagClick = { tag ->
                                 setSearch(tag)
                                 GlobalScope.launch {
