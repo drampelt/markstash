@@ -1,13 +1,18 @@
 package com.markstash.android.ui.bookmark.receive
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayout
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
@@ -28,12 +34,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.launchInComposition
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
@@ -42,9 +52,11 @@ import com.markstash.android.R
 import com.markstash.android.inject
 import com.markstash.android.ui.components.BottomSheet
 import com.markstash.api.bookmarks.CreateRequest
+import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
 import com.markstash.client.api.BookmarksApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.getKoin
 
 class ReceiveBookmarkActivity : AppCompatActivity() {
@@ -79,6 +91,7 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var bookmark by remember { mutableStateOf<Bookmark?>(null) }
+    val scope = rememberCoroutineScope()
 
     val notUrlErrorMessage = stringResource(R.string.bookmark_label_not_url)
 
@@ -106,6 +119,27 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
         }
     }
 
+    fun updateBookmark(newBookmark: Bookmark) {
+        bookmark = newBookmark
+        scope.launch {
+            try {
+                bookmarksApi.update(newBookmark.id, UpdateRequest(tags = newBookmark.tags))
+            } catch (e: Throwable) {
+                error = e.message
+            }
+        }
+    }
+
+    fun addTag(tag: String) {
+        val newBookmark = bookmark?.let { it.copy(tags = it.tags + tag) } ?: return
+        updateBookmark(newBookmark)
+    }
+
+    fun removeTag(tag: String) {
+        val newBookmark = bookmark?.let { it.copy(tags = it.tags - tag) } ?: return
+        updateBookmark(newBookmark)
+    }
+
     BottomSheet(
         onClose = onFinish
     ) {
@@ -113,13 +147,27 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
             isLoading = isLoading,
             title = title,
             error = error,
-            bookmark = bookmark
+            bookmark = bookmark,
+            onAddTag = ::addTag,
+            onRemoveTag = ::removeTag,
         )
     }
 }
 
+@OptIn(ExperimentalLayout::class)
 @Composable
-fun ReceiveBookmarkContent(isLoading: Boolean, title: String?, error: String?, bookmark: Bookmark?) {
+fun ReceiveBookmarkContent(
+    isLoading: Boolean,
+    title: String?,
+    error: String?,
+    bookmark: Bookmark?,
+    onAddTag: (String) -> Unit,
+    onRemoveTag: (String) -> Unit,
+) {
+    var tagInput by remember { mutableStateOf(TextFieldValue()) }
+
+    val vibrator = ContextAmbient.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Row {
             Icon(
@@ -146,19 +194,40 @@ fun ReceiveBookmarkContent(isLoading: Boolean, title: String?, error: String?, b
                     if (bookmark.tags.isEmpty()) {
                         Text(stringResource(R.string.resource_label_no_tags))
                     } else {
-                        ScrollableRow {
+                        FlowRow(
+                            mainAxisSpacing = 4.dp,
+                            crossAxisSpacing = 4.dp,
+                        ) {
                             bookmark.tags.forEach { tag ->
                                 Text(
                                     text = tag,
-                                    style = MaterialTheme.typography.caption,
                                     modifier = Modifier
                                         .background(Color.LightGray, RoundedCornerShape(50))
                                         .padding(horizontal = 8.dp, vertical = 2.dp)
+                                        .clickable(
+                                            onLongClick = {
+                                                vibrator.vibrate(10)
+                                                onRemoveTag(tag)
+                                            },
+                                            onClick = {},
+                                        )
                                 )
-                                Spacer(Modifier.width(4.dp))
                             }
                         }
                     }
+
+                    OutlinedTextField(
+                        value = tagInput,
+                        onValueChange = { tagInput = it },
+                        label = { Text(stringResource(R.string.bookmark_action_add_tag)) },
+                        imeAction = ImeAction.Go,
+                        onImeActionPerformed = { _, _ ->
+                            if (tagInput.text.isNotBlank()) {
+                                onAddTag(tagInput.text)
+                                tagInput = TextFieldValue()
+                            }
+                        }
+                    )
 
                     Spacer(Modifier.height(16.dp))
 

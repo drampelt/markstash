@@ -33,4 +33,6 @@
     <string name="bookmark_label_saved">Bookmark saved!</string>
     <string name="bookmark_label_not_saved">Could not save bookmark</string>
     <string name="bookmark_label_not_url">Whoops! That doesn\'t look like a link, try bookmarking something else.</string>
+
+    <string name="bookmark_action_add_tag">Add Tag</string>
 </resources>
