@@ -56,7 +56,12 @@ fun Route.users() {
             .sign(jwtAlgorithm)
 
         call.respond(RegisterResponse(
-            user = User(id = user.id, email = user.email),
+            user = User(
+                id = user.id,
+                email = user.email,
+                createdAt = user.createdAt,
+                updatedAt = user.updatedAt,
+            ),
             authToken = jwtToken
         ))
     }
@@ -66,7 +71,9 @@ fun Route.users() {
             call.respond(
                 User(
                     id = currentUser.user.id,
-                    email = currentUser.user.email
+                    email = currentUser.user.email,
+                    createdAt = currentUser.user.createdAt,
+                    updatedAt = currentUser.user.updatedAt,
                 )
             )
         }

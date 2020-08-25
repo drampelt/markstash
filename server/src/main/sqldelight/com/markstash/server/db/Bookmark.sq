@@ -1,10 +1,12 @@
+import kotlinx.datetime.Instant;
+
 CREATE TABLE bookmark (
     id INTEGER PRIMARY KEY ASC,
     userId INTEGER NOT NULL,
     title TEXT NOT NULL,
     url TEXT NOT NULL,
-    createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL,
+    createdAt TEXT AS Instant NOT NULL,
+    updatedAt TEXT AS Instant NOT NULL,
     excerpt TEXT,
     author TEXT
 );
@@ -64,7 +66,7 @@ END;
 
 insert:
 INSERT INTO bookmark (userId, title, url, createdAt, updatedAt)
-VALUES (?, ?, ?, datetime('now'), datetime('now'));
+VALUES (?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
 
 lastInsert:
 SELECT last_insert_rowid();

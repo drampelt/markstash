@@ -1,10 +1,12 @@
+import kotlinx.datetime.Instant;
+
 CREATE TABLE user (
     id INTEGER PRIMARY KEY ASC,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     apiKey TEXT NOT NULL,
-    createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL
+    createdAt TEXT AS Instant NOT NULL,
+    updatedAt TEXT AS Instant NOT NULL
 );
 
 CREATE INDEX user_email ON user(email);
@@ -12,7 +14,7 @@ CREATE INDEX user_apiKey ON user(apiKey);
 
 insert:
 INSERT INTO user(email, password, apiKey, createdAt, updatedAt)
-VALUES (?, ?, ?, datetime('now'), datetime('now'));
+VALUES (?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
 
 findByEmail:
 SELECT * FROM user

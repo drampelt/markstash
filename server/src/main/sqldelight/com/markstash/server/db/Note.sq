@@ -1,11 +1,13 @@
+import kotlinx.datetime.Instant;
+
 CREATE TABLE note (
     id INTEGER PRIMARY KEY ASC,
     userId INTEGER NOT NULL,
     title TEXT,
     excerpt TEXT,
     content TEXT,
-    createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL
+    createdAt TEXT AS Instant NOT NULL,
+    updatedAt TEXT AS Instant NOT NULL
 );
 
 CREATE INDEX note_userId ON note(userId);
@@ -54,7 +56,7 @@ END;
 
 insert:
 INSERT INTO note (userId, title, createdAt, updatedAt)
-VALUES (?, ?, datetime('now'), datetime('now'));
+VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
 
 lastInsert:
 SELECT last_insert_rowid();
@@ -75,7 +77,7 @@ ORDER BY createdAt DESC
 
 update:
 UPDATE note
-SET title = ?, excerpt = ?, content = ?, updatedAt = datetime('now')
+SET title = ?, excerpt = ?, content = ?, updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
 WHERE id = ?;
 
 deleteById:

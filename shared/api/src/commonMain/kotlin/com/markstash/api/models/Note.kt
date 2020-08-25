@@ -1,6 +1,11 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package com.markstash.api.models
 
+import com.markstash.api.serializers.InstantSerializer
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 @Serializable
 data class Note(
@@ -9,8 +14,8 @@ data class Note(
     val excerpt: String?,
     val content: String?,
     val tags: Set<String>,
-    val createdAt: String,
-    val updatedAt: String
+    val createdAt: Instant,
+    val updatedAt: Instant,
 ) {
     companion object {
         private val headingRegex = Regex("^#+ ?")

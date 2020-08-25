@@ -35,6 +35,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Dependencies.kotlinSerialization)
+                api(Dependencies.kotlinDatetime)
             }
         }
 

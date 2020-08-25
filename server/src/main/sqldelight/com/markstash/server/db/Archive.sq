@@ -1,4 +1,5 @@
 import com.markstash.api.models.Archive;
+import kotlinx.datetime.Instant;
 
 CREATE TABLE archive (
     id INTEGER PRIMARY KEY,
@@ -7,8 +8,8 @@ CREATE TABLE archive (
     status TEXT AS Archive.Status NOT NULL,
     path TEXT,
     data TEXT,
-    createdAt TEXT NOT NULL,
-    updatedAt TEXT NOT NULL,
+    createdAt TEXT AS Instant NOT NULL,
+    updatedAt TEXT AS Instant NOT NULL,
     key TEXT NOT NULL DEFAULT ''
 );
 
@@ -24,14 +25,14 @@ CREATE INDEX archive_key ON archive(key);
 
 insert:
 INSERT INTO archive (bookmarkId, type, status, path, data, createdAt, updatedAt, key)
-VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'), ?);
+VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), ?);
 
 lastInsert:
 SELECT last_insert_rowid();
 
 update:
 UPDATE archive
-SET status = ?, path = ?, data = ?, updatedAt = datetime('now')
+SET status = ?, path = ?, data = ?, updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
 WHERE id = ?;
 
 findByBookmark:

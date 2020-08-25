@@ -12,6 +12,7 @@ import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import kotlinx.datetime.toInstant
 import org.koin.ktor.ext.inject
 
 @Location("/resources")
@@ -35,8 +36,8 @@ fun Route.resources() {
                 excerpt = resource.excerpt,
                 tags = resource.tags.split(",").filter(String::isNotBlank).toSet(),
                 url = resource.url,
-                createdAt = resource.createdAt,
-                updatedAt = resource.updatedAt
+                createdAt = resource.createdAt.toInstant(),
+                updatedAt = resource.updatedAt.toInstant()
             )
         }
         call.respond(resources)
@@ -52,8 +53,8 @@ fun Route.resources() {
                 excerpt = resource.snippet,
                 tags = resource.tags!!.split(",").filter(String::isNotBlank).toSet(),
                 url = resource.url,
-                createdAt = resource.createdAt!!,
-                updatedAt = resource.updatedAt!!
+                createdAt = resource.createdAt!!.toInstant(),
+                updatedAt = resource.updatedAt!!.toInstant()
             )
         }
         call.respond(SearchResponse(resources))

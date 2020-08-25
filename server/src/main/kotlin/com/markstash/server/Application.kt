@@ -15,10 +15,12 @@ import com.markstash.server.controllers.resources
 import com.markstash.server.controllers.sessions
 import com.markstash.server.controllers.tags
 import com.markstash.server.controllers.users
-import com.markstash.server.db.Archive
 import com.markstash.server.db.Database
+import com.markstash.server.db.archiveAdapter
+import com.markstash.server.db.bookmarkAdapter
+import com.markstash.server.db.noteAdapter
+import com.markstash.server.db.userAdapter
 import com.markstash.server.workers.JobProcessor
-import com.squareup.sqldelight.EnumColumnAdapter
 import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.sqlite.driver.JdbcSqliteDriver
 import io.ktor.application.Application
@@ -95,10 +97,11 @@ fun Application.main() {
             single {
                 Database(
                     get(),
-                    archiveAdapter = Archive.Adapter(
-                        typeAdapter = EnumColumnAdapter(),
-                        statusAdapter = EnumColumnAdapter()
-                    ))
+                    archiveAdapter = archiveAdapter,
+                    bookmarkAdapter = bookmarkAdapter,
+                    noteAdapter = noteAdapter,
+                    userAdapter = userAdapter,
+                )
             }
             single { Settings(get()) }
             single { BCrypt.with(LongPasswordStrategies.truncate(BCrypt.Version.VERSION_2A)) }

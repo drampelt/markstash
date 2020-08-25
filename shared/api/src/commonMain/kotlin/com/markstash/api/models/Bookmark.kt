@@ -1,6 +1,11 @@
+@file:UseSerializers(InstantSerializer::class)
+
 package com.markstash.api.models
 
+import com.markstash.api.serializers.InstantSerializer
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 
 @Serializable
 data class Bookmark(
@@ -10,8 +15,8 @@ data class Bookmark(
     val excerpt: String?,
     val author: String?,
     val tags: Set<String>,
-    val createdAt: String,
-    val updateAt: String,
+    val createdAt: Instant,
+    val updateAt: Instant,
     val archives: List<Archive>? = null
 ) {
     fun toResource() = Resource(

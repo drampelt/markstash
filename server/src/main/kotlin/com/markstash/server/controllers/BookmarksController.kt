@@ -120,7 +120,9 @@ fun Route.bookmarks() {
                 type = archive.type,
                 status = archive.status,
                 path = archive.path,
-                data = archive.data
+                data = archive.data,
+                createdAt = archive.createdAt,
+                updatedAt = archive.updatedAt
             )
         }
 

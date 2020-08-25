@@ -1,0 +1,13 @@
+UPDATE bookmark SET createdAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(createdAt));
+UPDATE bookmark SET updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(updatedAt));
+
+UPDATE note SET createdAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(createdAt));
+UPDATE note SET updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(updatedAt));
+
+UPDATE archive SET createdAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(createdAt));
+UPDATE archive SET updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(updatedAt));
+
+UPDATE user SET createdAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(createdAt));
+UPDATE user SET updatedAt = strftime('%Y-%m-%dT%H:%M:%fZ', datetime(updatedAt));
+
+UPDATE setting SET value = "10" WHERE name = "databaseVersion";
