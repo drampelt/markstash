@@ -75,7 +75,7 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                 rawHtml("text-sm text-gray-500 ${if (props.showFullExcerpt) "" else "truncate"}") {
                     props.resource.excerpt.takeUnless { it.isNullOrBlank() } ?: "No description"
                 }
-                div("overflow-hidden") {
+                div("whitespace-no-wrap overflow-hidden") {
                     if (props.resource.tags.isEmpty()) {
                         span("text-sm text-gray-400") { +"No tags" }
                     } else {
