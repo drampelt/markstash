@@ -3,6 +3,7 @@ package com.markstash.web.pages.index
 import com.markstash.api.models.Bookmark
 import com.markstash.api.models.Note
 import com.markstash.api.models.Resource
+import com.markstash.client.util.formatRelativeDisplay
 import com.markstash.shared.js.api.bookmarksApi
 import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.api.resourcesApi
@@ -15,9 +16,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
-import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLInputElement
 import react.RBuilder
 import react.RProps
@@ -55,6 +57,12 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                 }
             }
             div("w-0 flex-grow") {
+                div("flex items-center text-sm text-gray-400") {
+                    div("") {
+                        val date = if (props.resource.type == Resource.Type.BOOKMARK) props.resource.createdAt else props.resource.updatedAt
+                        +date.toLocalDateTime(TimeZone.currentSystemDefault()).formatRelativeDisplay()
+                    }
+                }
                 rawHtml("text-sm leading-5 font-medium text-gray-900 truncate") {
                     props.resource.title.takeUnless { it.isNullOrBlank() } ?: "Untitled"
                 }
@@ -63,7 +71,7 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                 }
                 div("overflow-hidden") {
                     if (props.resource.tags.isEmpty()) {
-                        span("text-sm text-gray-500") { +"No tags" }
+                        span("text-sm text-gray-400") { +"No tags" }
                     } else {
                         props.resource.tags.forEach { tag ->
                             child(resourceTag) {
