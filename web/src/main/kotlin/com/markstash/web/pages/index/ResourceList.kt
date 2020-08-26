@@ -105,7 +105,9 @@ private val searchInput = Channel<String>()
 
 val resourceList = functionalComponent<ResourceListProps> { props ->
     val (isLoading, setIsLoading) = useState(true)
-    val resources = useStore(ResourceStore, ResourceStoreState::resources)
+    val resources = useStore(ResourceStore) { store ->
+        store.resources.sortedByDescending { if (it.type == Resource.Type.BOOKMARK) it.createdAt else it.updatedAt  }
+    }
     val (error, setError) = useState<String?>(null)
     val (search, setSearch) = useState("")
 

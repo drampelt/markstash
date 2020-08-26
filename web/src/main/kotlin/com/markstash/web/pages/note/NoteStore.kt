@@ -13,6 +13,11 @@ object NoteStore : Store<NoteStoreState>(NoteStoreState()) {
         notifyListeners()
     }
 
+    fun updateDate(note: Note) {
+        state.notes[note.id] = state.notes[note.id]?.copy(updatedAt = note.updatedAt) ?: note
+        notifyListeners()
+    }
+
     fun delete(note: Note) = delete(note.id)
 
     fun delete(id: Long) {

@@ -28,7 +28,7 @@ fun Route.resources() {
     val db: Database by inject()
 
     get<Resources.Index> {
-        val resources = db.resourceQueries.indexCreatedDesc(currentUser.user.id).executeAsList().map { resource ->
+        val resources = db.resourceQueries.index(currentUser.user.id).executeAsList().map { resource ->
             Resource(
                 type = Resource.Type.valueOf(resource.resourceType.toUpperCase()),
                 id = resource.resourceId,

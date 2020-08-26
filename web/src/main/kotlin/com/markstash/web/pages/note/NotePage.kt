@@ -150,7 +150,9 @@ val notePage = functionalComponent<NotePageProps> { props ->
         val job = GlobalScope.launch {
             saveChannel.current.receiveAsFlow().debounce(3000).collect { noteToSave ->
                 try {
-                    notesApi.update(noteToSave.id, UpdateRequest(noteToSave.content, noteToSave.tags))
+                    val updatedNote = notesApi.update(noteToSave.id, UpdateRequest(noteToSave.content, noteToSave.tags))
+                    NoteStore.updateDate(updatedNote)
+                    ResourceStore.updateResourceDate(updatedNote.toResource())
                 } catch (e: Throwable) {
                     // TODO: handle this
                     console.log(e)

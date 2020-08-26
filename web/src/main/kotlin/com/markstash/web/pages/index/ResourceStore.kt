@@ -23,6 +23,17 @@ object ResourceStore : Store<ResourceStoreState>(ResourceStoreState()) {
         state = state.copy(resources = newResources)
     }
 
+    fun updateResourceDate(newResource: Resource) {
+        val newResources = state.resources.map { oldResource ->
+            if (oldResource.type == newResource.type && oldResource.id == newResource.id) {
+                oldResource.copy(updatedAt = newResource.updatedAt)
+            } else {
+                oldResource
+            }
+        }
+        state = state.copy(resources = newResources)
+    }
+
     fun addResource(newResource: Resource) {
         state = state.copy(resources = listOf(newResource) + state.resources)
     }
