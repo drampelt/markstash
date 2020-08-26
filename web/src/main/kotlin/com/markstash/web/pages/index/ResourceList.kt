@@ -45,20 +45,18 @@ private interface ResourceRowProps : RProps {
 
 private val resourceRow = functionalComponent<ResourceRowProps> { props ->
     val link = "${if (props.listResourceType == null) "/everything" else ""}/${props.resource.type.name.toLowerCase()}s/${props.resource.id}"
-    navLink<RProps>(to = link, className = "resource-row block px-4 py-4 border-b border-gray-200", activeClassName = "bg-indigo-50") {
+    navLink<RProps>(to = link, className = "resource-row block px-4 py-4 border-b border-gray-200 hover:bg-gray-50 group", activeClassName = "bg-indigo-50 hover:bg-indigo-50") {
         div("flex items-center") {
-            if (props.listResourceType == null) {
-                div("flex-no-shrink mr-4") {
-                    rawHtml("w-6 h-6 text-gray-700") {
-                        when (props.resource.type) {
-                            Resource.Type.BOOKMARK -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z\"></path></svg>"
-                            Resource.Type.NOTE -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z\"></path></svg>"
-                        }
-                    }
-                }
-            }
             div("w-0 flex-grow") {
                 div("flex items-center text-sm text-gray-400") {
+                    div("flex-no-shrink mr-1") {
+                        rawHtml("w-4 h-4 text-gray-700") {
+                            when (props.resource.type) {
+                                Resource.Type.BOOKMARK -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z\"></path></svg>"
+                                Resource.Type.NOTE -> "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z\"></path></svg>"
+                            }
+                        }
+                    }
                     div {
                         val date = if (props.resource.type == Resource.Type.BOOKMARK) props.resource.createdAt else props.resource.updatedAt
                         +date.toLocalDateTime(TimeZone.currentSystemDefault()).formatRelativeDisplay()
