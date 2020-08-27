@@ -1,7 +1,7 @@
 object Versions {
     const val jvm = "1.8"
     const val kotlin = "1.4.0"
-    const val kotlinComposeExtension = "0.1.0-dev17"
+    const val kotlinComposeExtension = "1.0.0-alpha01"
     const val graal = "20.1.0"
     const val androidMinSdk = 21
     const val androidTargetSdk = 29
@@ -11,7 +11,7 @@ object Versions {
     const val shadow = "6.0.0"
     const val sqlDelight = "1.4.1"
     const val proguard = "7.0.0"
-    const val androidGradle = "4.2.0-alpha06"
+    const val androidGradle = "4.2.0-alpha08"
     const val versions = "0.29.0"
 
     // Libraries
@@ -22,7 +22,7 @@ object Versions {
     const val babelPresetEnv = "7.2.0"
     const val bcrypt = "0.9.0"
     const val browserMob = "2.1.5"
-    const val compose = "0.1.0-dev17"
+    const val compose = "1.0.0-alpha01"
     const val composeRouter = "0.15.1"
     const val cssLoader = "3.6.0"
     const val cssnano = "4.1.10"
