@@ -1,15 +1,25 @@
 package com.markstash.android.ui.main
 
 import androidx.compose.foundation.Icon
+import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.InnerPadding
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
+import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
@@ -18,11 +28,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.ui.tooling.preview.Preview
 import com.markstash.android.R
+import com.markstash.android.ui.components.Tag
 import com.markstash.api.models.Resource
+import com.markstash.client.util.formatRelativeDisplay
+import com.markstash.client.util.parseDomainFromUrl
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.days
 
 @Composable
 fun ResourceList(resources: List<Resource>) {
@@ -39,35 +60,132 @@ fun ResourceList(resources: List<Resource>) {
 fun ResourceRow(resource: Resource) {
     val title = remember(resource) { resource.title.takeUnless { it.isNullOrBlank() } }
     val excerpt = remember(resource) { resource.excerpt.takeUnless { it.isNullOrBlank() } }
+    val date = remember(resource) {
+        (if (resource.type == Resource.Type.BOOKMARK) resource.createdAt else resource.updatedAt)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+    }
+    val domain = remember(resource) { resource.url?.parseDomainFromUrl() }
+    val tags = remember(resource) { resource.tags.toList() }
 
-    Row(
-        verticalGravity = Alignment.CenterVertically,
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {  }
-            .padding(16.dp)
+            .clickable {}
     ) {
-        Icon(
-            if (resource.type == Resource.Type.BOOKMARK) Icons.Default.Star else Icons.Default.Edit,
-            modifier = Modifier.padding(end = 16.dp),
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            verticalGravity = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        ) {
+            Icon(
+                if (resource.type == Resource.Type.BOOKMARK) Icons.Default.Star else Icons.Default.Edit,
+                modifier = Modifier.preferredSize(16.dp),
+            )
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            Text(
+                text = date.formatRelativeDisplay(),
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.drawOpacity(0.7f),
+            )
+
+            if (resource.type == Resource.Type.BOOKMARK && domain != null) {
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.drawOpacity(0.7f),
+                )
+
+                Spacer(modifier = Modifier.width(4.dp))
+
+                Text(
+                    text = domain,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.drawOpacity(0.7f),
+                )
+            }
+        }
+
+        Text(
+            text = title ?: stringResource(R.string.resource_label_untitled),
+            style = MaterialTheme.typography.h6,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .drawOpacity(if (title == null) 0.7f else 1.0f)
+                .padding(horizontal = 16.dp),
         )
 
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = title ?: stringResource(R.string.resource_label_untitled),
-                style = MaterialTheme.typography.h6,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.drawOpacity(if (title == null) 0.7f else 1.0f),
-            )
+        Text(
+            text = excerpt ?: stringResource(R.string.resource_label_no_description),
+            style = MaterialTheme.typography.body2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .drawOpacity(if (excerpt == null) 0.7f else 1.0f)
+                .padding(horizontal = 16.dp),
+        )
 
+        if (tags.isEmpty()) {
             Text(
-                text = excerpt ?: stringResource(R.string.resource_label_no_description),
+                text = stringResource(R.string.resource_label_no_tags),
                 style = MaterialTheme.typography.body2,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.drawOpacity(if (excerpt == null) 0.7f else 1.0f),
+                modifier = Modifier
+                    .drawOpacity(0.7f)
+                    .padding(horizontal = 16.dp),
             )
+        } else {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyRowFor(items = tags, contentPadding = InnerPadding(start = 16.dp, end = 16.dp)) { tag ->
+                Tag(tag = tag)
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Preview
+@Composable
+fun ResourceRowBookmarkPreview() {
+    MaterialTheme {
+        Surface(Modifier.background(MaterialTheme.colors.background)) {
+            ResourceRow(resource = Resource(
+                type = Resource.Type.BOOKMARK,
+                id = 1L,
+                title = "Introduction to Programming",
+                excerpt = "This is probably the best introduction to programming you could ever read.",
+                tags = setOf("blog", "programming", "introduction", "beginner", "python"),
+                url = "https://example.com",
+                createdAt = Clock.System.now(),
+                updatedAt = Clock.System.now(),
+            ))
+        }
+    }
+}
+
+@OptIn(ExperimentalTime::class)
+@Preview
+@Composable
+fun ResourceRowNotePreview() {
+    MaterialTheme {
+        Surface(Modifier.background(MaterialTheme.colors.background)) {
+            ResourceRow(resource = Resource(
+                type = Resource.Type.NOTE,
+                id = 2L,
+                title = "Daily Journal",
+                excerpt = "Today I made some awesome previews in Compose, it's really nice",
+                tags = emptySet(),
+                url = null,
+                createdAt = Clock.System.now().minus(5.days),
+                updatedAt = Clock.System.now().minus(3.days),
+            ))
         }
     }
 }

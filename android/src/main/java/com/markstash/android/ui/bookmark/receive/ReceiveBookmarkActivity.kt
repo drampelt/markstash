@@ -47,10 +47,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
+import androidx.ui.tooling.preview.Preview
 import com.markstash.android.KoinContext
 import com.markstash.android.R
 import com.markstash.android.inject
 import com.markstash.android.ui.components.BottomSheet
+import com.markstash.android.ui.components.Tag
 import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
@@ -199,18 +201,15 @@ fun ReceiveBookmarkContent(
                             crossAxisSpacing = 4.dp,
                         ) {
                             bookmark.tags.forEach { tag ->
-                                Text(
-                                    text = tag,
-                                    modifier = Modifier
-                                        .background(Color.LightGray, RoundedCornerShape(50))
-                                        .padding(horizontal = 8.dp, vertical = 2.dp)
-                                        .clickable(
-                                            onLongClick = {
-                                                vibrator.vibrate(10)
-                                                onRemoveTag(tag)
-                                            },
-                                            onClick = {},
-                                        )
+                                Tag(
+                                    tag = tag,
+                                    modifier = Modifier.clickable(
+                                        onClick = {},
+                                        onLongClick = {
+                                            vibrator.vibrate(10)
+                                            onRemoveTag(tag)
+                                        }
+                                    )
                                 )
                             }
                         }
