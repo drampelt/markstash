@@ -27,3 +27,8 @@ config.module.rules.push({
 config.externals = Object.assign({}, config.externals, {
     'fs': 'fs',
 });
+
+if (config.mode === 'production') {
+    var webpack = require('webpack');
+    config.plugins.push(new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 5 }));
+}
