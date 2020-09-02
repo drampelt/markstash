@@ -4,6 +4,7 @@ import com.markstash.api.notes.CreateRequest
 import com.markstash.shared.js.api.apiClient
 import com.markstash.shared.js.api.notesApi
 import com.markstash.shared.js.helpers.rawHtml
+import com.markstash.shared.js.icons.logo
 import com.markstash.web.Session
 import com.markstash.web.pages.index.ResourceStore
 import kotlinx.coroutines.GlobalScope
@@ -80,7 +81,8 @@ val authenticatedLayout = functionalComponent<AuthenticatedLayoutProps> { props 
         div("hidden md:flex md:flex-shrink-0") {
             div("flex flex-col w-64 bg-gray-800") {
                 div("flex items-center justify-center h-16 flex-shrink-0 px-4") {
-                    div("text-white text-2xl bold") { +"Markstash" }
+                    logo("w-10 h-10 text-white")
+                    div("ml-2 text-white text-2xl bold") { +"Markstash" }
                 }
                 div("flex-1 flex flex-col overflow-y-auto") {
                     nav("flex-1 px-2 py-4") {

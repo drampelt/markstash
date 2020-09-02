@@ -4,7 +4,8 @@
   "version": "0.1",
   "description": "Bookmark with Markstash",
   "icons": {
-    "48": "icons/border-48.png"
+    "48": "icons/markstash-48.png",
+    "96": "icons/markstash-96.png"
   },
   "permissions": [
     "activeTab",
@@ -16,7 +17,10 @@
     "persistent": false
   },
   "browser_action": {
-    "default_icon": "icons/border-48.png",
+    "default_icon": {
+      "48": "icons/markstash-48.png",
+      "96": "icons/markstash-96.png"
+    },
     "default_title": "Bookmark",
     "default_popup": "popup/bookmark.html"
   }

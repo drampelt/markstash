@@ -2,6 +2,7 @@ package com.markstash.web.pages
 
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.shared.js.components.loginForm
+import com.markstash.shared.js.icons.logo
 import com.markstash.web.Session
 import react.RProps
 import react.child
@@ -23,8 +24,11 @@ val loginPage = functionalComponent<RProps> {
     } else {
         div("min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8") {
             div("sm:mx-auto sm:w-full sm:max-w-md") {
-                h1("text-center text-5xl leading-9 text-gray-900") {
-                    +"Markstash"
+                div("flex items-center justify-center") {
+                    logo("w-16 h-16 mr-2 text-gray-900")
+                    h1("text-center text-5xl leading-9 text-gray-900") {
+                        +"Markstash"
+                    }
                 }
                 h2("text-center text-3xl leading-9 font-extrabold text-gray-900 mt-8") {
                     +"Sign in"
