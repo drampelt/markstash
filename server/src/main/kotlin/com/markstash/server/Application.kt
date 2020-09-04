@@ -205,9 +205,9 @@ fun Application.main() {
         route("/api") {
             sessions()
             users()
-            archives()
 
             authenticate("jwt", "cookie") {
+                archives()
                 bookmarks()
                 notes()
                 resources()

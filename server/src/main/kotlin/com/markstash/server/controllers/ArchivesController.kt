@@ -3,6 +3,7 @@ package com.markstash.server.controllers
 import com.markstash.api.errors.NotFoundException
 import com.markstash.api.models.Archive
 import com.markstash.server.Constants
+import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
 import io.ktor.application.call
 import io.ktor.http.ContentType
@@ -17,10 +18,10 @@ import org.koin.core.qualifier.named
 import org.koin.ktor.ext.inject
 import java.io.File
 
-@Location("/archives")
-class Archives {
-    @Location("/{key}")
-    data class Archive(val parent: Archives, val key: String)
+@Location("/bookmarks/{bookmarkId}/archives")
+class Archives(val bookmarkId: Long) {
+    @Location("/{id}")
+    data class Archive(val parent: Archives, val id: Long)
 }
 
 fun Route.archives() {
@@ -28,7 +29,11 @@ fun Route.archives() {
     val archiveDir: String by application.inject(named(Constants.Storage.ARCHIVE_DIR))
 
     get<Archives.Archive> { req ->
-        val archive = db.archiveQueries.findByKey(req.key).executeAsOneOrNull() ?: throw NotFoundException()
+        val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.parent.bookmarkId).executeAsOneOrNull()
+            ?: throw NotFoundException()
+        val archive = db.archiveQueries.findByBookmarkAndId(bookmark.id, req.id).executeAsOneOrNull()
+            ?: throw NotFoundException()
+
         val file = File("${archiveDir}/${archive.path}")
         call.response.header(
             "Content-Security-Policy",

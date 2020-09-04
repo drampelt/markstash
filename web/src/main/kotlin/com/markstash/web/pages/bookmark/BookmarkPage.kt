@@ -168,7 +168,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
             }
             Archive.Status.COMPLETED -> {
                 iframe(classes = "w-full h-full") {
-                    attrs.src = "/api/archives/${archive.key}"
+                    attrs.src = "/api/bookmarks/${archive.bookmarkId}/archives/${archive.id}"
                 }
             }
         }

@@ -51,6 +51,10 @@ findById:
 SELECT * FROM archive
 WHERE id = ?;
 
+findByBookmarkAndId:
+SELECT * FROM archive
+WHERE bookmarkId = ? AND id = ?;
+
 findByKey:
 SELECT * FROM archive
 WHERE key = ?;
