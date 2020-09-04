@@ -31,6 +31,7 @@ data class Archive(
         HAR,
         WARC,
         PDF,
+        FAVICON,
     }
 
     @Serializable

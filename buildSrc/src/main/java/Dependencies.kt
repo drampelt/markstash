@@ -52,6 +52,7 @@ object Versions {
     const val svgSpriteLoader = "5.0.0"
     const val tailwindcss = "1.4.6"
     const val tailwindUi = "0.3.1"
+    const val touchicon = "0.8.0"
     const val urlLoader = "4.1.0"
     const val webextensionPolyfill = "0.6.0"
     const val xAppCompat = "1.1.0"
@@ -78,6 +79,7 @@ object Dependencies {
     const val kotlinReactRouterDom = "org.jetbrains:kotlin-react-router-dom:${Versions.kotlinReactRouter}"
     const val kotlinSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-core:${Versions.kotlinSerialization}"
     const val ktorAuthJwt = "io.ktor:ktor-auth-jwt:${Versions.ktor}"
+    const val ktorClientCio = "io.ktor:ktor-client-cio:${Versions.ktor}"
     const val ktorClientCore = "io.ktor:ktor-client-core:${Versions.ktor}"
     const val ktorClientJs = "io.ktor:ktor-client-js:${Versions.ktor}"
     const val ktorClientOkHttp = "io.ktor:ktor-client-okhttp:${Versions.ktor}"
@@ -95,5 +97,6 @@ object Dependencies {
     const val sqlDelightSqlite = "com.squareup.sqldelight:sqlite-driver:${Versions.sqlDelight}"
     const val sqlite = "org.xerial:sqlite-jdbc:${Versions.sqlite}"
     const val svm = "org.graalvm.nativeimage:svm:${Versions.graal}"
+    const val touchicon = "net.mm2d:touchicon:${Versions.touchicon}"
     const val xAppCompat = "androidx.appcompat:appcompat:${Versions.xAppCompat}"
 }

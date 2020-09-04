@@ -5,12 +5,21 @@ import com.markstash.api.models.Archive
 import com.markstash.server.Constants
 import com.markstash.server.db.BookmarkWithTags
 import com.markstash.server.db.Database
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.request.get
+import io.ktor.http.isSuccess
+import io.ktor.util.cio.writeChannel
+import io.ktor.util.extension
+import io.ktor.utils.io.copyAndClose
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import net.dankito.readability4j.Readability4J
 import net.lightbody.bmp.BrowserMobProxyServer
 import net.lightbody.bmp.proxy.CaptureType
+import net.mm2d.touchicon.PageIcon
+import net.mm2d.touchicon.Relationship
 import org.koin.core.qualifier.named
 import org.koin.ktor.ext.get
 import org.netpreserve.jwarc.HttpRequest
@@ -18,7 +27,9 @@ import org.netpreserve.jwarc.HttpResponse
 import org.netpreserve.jwarc.WarcRequest
 import org.netpreserve.jwarc.WarcResponse
 import org.netpreserve.jwarc.WarcWriter
+import org.openqa.selenium.By
 import org.openqa.selenium.OutputType
+import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -29,10 +40,12 @@ import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.security.SecureRandom
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import io.ktor.client.statement.HttpResponse as KtorHttpResponse
 
 class ArchiveWorker(
     private val userId: Long,
@@ -71,6 +84,7 @@ class ArchiveWorker(
     private var harArchiveId: Long = 0
     private var warcArchiveId: Long = 0
     private var pdfArchiveId: Long = 0
+    private var faviconArchiveId: Long = 0
 
     private val tmpDir by lazy { Files.createTempDirectory("tmp") }
 
@@ -103,10 +117,12 @@ class ArchiveWorker(
         harArchiveId = createArchive(Archive.Type.HAR)
         warcArchiveId = createArchive(Archive.Type.WARC)
         pdfArchiveId = createArchive(Archive.Type.PDF)
+        faviconArchiveId = createArchive(Archive.Type.FAVICON)
 
         startProxy()
         setupDriver()
         loadPage()
+        saveFavicon()
         saveBasic()
         saveMonolith()
         saveScreenshot()
@@ -387,6 +403,79 @@ class ArchiveWorker(
         log.error("Timeout waiting for chrome, killing process")
         pdfFile.delete()
         chromeProcess.destroyForcibly()
+    }
+
+    private suspend fun saveFavicon() {
+        log.debug("Starting favicon download")
+        val icons = (driver as WebDriver).findElements(By.xpath("//link")).mapNotNull { el ->
+            val rel = Relationship.values().firstOrNull { it.value == el.getAttribute("rel") } ?: return@mapNotNull null
+            if (rel == Relationship.MANIFEST) return@mapNotNull null
+            val href = el.getAttribute("href") ?: ""
+            if (href.isEmpty()) return@mapNotNull null
+            val url = URL(driver.currentUrl).let {
+                if (href.startsWith("//")) {
+                    it.protocol + ":" + href
+                } else {
+                    URL(it, href).toString()
+                }
+            }
+            val sizes = el.getAttribute("sizes") ?: ""
+            val mimeType = el.getAttribute("type") ?: ""
+            PageIcon(rel, url, sizes, mimeType)
+        }.sortedWith(compareBy<PageIcon> { it.rel.priority }.thenByDescending { it.inferSize().height }).let {
+            val url = URL(driver.currentUrl)
+            it + PageIcon(Relationship.SHORTCUT_ICON, "${url.protocol}://${url.host}/favicon.ico", "", "")
+        }
+
+        icons.forEach { log.debug("Icon: $it") }
+
+        if (icons.isEmpty()) {
+            log.error("No icons found")
+            return
+        }
+
+        HttpClient(CIO) { followRedirects = true }.use { client ->
+            for (icon in icons) {
+                log.debug("Trying to download $icon")
+                val response = runCatching { client.get<KtorHttpResponse>(icon.url) }
+                    .getOrNull() ?: continue
+
+                if (response.status.isSuccess()) {
+                    val ext = Paths.get(URL(icon.url).path).fileName.toString().substringAfterLast(".").takeIf { it.length <= 5 } ?: "unknown"
+                    val downloadTmp = File.createTempFile("favicon", "input.$ext")
+                    response.content.copyAndClose(downloadTmp.writeChannel())
+
+                    val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
+                    val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
+                    val fileName = "${date}_favicon_${key}.png"
+                    val file = File(archiveFolder, fileName)
+
+                    log.debug("Converting icon: ${downloadTmp.absolutePath} -> ${file.absolutePath}")
+                    val convertProcess = ProcessBuilder(listOf("convert", "${downloadTmp.absolutePath}[0]", file.absolutePath))
+                        .inheritIO()
+                        .start()
+
+                    var time = 0
+                    while (time < 300) {
+                        if (convertProcess.isAlive) {
+                            delay(100)
+                            time++
+                        } else if (convertProcess.exitValue() == 0) {
+                            log.debug("Completed icon conversion")
+                            db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), faviconArchiveId)
+                            downloadTmp.delete()
+                            return
+                        } else {
+                            log.error("Could not convert icon: exit code ${convertProcess.exitValue()}")
+                            downloadTmp.delete()
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        log.error("Could not download icon")
     }
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {

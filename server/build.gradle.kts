@@ -24,6 +24,7 @@ dependencies {
     implementation(Dependencies.jwarc)
     implementation(Dependencies.koinKtor)
     implementation(Dependencies.ktorAuthJwt)
+    implementation(Dependencies.ktorClientCio)
     implementation(Dependencies.ktorLocations)
     implementation(Dependencies.ktorSerialization)
     implementation(Dependencies.ktorServerCio)
@@ -32,6 +33,7 @@ dependencies {
     implementation(Dependencies.selenium)
     implementation(Dependencies.sqlDelightSqlite)
     implementation(Dependencies.sqlite)
+    implementation(Dependencies.touchicon)
 
     compileOnly(Dependencies.svm)
 }
