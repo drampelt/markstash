@@ -8,6 +8,7 @@ import com.markstash.api.errors.ErrorResponse
 import com.markstash.api.errors.NotFoundException
 import com.markstash.api.errors.ServerException
 import com.markstash.server.auth.CurrentUser
+import com.markstash.server.auth.MarkstashSession
 import com.markstash.server.controllers.archives
 import com.markstash.server.controllers.bookmarks
 import com.markstash.server.controllers.notes
@@ -30,6 +31,7 @@ import io.ktor.application.log
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.jwt.jwt
+import io.ktor.auth.session
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
@@ -39,6 +41,7 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.defaultForFilePath
 import io.ktor.locations.Locations
+import io.ktor.request.header
 import io.ktor.response.respond
 import io.ktor.response.respondOutputStream
 import io.ktor.routing.Routing
@@ -50,6 +53,11 @@ import io.ktor.server.engine.ApplicationEngineEnvironment
 import io.ktor.server.engine.addShutdownHook
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
+import io.ktor.sessions.SessionTransportTransformerMessageAuthentication
+import io.ktor.sessions.Sessions
+import io.ktor.sessions.cookie
+import io.ktor.sessions.get
+import io.ktor.sessions.sessions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -80,6 +88,10 @@ fun Application.main() {
     val jwtRealm = environment.config.property("jwt.realm").getString()
     val jwtSecret = environment.config.property("jwt.secret").getString()
     val jwtAlgorithm = Algorithm.HMAC256(jwtSecret)
+    val jwtVerifier = JWT.require(jwtAlgorithm)
+        .withIssuer(jwtIssuer)
+        .withAudience(jwtAudience)
+        .build()
 
     val dbPath = environment.config.propertyOrNull("markstash.database_dir")?.getString() ?: "database"
     val dbFolder = File(dbPath)
@@ -138,20 +150,44 @@ fun Application.main() {
     }
 
     install(Authentication) {
-        jwt {
+        jwt("jwt") {
             realm = jwtRealm
-            verifier(
-                JWT.require(jwtAlgorithm)
-                    .withIssuer(jwtIssuer)
-                    .withAudience(jwtAudience)
-                    .build()
-            )
+            verifier(jwtVerifier)
             validate { credential ->
                 if (!credential.payload.audience.contains(jwtAudience)) return@validate null
                 val apiKey = credential.payload.getClaim("apiKey").asString() ?: return@validate null
                 val db = get<Database>()
                 CurrentUser(db.userQueries.findByApiKey(apiKey).executeAsOne())
             }
+            skipWhen { call ->
+                call.sessions.get<MarkstashSession>() != null
+            }
+        }
+        session<MarkstashSession>("cookie") {
+            validate { session ->
+                val credential = try {
+                    jwtVerifier.verify(session.authToken)
+                } catch (e: Throwable) {
+                    return@validate null
+                }
+
+                if (!credential.audience.contains(jwtAudience)) return@validate null
+                val apiKey = credential.getClaim("apiKey").asString() ?: return@validate null
+                val db = get<Database>()
+                CurrentUser(db.userQueries.findByApiKey(apiKey).executeAsOne())
+            }
+            skipWhen { call ->
+                call.request.header("Authorization") != null && call.sessions.get<MarkstashSession>() == null
+            }
+        }
+    }
+
+    install(Sessions) {
+        cookie<MarkstashSession>("markstash_session") {
+            serializer = MarkstashSession.serializer
+            cookie.path = "/"
+            cookie.httpOnly = false
+            transform(SessionTransportTransformerMessageAuthentication(jwtSecret.toByteArray()))
         }
     }
 
@@ -171,7 +207,7 @@ fun Application.main() {
             users()
             archives()
 
-            authenticate {
+            authenticate("jwt", "cookie") {
                 bookmarks()
                 notes()
                 resources()

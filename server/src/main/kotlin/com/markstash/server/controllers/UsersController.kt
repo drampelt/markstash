@@ -10,6 +10,7 @@ import com.markstash.api.users.RegisterRequest
 import com.markstash.api.users.RegisterResponse
 import com.markstash.server.Constants
 import com.markstash.server.auth.ApiKeyGenerator
+import com.markstash.server.auth.MarkstashSession
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
 import io.ktor.application.call
@@ -20,6 +21,8 @@ import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import io.ktor.sessions.sessions
+import io.ktor.sessions.set
 import org.koin.core.qualifier.named
 import org.koin.ktor.ext.inject
 
@@ -55,6 +58,8 @@ fun Route.users() {
             .withClaim("apiKey", user.apiKey)
             .sign(jwtAlgorithm)
 
+        call.sessions.set(MarkstashSession(jwtToken))
+
         call.respond(RegisterResponse(
             user = User(
                 id = user.id,
@@ -66,7 +71,7 @@ fun Route.users() {
         ))
     }
 
-    authenticate {
+    authenticate("jwt", "cookie") {
         get<Users.Me> {
             call.respond(
                 User(
