@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":shared:api"))
     implementation(project(":shared:client"))
 
+    implementation(Dependencies.accompanist)
     implementation(Dependencies.composeFoundation)
     implementation(Dependencies.composeFoundationLayout)
     implementation(Dependencies.composeMaterial)

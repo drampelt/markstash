@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.foundation.lazy.LazyRowFor
@@ -29,15 +30,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import coil.request.ImageRequest
 import com.markstash.android.R
+import com.markstash.android.Session
+import com.markstash.android.inject
 import com.markstash.android.ui.components.Tag
 import com.markstash.api.models.Resource
 import com.markstash.client.util.formatRelativeDisplay
 import com.markstash.client.util.parseDomainFromUrl
+import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -53,6 +59,29 @@ fun ResourceList(resources: List<Resource>) {
         if (index < resources.size) {
             Divider()
         }
+    }
+}
+
+@Composable
+fun ResourceRowIcon(resource: Resource, modifier: Modifier = Modifier) {
+    val session: Session by inject()
+    val context = ContextAmbient.current
+
+    val coilRequest: ImageRequest? = remember(resource) {
+        if (resource.iconArchiveId == null) return@remember null
+        ImageRequest.Builder(context)
+            .data("${session.baseUrl}/bookmarks/${resource.id}/archives/${resource.iconArchiveId}")
+            .addHeader("Authorization", "Bearer ${session.authToken}")
+            .build()
+    }
+
+    if (coilRequest == null) {
+        Icon(
+            if (resource.type == Resource.Type.BOOKMARK) Icons.Default.Star else Icons.Default.Edit,
+            modifier = modifier,
+        )
+    } else {
+        CoilImage(request = coilRequest, modifier = modifier)
     }
 }
 
@@ -78,20 +107,17 @@ fun ResourceRow(resource: Resource) {
             verticalGravity = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
-            Icon(
-                if (resource.type == Resource.Type.BOOKMARK) Icons.Default.Star else Icons.Default.Edit,
-                modifier = Modifier.preferredSize(16.dp),
-            )
+            ResourceRowIcon(resource = resource, modifier = Modifier.size(16.dp))
 
             Spacer(modifier = Modifier.width(4.dp))
 
-            Text(
-                text = date.formatRelativeDisplay(),
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.drawOpacity(0.7f),
-            )
-
             if (resource.type == Resource.Type.BOOKMARK && domain != null) {
+                Text(
+                    text = domain,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.drawOpacity(0.7f),
+                )
+
                 Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
@@ -102,12 +128,13 @@ fun ResourceRow(resource: Resource) {
 
                 Spacer(modifier = Modifier.width(4.dp))
 
-                Text(
-                    text = domain,
-                    style = MaterialTheme.typography.caption,
-                    modifier = Modifier.drawOpacity(0.7f),
-                )
             }
+
+            Text(
+                text = date.formatRelativeDisplay(),
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.drawOpacity(0.7f),
+            )
         }
 
         Text(
@@ -163,6 +190,7 @@ fun ResourceRowBookmarkPreview() {
                 excerpt = "This is probably the best introduction to programming you could ever read.",
                 tags = setOf("blog", "programming", "introduction", "beginner", "python"),
                 url = "https://example.com",
+                iconArchiveId = null,
                 createdAt = Clock.System.now(),
                 updatedAt = Clock.System.now(),
             ))
@@ -183,6 +211,7 @@ fun ResourceRowNotePreview() {
                 excerpt = "Today I made some awesome previews in Compose, it's really nice",
                 tags = emptySet(),
                 url = null,
+                iconArchiveId = null,
                 createdAt = Clock.System.now().minus(5.days),
                 updatedAt = Clock.System.now().minus(3.days),
             ))

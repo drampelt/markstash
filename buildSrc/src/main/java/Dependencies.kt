@@ -15,6 +15,7 @@ object Versions {
     const val versions = "0.29.0"
 
     // Libraries
+    const val accompanist = "0.2.1"
     const val autoprefixer = "9.8.4"
     const val babel = "7.2.0"
     const val babelLoader = "8.1.0"
@@ -59,6 +60,7 @@ object Versions {
 }
 
 object Dependencies {
+    const val accompanist = "dev.chrisbanes.accompanist:accompanist-coil:${Versions.accompanist}"
     const val androidGradle = "com.android.tools.build:gradle:${Versions.androidGradle}"
     const val bcrypt = "at.favre.lib:bcrypt:${Versions.bcrypt}"
     const val browserMob = "net.lightbody.bmp:browsermob-core:2.1.5"
