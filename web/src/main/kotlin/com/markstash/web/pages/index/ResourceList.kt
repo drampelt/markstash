@@ -61,16 +61,16 @@ private val resourceRow = functionalComponent<ResourceRowProps> { props ->
                             }
                         }
                     }
-                    div {
-                        val date = if (props.resource.type == Resource.Type.BOOKMARK) props.resource.createdAt else props.resource.updatedAt
-                        +date.toLocalDateTime(TimeZone.currentSystemDefault()).formatRelativeDisplay()
-                    }
                     val domain = props.resource.url?.parseDomainFromUrl()
                     if (props.resource.type == Resource.Type.BOOKMARK && domain != null) {
-                        div("mx-1") { +"•" }
                         div("truncate") {
                             +domain
                         }
+                        div("mx-1") { +"•" }
+                    }
+                    div {
+                        val date = if (props.resource.type == Resource.Type.BOOKMARK) props.resource.createdAt else props.resource.updatedAt
+                        +date.toLocalDateTime(TimeZone.currentSystemDefault()).formatRelativeDisplay()
                     }
                 }
                 rawHtml("text-sm leading-5 font-medium text-gray-900 truncate") {
