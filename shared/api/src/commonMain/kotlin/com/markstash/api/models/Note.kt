@@ -47,6 +47,7 @@ data class Note(
         excerpt = excerpt,
         tags = tags,
         url = null,
+        iconArchiveId = null,
         createdAt = createdAt,
         updatedAt = updatedAt
     )

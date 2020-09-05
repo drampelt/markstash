@@ -1,12 +1,12 @@
 index:
 SELECT * FROM (
-    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, createdAt, updatedAt, createdAt AS sortDate FROM bookmarkWithTags
+    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, iconArchiveId, createdAt, updatedAt, createdAt AS sortDate FROM bookmarkWithTags
     WHERE userId = :userId
     ORDER BY createdAt DESC
 )
 UNION
 SELECT * FROM (
-    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, createdAt, updatedAt, updatedAt AS sortDate FROM simpleNoteWithTags
+    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, NULL AS iconArchiveId, createdAt, updatedAt, updatedAt AS sortDate FROM simpleNoteWithTags
     WHERE userId = :userId
     ORDER BY updatedAt DESC
 )
@@ -14,13 +14,13 @@ ORDER BY sortDate DESC;
 
 indexCreatedDesc:
 SELECT * FROM (
-    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, createdAt, updatedAt FROM bookmarkWithTags
+    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, iconArchiveId, createdAt, updatedAt FROM bookmarkWithTags
     WHERE userId = :userId
     ORDER BY createdAt DESC
 )
 UNION
 SELECT * FROM (
-    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, createdAt, updatedAt FROM simpleNoteWithTags
+    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, NULL AS iconArchiveId, createdAt, updatedAt FROM simpleNoteWithTags
     WHERE userId = :userId
     ORDER BY createdAt DESC
 )
@@ -28,20 +28,20 @@ ORDER BY createdAt DESC;
 
 indexUpdatedDesc:
 SELECT * FROM (
-    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, createdAt, updatedAt FROM bookmarkWithTags
+    SELECT 'bookmark' AS resourceType, id AS resourceId, title, excerpt, tags, url, iconArchiveId, createdAt, updatedAt FROM bookmarkWithTags
     WHERE userId = :userId
     ORDER BY updatedAt DESC
 )
 UNION
 SELECT * FROM (
-    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, createdAt, updatedAt FROM simpleNoteWithTags
+    SELECT 'note' AS resourceType, id AS resourceId, title, excerpt, tags, NULL AS url, NULL AS iconArchiveId, createdAt, updatedAt FROM simpleNoteWithTags
     WHERE userId = :userId
     ORDER BY updatedAt DESC
 )
 ORDER BY updatedAt DESC;
 
 search:
-SELECT resourceType, resourceId, title, excerpt, tags, url, snippet, createdAt, updatedAt FROM (
+SELECT resourceType, resourceId, title, excerpt, tags, url, iconArchiveId, snippet, createdAt, updatedAt FROM (
     SELECT * FROM (
         SELECT
             'bookmark' AS resourceType,
@@ -50,6 +50,7 @@ SELECT resourceType, resourceId, title, excerpt, tags, url, snippet, createdAt, 
             bookmarkWithTags.excerpt AS excerpt,
             bookmarkWithTags.tags AS tags,
             bookmarkWithTags.url AS url,
+            bookmarkWithTags.iconArchiveId AS iconArchiveId,
             bookmarkWithTags.createdAt AS createdAt,
             bookmarkWithTags.updatedAt AS updatedAt,
             snippet(bookmarkSearch, -1, '<b>', '</b>', '...', 25) AS snippet,
@@ -68,6 +69,7 @@ SELECT resourceType, resourceId, title, excerpt, tags, url, snippet, createdAt, 
             simpleNoteWithTags.excerpt AS excerpt,
             simpleNoteWithTags.tags AS tags,
             NULL AS url,
+            NULL AS iconArchiveId,
             simpleNoteWithTags.createdAt AS createdAt,
             simpleNoteWithTags.updatedAt AS updatedAt,
             snippet(noteSearch, -1, '<b>', '</b>', '...', 25) AS snippet,

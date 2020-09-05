@@ -8,7 +8,8 @@ CREATE TABLE bookmark (
     createdAt TEXT AS Instant NOT NULL,
     updatedAt TEXT AS Instant NOT NULL,
     excerpt TEXT,
-    author TEXT
+    author TEXT,
+    iconArchiveId INTEGER
 );
 
 CREATE INDEX bookmark_userId ON bookmark(userId);
@@ -91,6 +92,11 @@ WHERE userId = ? AND url = ?;
 updateMetadata:
 UPDATE bookmark
 SET excerpt = ?, author = ?
+WHERE id = ?;
+
+updateIcon:
+UPDATE bookmark
+SET iconArchiveId = ?
 WHERE id = ?;
 
 deleteById:

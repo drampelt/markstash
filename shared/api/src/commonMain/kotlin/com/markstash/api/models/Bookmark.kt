@@ -12,6 +12,7 @@ data class Bookmark(
     val id: Long,
     val title: String,
     val url: String,
+    val iconArchiveId: Long?,
     val excerpt: String?,
     val author: String?,
     val tags: Set<String>,
@@ -26,6 +27,7 @@ data class Bookmark(
         excerpt = excerpt,
         tags = tags,
         url = url,
+        iconArchiveId = iconArchiveId,
         createdAt = createdAt,
         updatedAt = updateAt
     )

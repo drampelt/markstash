@@ -15,6 +15,7 @@ data class Resource(
     val excerpt: String?,
     val tags: Set<String>,
     val url: String?,
+    val iconArchiveId: Long?,
     val createdAt: Instant,
     val updatedAt: Instant,
 ) {

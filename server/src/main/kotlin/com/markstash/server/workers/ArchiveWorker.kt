@@ -463,6 +463,7 @@ class ArchiveWorker(
                         } else if (convertProcess.exitValue() == 0) {
                             log.debug("Completed icon conversion")
                             db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), faviconArchiveId)
+                            db.bookmarkQueries.updateIcon(faviconArchiveId, bookmarkId)
                             downloadTmp.delete()
                             return
                         } else {

@@ -36,6 +36,7 @@ fun Route.resources() {
                 excerpt = resource.excerpt,
                 tags = resource.tags.split(",").filter(String::isNotBlank).toSet(),
                 url = resource.url,
+                iconArchiveId = resource.iconArchiveId,
                 createdAt = resource.createdAt.toInstant(),
                 updatedAt = resource.updatedAt.toInstant()
             )
@@ -53,6 +54,7 @@ fun Route.resources() {
                 excerpt = resource.snippet,
                 tags = resource.tags!!.split(",").filter(String::isNotBlank).toSet(),
                 url = resource.url,
+                iconArchiveId = resource.iconArchiveId,
                 createdAt = resource.createdAt!!.toInstant(),
                 updatedAt = resource.updatedAt!!.toInstant()
             )
