@@ -3,12 +3,10 @@ package com.markstash.android.ui.bookmark.receive
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
@@ -18,9 +16,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -38,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
@@ -47,7 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
-import androidx.ui.tooling.preview.Preview
+import coil.request.ImageRequest
 import com.markstash.android.KoinContext
 import com.markstash.android.R
 import com.markstash.android.inject
@@ -57,9 +53,17 @@ import com.markstash.api.bookmarks.CreateRequest
 import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
 import com.markstash.client.api.BookmarksApi
+import dev.chrisbanes.accompanist.coil.CoilImage
+import dev.chrisbanes.accompanist.coil.ErrorResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.mm2d.touchicon.Icon
+import net.mm2d.touchicon.PageIcon
+import net.mm2d.touchicon.Relationship
+import net.mm2d.touchicon.TouchIconExtractor
 import org.koin.android.ext.android.getKoin
+import java.net.URL
 
 class ReceiveBookmarkActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +97,7 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
     var bookmark by remember { mutableStateOf<Bookmark?>(null) }
+    var iconUrl by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
     val notUrlErrorMessage = stringResource(R.string.bookmark_label_not_url)
@@ -104,6 +109,27 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
             delay(2500)
             onFinish()
             return@launchInComposition
+        }
+
+        launch(Dispatchers.IO) {
+            iconUrl = TouchIconExtractor().fromPage(url, true)
+                .sortedWith(compareBy<Icon> { it.rel.priority }.thenByDescending { it.inferSize().height })
+                .let {
+                    if (it.isEmpty()) {
+                        val page = URL(url)
+                        it + PageIcon(
+                            rel = Relationship.SHORTCUT_ICON,
+                            url = "${page.protocol}://${page.host}/favicon.ico",
+                            sizes = "",
+                            mimeType = "",
+                            precomposed = false
+                        )
+                    } else {
+                        it
+                    }
+                }
+                .first()
+                .url
         }
 
         try {
@@ -148,6 +174,7 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
         ReceiveBookmarkContent(
             isLoading = isLoading,
             title = title,
+            iconUrl = iconUrl,
             error = error,
             bookmark = bookmark,
             onAddTag = ::addTag,
@@ -161,21 +188,39 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
 fun ReceiveBookmarkContent(
     isLoading: Boolean,
     title: String?,
+    iconUrl: String?,
     error: String?,
     bookmark: Bookmark?,
     onAddTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
 ) {
-    var tagInput by remember { mutableStateOf(TextFieldValue()) }
+    val context = ContextAmbient.current
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
-    val vibrator = ContextAmbient.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    var tagInput by remember { mutableStateOf(TextFieldValue()) }
+    var iconFailed by remember { mutableStateOf(false) }
+    val iconRequest: ImageRequest? = remember(iconUrl) {
+        if (iconUrl == null) return@remember null
+        ImageRequest.Builder(context)
+            .data(iconUrl)
+            .placeholder(R.drawable.ic_star)
+            .build()
+    }
 
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
         Row {
-            Icon(
-                asset = if (isLoading) Icons.Default.Refresh else Icons.Default.Star,
-                modifier = Modifier.preferredSize(48.dp)
-            )
+            if (iconRequest == null || isLoading || iconFailed) {
+                Icon(
+                    asset = if (isLoading) Icons.Default.Refresh else Icons.Default.Star,
+                    modifier = Modifier.size(48.dp),
+                )
+            } else {
+                CoilImage(
+                    request = iconRequest,
+                    modifier = Modifier.size(48.dp),
+                    onRequestCompleted = { iconFailed = it is ErrorResult },
+                )
+            }
 
             Spacer(Modifier.width(16.dp))
 

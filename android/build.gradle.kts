@@ -45,7 +45,7 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
     kotlinOptions {
         jvmTarget = Versions.jvm
-        freeCompilerArgs = freeCompilerArgs + listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check")
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check", "-Xjvm-default=compatibility")
     }
 }
 
@@ -62,6 +62,9 @@ dependencies {
     implementation(project(":shared:client"))
 
     implementation(Dependencies.accompanist)
+    implementation(Dependencies.coil)
+    implementation(Dependencies.coilIco)
+    implementation(Dependencies.coilSvg)
     implementation(Dependencies.composeFoundation)
     implementation(Dependencies.composeFoundationLayout)
     implementation(Dependencies.composeMaterial)
@@ -70,5 +73,6 @@ dependencies {
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
     implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.touchicon)
     implementation(Dependencies.xAppCompat)
 }
