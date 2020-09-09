@@ -13,6 +13,7 @@ object Versions {
     const val proguard = "7.0.0"
     const val androidGradle = "4.2.0-alpha10"
     const val versions = "0.29.0"
+    const val easylauncher = "3.2.1"
 
     // Libraries
     const val accompanist = "0.2.1"

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("com.starter.easylauncher")
 }
 
 android {
@@ -21,6 +22,10 @@ android {
             isMinifyEnabled = true
             setProguardFiles(listOf(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"))
         }
+        named("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
     }
 
     compileOptions {
@@ -39,6 +44,14 @@ android {
     composeOptions {
         kotlinCompilerVersion = Versions.kotlin
         kotlinCompilerExtensionVersion = Versions.kotlinComposeExtension
+    }
+}
+
+easylauncher {
+    buildTypes {
+        create("debug") {
+            filters(blueRibbonFilter())
+        }
     }
 }
 
