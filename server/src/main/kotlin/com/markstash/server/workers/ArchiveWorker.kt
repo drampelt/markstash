@@ -10,7 +10,6 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.get
 import io.ktor.http.isSuccess
 import io.ktor.util.cio.writeChannel
-import io.ktor.util.extension
 import io.ktor.utils.io.copyAndClose
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -364,18 +363,13 @@ class ArchiveWorker(
     }
 
     private suspend fun savePdf() {
-        val htmlArchive = db.archiveQueries.findById(monolithArchiveId).executeAsOneOrNull()
-            ?: db.archiveQueries.findById(originalArchiveId).executeAsOneOrNull()
-            ?: return
-
         log.debug("Starting pdf archive")
 
-        val port = application.environment.config.propertyOrNull("ktor.deployment.port")?.getString()?.toIntOrNull() ?: 8080
         val pdfFile = File.createTempFile("pdf", ".pdf")
         val chromeProcess = ProcessBuilder(
             listOf(chromeBin)
                 + chromeArgs
-                + listOf("--print-to-pdf=${pdfFile.absolutePath}", "http://localhost:$port/api/archives/${htmlArchive.key}")
+                + listOf("--print-to-pdf=${pdfFile.absolutePath}", bookmark.url)
         ).start()
 
         var time = 0
