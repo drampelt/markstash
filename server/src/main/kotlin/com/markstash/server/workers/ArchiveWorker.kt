@@ -320,7 +320,6 @@ class ArchiveWorker(
         Files.copy(screenshots.first().toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
         db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotArchiveId)
         log.debug("Completed screenshot archive")
-        file.delete()
 
         val extraHeight = ((viewportHeight - (pageHeight % viewportHeight)).takeIf { it < pageHeight } ?: 0) * dpi
         log.debug("Finished scrolling, saved ${screenshots.size} screenshots. Starting imagemagick merge, cutting off extra height: $extraHeight")
