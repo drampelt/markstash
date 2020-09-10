@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.SerializationKt
+-keep,includedescriptorclasses class com.markstash.api.**$$serializer { *; }
+-keepclassmembers class com.markstash.api.** {
+    *** Companion;
+}
+-keepclasseswithmembers class com.markstash.api.** {
+    kotlinx.serialization.KSerializer serializer(...);
+}
