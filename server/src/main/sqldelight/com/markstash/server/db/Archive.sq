@@ -27,6 +27,10 @@ insert:
 INSERT INTO archive (bookmarkId, type, status, path, data, createdAt, updatedAt, key)
 VALUES (?, ?, ?, ?, ?, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), strftime('%Y-%m-%dT%H:%M:%fZ', 'now'), ?);
 
+insertWithDate:
+INSERT INTO archive (bookmarkId, type, status, path, data, createdAt, updatedAt, key)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
 lastInsert:
 SELECT last_insert_rowid();
 

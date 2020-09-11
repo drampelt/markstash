@@ -1,6 +1,5 @@
 package com.markstash.server.workers
 
-import com.google.common.hash.Hashing
 import com.markstash.api.models.Archive
 import com.markstash.server.Constants
 import com.markstash.server.db.BookmarkWithTags
@@ -14,6 +13,7 @@ import io.ktor.utils.io.copyAndClose
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import net.dankito.readability4j.Readability4J
 import net.lightbody.bmp.BrowserMobProxyServer
 import net.lightbody.bmp.proxy.CaptureType
@@ -37,13 +37,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URI
 import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.security.SecureRandom
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.Locale
 import io.ktor.client.statement.HttpResponse as KtorHttpResponse
 
 class ArchiveWorker(
@@ -67,6 +65,7 @@ class ArchiveWorker(
 
     private lateinit var bookmark: BookmarkWithTags
     private lateinit var driver: ChromeDriver
+    private val date = Clock.System.now()
     private var harProxy: BrowserMobProxyServer? = null
     private var warcWriter: WarcWriter? = null
     private var warcRequests = mutableMapOf<String, URI>()
@@ -95,6 +94,7 @@ class ArchiveWorker(
         var archivePrefix = "${url.host}/$path"
         if (query != null) archivePrefix += "_$query"
         if (archivePrefix.length > 500) archivePrefix = archivePrefix.substring(0, 499)
+        archivePrefix += "/${date.epochSeconds}"
         archivePrefix
     }
 
@@ -172,10 +172,7 @@ class ArchiveWorker(
     }
 
     private fun startProxy() {
-        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of warc
-        val fileName = "${date}_warc_${key}.warc"
-        val file = File(archiveFolder, fileName).also { warcFile = it }
+        val file = File(archiveFolder, "warc.warc").also { warcFile = it }
         warcWriter = WarcWriter(FileOutputStream(file))
 
         harProxy = BrowserMobProxyServer().also { proxy ->
@@ -223,9 +220,7 @@ class ArchiveWorker(
         isWarcPaused = true
         warcWriter?.close()
 
-        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of har
-        val fileName = "${date}_har_${key}.har"
+        val fileName = "har.har"
         val file = File(archiveFolder, fileName)
         harProxy?.har?.writeTo(file)
 
@@ -313,9 +308,7 @@ class ArchiveWorker(
             return
         }
 
-        val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-        val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
-        val fileName = "${date}_screenshot_${key}.png"
+        val fileName = "screenshot.png"
         val file = File(archiveFolder, fileName)
         Files.copy(screenshots.first().toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
         db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), screenshotArchiveId)
@@ -338,8 +331,7 @@ class ArchiveWorker(
                 delay(1000)
                 time++
             } else if (convertProcess.exitValue() == 0) {
-                val fullKey = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
-                val fullFileName = "${date}_screenshot_full_${fullKey}.png"
+                val fullFileName = "screenshot_full.png"
                 val fullFile = File(archiveFolder, fullFileName)
                 Files.copy(mergedScreenshot.toPath(), fullFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fullFileName", fullFile.length().toString(), screenshotFullArchiveId)
@@ -377,9 +369,7 @@ class ArchiveWorker(
                 delay(1000)
                 time++
             } else if (chromeProcess.exitValue() == 0) {
-                val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-                val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of pdf
-                val fileName = "${date}_pdf_${key}.pdf"
+                val fileName = "pdf.pdf"
                 val file = File(archiveFolder, fileName)
                 Files.copy(pdfFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), pdfArchiveId)
@@ -438,9 +428,7 @@ class ArchiveWorker(
                     val downloadTmp = File.createTempFile("favicon", "input.$ext")
                     response.content.copyAndClose(downloadTmp.writeChannel())
 
-                    val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-                    val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("") // TODO: use actual hash of image
-                    val fileName = "${date}_favicon_${key}.png"
+                    val fileName = "favicon.png"
                     val file = File(archiveFolder, fileName)
 
                     log.debug("Converting icon: ${downloadTmp.absolutePath} -> ${file.absolutePath}")
@@ -474,7 +462,7 @@ class ArchiveWorker(
 
     private fun createArchive(type: Archive.Type): Long = db.transactionWithResult {
         val key = (1..16).map { SecureRandom().nextInt(keyPool.size) }.map(keyPool::get).joinToString("")
-        db.archiveQueries.insert(bookmarkId, type, Archive.Status.PROCESSING, null, null, key)
+        db.archiveQueries.insertWithDate(bookmarkId, type, Archive.Status.PROCESSING, null, null, date, date, key)
         db.archiveQueries.lastInsert().executeAsOne()
     }
 
@@ -488,9 +476,7 @@ class ArchiveWorker(
                 db.archiveQueries.update(status, null, "Could not get content", id)
             }
             else -> {
-                val date = LocalDate.now().format(DateTimeFormatter.BASIC_ISO_DATE)
-                val hash = Hashing.sha256().hashString(content, StandardCharsets.UTF_8).toString()
-                val fileName = "${date}_${type.name.toLowerCase()}_${hash.substring(0, 15)}.html"
+                val fileName = "${type.name.toLowerCase(Locale.ROOT)}.html"
                 val file = File(archiveFolder, fileName)
                 file.writeText(content)
                 db.archiveQueries.update(status, "$archivePath/$fileName", file.length().toString(), id)
