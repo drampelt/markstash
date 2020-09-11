@@ -1,6 +1,6 @@
 object Versions {
     const val jvm = "1.8"
-    const val kotlin = "1.4.0"
+    const val kotlin = "1.4.10"
     const val kotlinComposeExtension = "1.0.0-alpha02"
     const val graal = "20.1.0"
     const val androidMinSdk = 21
