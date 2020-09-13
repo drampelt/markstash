@@ -5,6 +5,7 @@ import com.markstash.api.models.Archive
 import com.markstash.shared.js.api.bookmarksApi
 import com.markstash.shared.js.components.resourceTag
 import com.markstash.shared.js.helpers.rawHtml
+import com.markstash.web.components.ArchiveIframe
 import com.markstash.web.components.modal
 import com.markstash.web.pages.index.ResourceStore
 import kotlinx.coroutines.GlobalScope
@@ -167,7 +168,8 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                 p { +"Archive processing failed" }
             }
             Archive.Status.COMPLETED -> {
-                iframe(classes = "w-full h-full") {
+                child(ArchiveIframe) {
+                    attrs.classes = "w-full h-full"
                     attrs.src = "/api/bookmarks/${archive.bookmarkId}/archives/${archive.id}"
                 }
             }
