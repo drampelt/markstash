@@ -25,6 +25,7 @@ dependencies {
     api(devNpm("postcss-nested", Versions.postcssNested))
     api(devNpm("tailwindcss", Versions.tailwindcss))
     api(devNpm("@tailwindcss/ui", Versions.tailwindUi))
+    api(devNpm("@tailwindui/react", Versions.tailwindUiReact))
     api(devNpm("autoprefixer", Versions.autoprefixer))
     api(devNpm("cssnano", Versions.cssnano))
     api(devNpm("babel-loader", Versions.babelLoader))
