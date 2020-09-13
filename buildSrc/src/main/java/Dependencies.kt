@@ -56,6 +56,7 @@ object Versions {
     const val svgSpriteLoader = "5.0.0"
     const val tailwindcss = "1.4.6"
     const val tailwindUi = "0.3.1"
+    const val tailwindUiReact = "0.1.1"
     const val touchicon = "0.8.0"
     const val urlLoader = "4.1.0"
     const val webextensionPolyfill = "0.6.0"
