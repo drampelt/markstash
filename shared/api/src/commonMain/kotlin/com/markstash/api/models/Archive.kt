@@ -20,18 +20,27 @@ data class Archive(
     val updatedAt: Instant,
 ) {
     @Serializable
-    enum class Type {
-        ORIGINAL,
-        PLAIN,
-        READABILITY,
-        MONOLITH,
-        MONOLITH_READABILITY,
-        SCREENSHOT,
-        SCREENSHOT_FULL,
-        HAR,
-        WARC,
-        PDF,
-        FAVICON,
+    enum class Type(val previewType: PreviewType, val displayName: String) {
+        ORIGINAL(PreviewType.INLINE, "Original"),
+        PLAIN(PreviewType.NONE, "Plain Text"),
+        PDF(PreviewType.INLINE, "PDF"),
+        MONOLITH(PreviewType.INLINE, "Monolith"),
+        READABILITY(PreviewType.INLINE, "Readability"),
+        MONOLITH_READABILITY(PreviewType.INLINE, "Readability (Monolith)"),
+        SCREENSHOT(PreviewType.INLINE, "Screenshot"),
+        SCREENSHOT_FULL(PreviewType.INLINE, "Full Page Screenshot"),
+        HAR(PreviewType.DOWNLOAD, "HAR"),
+        WARC(PreviewType.DOWNLOAD, "WARC"),
+        FAVICON(PreviewType.DOWNLOAD, "Favicon"),
+        ;
+
+        enum class PreviewType {
+            NONE,
+            INLINE,
+            DOWNLOAD,
+            EXTERNAL,
+            ;
+        }
     }
 
     @Serializable
