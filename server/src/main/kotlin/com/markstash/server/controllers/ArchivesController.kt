@@ -5,11 +5,16 @@ import com.markstash.api.models.Archive
 import com.markstash.server.Constants
 import com.markstash.server.auth.currentUser
 import com.markstash.server.db.Database
+import com.markstash.server.workers.ArchiveWorker
+import com.markstash.server.workers.JobProcessor
 import io.ktor.application.call
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.locations.Location
 import io.ktor.locations.get
+import io.ktor.locations.post
 import io.ktor.response.header
+import io.ktor.response.respond
 import io.ktor.response.respondFile
 import io.ktor.response.respondOutputStream
 import io.ktor.routing.Route
@@ -27,6 +32,7 @@ class Archives(val bookmarkId: Long) {
 fun Route.archives() {
     val db: Database by inject()
     val archiveDir: String by application.inject(named(Constants.Storage.ARCHIVE_DIR))
+    val jobProcessor: JobProcessor by inject()
 
     get<Archives.Archive> { req ->
         val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.parent.bookmarkId).executeAsOneOrNull()
@@ -54,5 +60,14 @@ fun Route.archives() {
                 call.respondFile(file)
             }
         }
+    }
+
+    post<Archives> { req ->
+        val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.bookmarkId).executeAsOneOrNull()
+            ?: throw NotFoundException()
+
+        jobProcessor.submit(ArchiveWorker(bookmark.userId, bookmark.id))
+
+        call.respond(HttpStatusCode.NoContent, Unit)
     }
 }
