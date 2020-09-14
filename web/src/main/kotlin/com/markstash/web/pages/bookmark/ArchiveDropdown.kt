@@ -121,12 +121,12 @@ private interface ArchiveTypeRowProps : RProps {
 }
 
 private val ArchiveTypeRow = functionalComponent<ArchiveTypeRowProps> { props ->
+    val archive = props.archives.maxByOrNull(Archive::createdAt)!!
     val href = if (props.type.previewType == Archive.Type.PreviewType.EXTERNAL || props.type.previewType == Archive.Type.PreviewType.DOWNLOAD) {
-        val archive = props.archives.first()
         "/api/bookmarks/${archive.bookmarkId}/archives/${archive.id}"
     } else null
     a(href = href, target = "_blank", classes = "group flex items-center px-4 py-2 cursor-pointer text-sm leading-5 text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:bg-gray-100 focus:text-gray-900") {
-        if (href == null) attrs.onClickFunction = { props.onSelectArchive(props.archives.first()) }
+        if (href == null) attrs.onClickFunction = { props.onSelectArchive(archive) }
         rawHtml("mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-focus:text-gray-500") {
             props.type.icon()
         }
