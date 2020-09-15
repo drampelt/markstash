@@ -5,6 +5,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.EventListenerOptions
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
+import org.w3c.dom.get
 import react.RMutableRef
 import react.RProps
 import react.dom.*
@@ -41,12 +42,16 @@ val ArchiveIframe = functionalComponent<ArchiveIframeProps> { props ->
         }
 
         val loadListener = EventListener {
-            iframeRef.current.asDynamic().contentWindow.document.unsafeCast<Document>().addEventListener("click", clickHandler, EventListenerOptions(capture = true))
+            val document = iframeRef.current.asDynamic().contentWindow.document.unsafeCast<Document>()
+            document.addEventListener("click", clickHandler, EventListenerOptions(capture = true))
+
+            val links = document.links
+            for (i in 0 until links.length) {
+                links[i]?.setAttribute("target", "_blank")
+            }
         }
 
-        iframeRef.current?.let {
-            it.addEventListener("load", loadListener)
-        }
+        iframeRef.current?.addEventListener("load", loadListener)
 
         return@useEffectWithCleanup {
             iframeRef.current?.let {
