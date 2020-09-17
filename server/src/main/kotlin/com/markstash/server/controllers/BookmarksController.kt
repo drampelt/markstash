@@ -147,11 +147,11 @@ fun Route.bookmarks() {
         val bookmark = db.bookmarkQueries.findById(currentUser.user.id, req.id).executeAsOneOrNull()
             ?: throw NotFoundException()
         val updateRequest = call.receive<UpdateRequest>()
-        val newTags = updateRequest.tags.map { it.toLowerCase() }
+        val currentTags = bookmark.tags.split(",").toSet()
+        val newTags = (updateRequest.tags ?: currentTags).map { it.toLowerCase() }
         val tagsValid = newTags.all { it.matches(tagRegex) }
         if (!tagsValid) throw ValidationException("tags", "must be alphanumeric (may include dashes)")
 
-        val currentTags = bookmark.tags.split(",").toSet()
         val newBookmark = db.transactionWithResult<BookmarkWithTags> {
             (newTags - currentTags).forEach { newTag ->
                 db.tagQueries.insert(currentUser.user.id, newTag)
@@ -161,6 +161,8 @@ fun Route.bookmarks() {
             (currentTags - newTags).forEach { oldTag ->
                 db.tagQueries.untagByName("bookmark", bookmark.id, currentUser.user.id, oldTag)
             }
+
+            db.bookmarkQueries.updateMetadata(updateRequest.title ?: bookmark.title, updateRequest.excerpt ?: bookmark.excerpt, bookmark.author, bookmark.id)
 
             db.bookmarkQueries.findById(currentUser.user.id, bookmark.id).executeAsOne()
         }

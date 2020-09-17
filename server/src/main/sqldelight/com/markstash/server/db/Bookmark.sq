@@ -91,7 +91,7 @@ WHERE userId = ? AND url = ?;
 
 updateMetadata:
 UPDATE bookmark
-SET excerpt = ?, author = ?
+SET title = ?, excerpt = ?, author = ?
 WHERE id = ?;
 
 updateIcon:

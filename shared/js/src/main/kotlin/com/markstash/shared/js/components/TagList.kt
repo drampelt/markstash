@@ -2,6 +2,7 @@ package com.markstash.shared.js.components
 
 import com.markstash.api.tags.IndexResponse
 import com.markstash.shared.js.api.tagsApi
+import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.InputType
@@ -32,6 +33,8 @@ interface TagListProps : RProps {
     var onAddTag: (String) -> Boolean
     var onRemoveTag: (String) -> Boolean
     var showSuggestionsInline: Boolean?
+    var autoFocus: Boolean?
+    var matchInputStyle: Boolean?
 }
 
 val tagList = functionalComponent<TagListProps> { props ->
@@ -72,6 +75,7 @@ val tagList = functionalComponent<TagListProps> { props ->
     }
 
     fun handleBlur() {
+        setIsFocused(false)
         setIsLastSelected(false)
 
         if (!suggestionListHovered) {
@@ -81,6 +85,12 @@ val tagList = functionalComponent<TagListProps> { props ->
 
     fun handleInputChange(e: Event) {
         setText((e.currentTarget as HTMLInputElement).value)
+    }
+
+    fun requestFocus() {
+        window.setTimeout({
+            inputRef.current?.focus()
+        }, 1)
     }
 
     fun handleInputKeyPress(e: Event) {
@@ -93,19 +103,23 @@ val tagList = functionalComponent<TagListProps> { props ->
                     if (props.onAddTag(filteredTagList[selectedSuggestionIndex].name)) {
                         setText("")
                         setSelectedSuggestionIndex(-1)
+                        requestFocus()
                     }
                 } else if (text.isNotBlank() && props.onAddTag(text.toLowerCase())) {
                     setText("")
+                    requestFocus()
                 }
             }
             "Backspace" -> {
                 if (text.isEmpty()) {
+                    e.preventDefault()
                     if (isLastSelected) {
                         setIsLastSelected(false)
                         props.onRemoveTag(props.tags.last())
                     } else {
                         setIsLastSelected(true)
                     }
+                    requestFocus()
                 }
             }
             "ArrowDown" -> {
@@ -143,6 +157,7 @@ val tagList = functionalComponent<TagListProps> { props ->
                         attrs.onClickFunction = {
                             it.stopPropagation()
                             props.onAddTag(tag.name)
+                            requestFocus()
                         }
                         div("flex-grow truncate") {
                             +tag.name
@@ -156,32 +171,38 @@ val tagList = functionalComponent<TagListProps> { props ->
         }
     }
 
-    div("flex items-center flex-wrap relative") {
-        attrs.onClickFunction = { inputRef.current?.focus() }
-        props.tags.forEachIndexed { index, tag ->
-            attrs.key = tag
-            child(resourceTag) {
-                attrs.tag = tag
-                attrs.onDelete = {
-                    it.stopPropagation()
-                    props.onRemoveTag(tag)
+    val wrapperClasses = if (props.matchInputStyle == true) "mt-1 rounded-md shadow-sm" else ""
+    val selectedBorderClasses = if (isFocused) "border-blue-300 shadow-outline" else ""
+    val borderClasses = if (props.matchInputStyle == true) "border rounded-md py-2 px-3 w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5 $selectedBorderClasses" else ""
+    div(wrapperClasses) {
+        div("flex items-center flex-wrap relative $borderClasses") {
+            attrs.onClickFunction = { inputRef.current?.focus() }
+            props.tags.forEachIndexed { index, tag ->
+                attrs.key = tag
+                child(resourceTag) {
+                    attrs.tag = tag
+                    attrs.onDelete = {
+                        it.stopPropagation()
+                        props.onRemoveTag(tag)
+                        requestFocus()
+                    }
+                    attrs.isSelected = isLastSelected && index == props.tags.size - 1
+                    attrs.classes = "mb-1"
                 }
-                attrs.isSelected = isLastSelected && index == props.tags.size - 1
-                attrs.classes = "mb-1"
             }
-        }
-        div("ml-1 ${if (props.showSuggestionsInline == true) "relative" else ""}") {
-            input(type = InputType.text, classes = "bg-none ml-1 focus:outline-none py-1") {
-                ref = inputRef
-                attrs.autoFocus = true
-                attrs.value = text
-                if (props.tags.isEmpty()) attrs.placeholder = "Add tags..."
-                attrs.onChangeFunction = { handleInputChange(it) }
-                attrs.onKeyDownFunction = { handleInputKeyPress(it) }
-                attrs.onBlurFunction = { handleBlur() }
-                attrs.onFocusFunction = { handleFocus() }
+            div("${if (props.tags.isEmpty()) "" else "ml-1"} ${if (props.showSuggestionsInline == true) "relative" else ""}") {
+                input(type = InputType.text, classes = "bg-none ml-1 focus:outline-none py-1 text-xs") {
+                    ref = inputRef
+                    attrs.autoFocus = props.autoFocus ?: true
+                    attrs.value = text
+                    if (props.tags.isEmpty()) attrs.placeholder = "Add tags..."
+                    attrs.onChangeFunction = { handleInputChange(it) }
+                    attrs.onKeyDownFunction = { handleInputKeyPress(it) }
+                    attrs.onBlurFunction = { handleBlur() }
+                    attrs.onFocusFunction = { handleFocus() }
+                }
+                renderTagList()
             }
-            renderTagList()
         }
     }
 }

@@ -24,7 +24,7 @@ val modal = functionalComponent<ModalProps> { props ->
         }
         attrs.className = jsObject {
             val transitionStyle = if (props.isOpen) "ease-out duration-300" else "ease-in duration-200"
-            base = "relative bg-white rounded-lg outline-none px-4 pt-5 pb-4 w-full overflow-hidden shadow-xl transform transition-all $transitionStyle sm:max-w-lg sm:p-6 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            base = "relative bg-white rounded-lg outline-none px-4 pt-5 pb-4 w-full shadow-xl transform transition-all $transitionStyle sm:max-w-lg sm:p-6 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             afterOpen = if (props.isOpen) "opacity-100 translate-y-0 sm:scale-100" else ""
         }
         attrs.closeTimeoutMS = 200

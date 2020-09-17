@@ -243,7 +243,7 @@ class ArchiveWorker(
         val article = Readability4J(driver.currentUrl, html).parse()
         saveArchive(plainArchiveId, Archive.Type.PLAIN, article.textContent)
         saveArchive(readabilityArchiveId, Archive.Type.READABILITY, article.content)
-        db.bookmarkQueries.updateMetadata(article.excerpt, article.byline, bookmarkId)
+        db.bookmarkQueries.updateMetadata(bookmark.title, article.excerpt, article.byline, bookmarkId)
     }
 
     private suspend fun saveMonolith() {

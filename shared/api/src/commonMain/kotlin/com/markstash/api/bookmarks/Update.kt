@@ -5,7 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateRequest(
-    val tags: Set<String>
+    val title: String? = null,
+    val excerpt: String? = null,
+    val tags: Set<String>? = null,
 )
 
 typealias UpdateResponse = Bookmark
