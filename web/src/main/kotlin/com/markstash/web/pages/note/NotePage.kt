@@ -120,6 +120,12 @@ val notePage = functionalComponent<NotePageProps> { props ->
         props.history.push(path)
     }
 
+    fun handleEdit(newNote: Note) {
+        setNote(newNote)
+        NoteStore.update(newNote)
+        ResourceStore.updateResource(newNote.toResource())
+    }
+
     fun RBuilder.renderHeader() {
         div("flex items-center h-16 z-10 bg-white shadow p-4") {
             div("flex-grow w-0") {
@@ -154,7 +160,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
                         attrs.onClickOut = { setIsOptionsDropdownOpen(false) }
                         attrs.note = note
                         attrs.onDelete = { handleDelete() }
-//                        attrs.onEdit = { handleEdit(it) }
+                        attrs.onEdit = { handleEdit(it) }
                     }
                 }
             }

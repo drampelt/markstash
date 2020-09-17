@@ -56,11 +56,11 @@ val NoteOptionsDropdown = functionalComponent<NoteOptionsDropdownProps> { props 
         attrs.onRequestClose = { setIsDeleteModalOpen(false) }
         attrs.onDelete = { props.onDelete() }
     }
-//
-//    child(EditNoteModal) {
-//        attrs.note = props.note
-//        attrs.isOpen = isEditModalOpen
-//        attrs.onRequestClose = { setIsEditModalOpen(false) }
-//        attrs.onEdit = { props.onEdit(it) }
-//    }
+
+    child(EditNoteModal) {
+        attrs.note = props.note
+        attrs.isOpen = isEditModalOpen
+        attrs.onRequestClose = { setIsEditModalOpen(false) }
+        attrs.onEdit = { props.onEdit(it) }
+    }
 }

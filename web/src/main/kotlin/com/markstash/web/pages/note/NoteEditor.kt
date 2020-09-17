@@ -12,6 +12,7 @@ import react.functionalComponent
 import react.useLayoutEffectWithCleanup
 import kotlinx.browser.document
 import kotlinx.browser.window
+import react.useEffect
 
 interface NoteEditorProps : RProps {
     var content: String?
@@ -22,6 +23,11 @@ val noteEditor = functionalComponent<NoteEditorProps> { props ->
     // useRef seems to be broken... https://github.com/JetBrains/kotlin-wrappers/issues/315
     val editorWrapper = js("require('react').useRef()").unsafeCast<RMutableRef<Element>>()
     val muya = js("require('react').useRef()").unsafeCast<RMutableRef<Muya>>()
+    val onChangeRef = js("require('react').useRef()").unsafeCast<RMutableRef<((String) -> Unit)?>>()
+
+    useEffect(listOf(props.onContentChange)) {
+        onChangeRef.current = props.onContentChange
+    }
 
     useLayoutEffectWithCleanup(listOf()) {
         val editorDiv = document.createElement("div")
@@ -32,7 +38,7 @@ val noteEditor = functionalComponent<NoteEditorProps> { props ->
         }
         muya.current = Muya(editorDiv, options)
         muya.current.on("change") { changes: ChangeEvent ->
-            props.onContentChange?.invoke(changes.markdown)
+            onChangeRef.current?.invoke(changes.markdown)
         }
 
         return@useLayoutEffectWithCleanup {
