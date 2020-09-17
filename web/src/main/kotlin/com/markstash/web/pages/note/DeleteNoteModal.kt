@@ -31,6 +31,7 @@ val DeleteNoteModal = functionalComponent<DeleteNoteModalProps> { props ->
                 notesApi.delete(props.id)
                 setIsSaving(false)
                 props.onDelete()
+                props.onRequestClose()
             } catch (e: Throwable) {
                 setError(e.message ?: "Could not delete note")
                 setIsSaving(false)

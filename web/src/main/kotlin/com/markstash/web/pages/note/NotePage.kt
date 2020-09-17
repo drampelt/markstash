@@ -42,7 +42,7 @@ val notePage = functionalComponent<NotePageProps> { props ->
     val (isLoading, setIsLoading) = useState(cachedNote == null)
     val (note, setNote) = useState(cachedNote)
     val (error, setError) = useState<String?>(null)
-    val (isDeleteModalOpen, setIsDeleteModalOpen) = useState(false)
+    val (isOptionsDropdownOpen, setIsOptionsDropdownOpen) = useState(false)
     val saveChannel = js("require('react').useRef()").unsafeCast<RMutableRef<Channel<Note>>>()
     val everythingMatch = useRouteMatch<RProps>("/everything")
 
@@ -109,7 +109,6 @@ val notePage = functionalComponent<NotePageProps> { props ->
 
     fun handleDelete() {
         note ?: return
-        setIsDeleteModalOpen(false)
         NoteStore.delete(note)
         val nextResource = ResourceStore.deleteResource(note.toResource())
         val path = StringBuilder().apply {
@@ -142,19 +141,22 @@ val notePage = functionalComponent<NotePageProps> { props ->
                     }
                 }
             }
-            div("flex-no-shrink flex items-center") {
+            div("relative") {
                 div("w-6 h-6 ml-2 text-gray-500 cursor-pointer hover:text-gray-700") {
-                    attrs.onClickFunction = { setIsDeleteModalOpen(true) }
+                    attrs.onClickFunction = { setIsOptionsDropdownOpen(true) }
                     rawHtml {
-                        "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z\" clip-rule=\"evenodd\"></path></svg>"
+                        "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z\" /></svg>"
                     }
                 }
-            }
-            child(DeleteNoteModal) {
-                attrs.id = noteId
-                attrs.isOpen = isDeleteModalOpen
-                attrs.onRequestClose = { setIsDeleteModalOpen(false) }
-                attrs.onDelete = { handleDelete() }
+                if (note != null) {
+                    child(NoteOptionsDropdown) {
+                        attrs.isOpen = isOptionsDropdownOpen
+                        attrs.onClickOut = { setIsOptionsDropdownOpen(false) }
+                        attrs.note = note
+                        attrs.onDelete = { handleDelete() }
+//                        attrs.onEdit = { handleEdit(it) }
+                    }
+                }
             }
         }
     }
