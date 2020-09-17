@@ -1,25 +1,20 @@
 package com.markstash.android.ui.main
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Icon
-import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.InnerPadding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumnForIndexed
 import androidx.compose.foundation.lazy.LazyRowFor
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -31,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ContextAmbient
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,7 +43,6 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.days
 
@@ -106,7 +99,7 @@ fun ResourceRow(resource: Resource) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
-            verticalGravity = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             ResourceRowIcon(resource = resource, modifier = Modifier.size(16.dp))
@@ -170,7 +163,7 @@ fun ResourceRow(resource: Resource) {
         } else {
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyRowFor(items = tags, contentPadding = InnerPadding(start = 16.dp, end = 16.dp)) { tag ->
+            LazyRowFor(items = tags, contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) { tag ->
                 Tag(tag = tag)
                 Spacer(modifier = Modifier.width(8.dp))
             }
