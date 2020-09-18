@@ -3,11 +3,13 @@ package com.markstash.web.pages.bookmark
 import com.markstash.api.bookmarks.ShowResponse
 import com.markstash.api.models.Archive
 import com.markstash.api.models.Bookmark
+import com.markstash.api.models.Resource
 import com.markstash.shared.js.api.bookmarksApi
 import com.markstash.shared.js.components.resourceTag
 import com.markstash.shared.js.helpers.rawHtml
 import com.markstash.web.components.ArchiveIframe
 import com.markstash.web.pages.index.ResourceStore
+import com.markstash.web.useStore
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.html.js.onClickFunction
@@ -28,15 +30,33 @@ interface BookmarkPageProps : RProps {
 
 val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
     val bookmarkId = props.id.toLong()
-    val (isLoading, setIsLoading) = useState(true)
-    val (bookmark, setBookmark) = useState<ShowResponse?>(null)
+    val cachedBookmark = useStore(BookmarkStore, listOf(props.id)) { it.bookmarks[bookmarkId] }
+    val cachedResource = useStore(ResourceStore, listOf(props.id)) { state ->
+        state.resources.firstOrNull { it.type == Resource.Type.BOOKMARK && it.id == bookmarkId }
+    }
+    val (isLoading, setIsLoading) = useState(cachedBookmark == null)
+    val (bookmark, setBookmark) = useState(cachedBookmark)
     val (error, setError) = useState<String?>(null)
     val (selectedArchive, setSelectedArchive) = useState<Archive?>(null)
     val (isArchiveDropdownOpen, setIsArchiveDropdownOpen) = useState(false)
     val (isOptionsDropdownOpen, setIsOptionsDropdownOpen) = useState(false)
     val everythingMatch = useRouteMatch<RProps>("/everything")
 
-    useEffect(listOf(props.id)) {
+    useEffect(listOf(props.id, cachedBookmark)) {
+        if (bookmark != null) {
+            if (bookmark.id == bookmarkId) {
+                return@useEffect
+            } else {
+                setBookmark(null)
+            }
+        }
+
+        if (cachedBookmark != null) {
+            setBookmark(cachedBookmark)
+            setSelectedArchive(cachedBookmark.archives?.sortedByDescending { it.createdAt }?.firstOrNull { it.type == Archive.Type.MONOLITH_READABILITY })
+            return@useEffect
+        }
+
         setSelectedArchive(null)
         setIsLoading(true)
         setError(null)
@@ -45,6 +65,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                 val fullBookmark = bookmarksApi.show(bookmarkId)
                 setBookmark(fullBookmark)
                 setSelectedArchive(fullBookmark.archives?.sortedByDescending { it.createdAt }?.firstOrNull { it.type == Archive.Type.MONOLITH_READABILITY })
+                BookmarkStore.update(fullBookmark)
                 setIsLoading(false)
             } catch (e: Throwable) {
                 setError(e.message ?: "Error loading bookmark")
@@ -83,6 +104,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
             }
             Archive.Status.COMPLETED -> {
                 child(ArchiveIframe) {
+                    key = "$bookmarkId"
                     attrs.classes = "w-full h-full"
                     attrs.src = "/api/bookmarks/${archive.bookmarkId}/archives/${archive.id}"
                 }
@@ -90,19 +112,24 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
         }
     }
 
-    fun RBuilder.renderHeader(bookmark: Bookmark) {
+    fun RBuilder.renderHeader() {
         div("flex items-center bg-white shadow p-4 z-10 h-16") {
             div("flex-grow w-0") {
                 div("flex items-center") {
-                    div("text-sm font-medium text-gray-900 truncate") { +bookmark.title }
+                    div("text-sm font-medium text-gray-900 truncate") {
+                        +(bookmark?.title ?: cachedResource?.title ?: "Untitled")
+                    }
                     div("px-1") { +"•" }
-                    a(bookmark.url, classes = "text-sm text-gray-500 truncate") { +bookmark.url }
+                    a(bookmark?.url ?: cachedResource?.url, classes = "text-sm text-gray-500 truncate") {
+                        +(bookmark?.url ?: cachedResource?.url ?: "")
+                    }
                 }
                 div("flex items-center") {
-                    if (bookmark.tags.isEmpty()) {
+                    val tags = bookmark?.tags ?: cachedResource?.tags ?: emptySet()
+                    if (tags.isEmpty()) {
                         span("text-sm text-gray-500") { +"No tags"}
                     } else {
-                        bookmark.tags.forEach { tag ->
+                        tags.forEach { tag ->
                             child(resourceTag) {
                                 attrs.tag = tag
                             }
@@ -111,7 +138,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                 }
             }
             div("flex-no-shrink flex items-center ml-4") {
-                a(href = bookmark.url, target = "_blank", classes = "ml-2") {
+                a(href = bookmark?.url ?: cachedResource?.url, target = "_blank", classes = "ml-2") {
                     rawHtml("w-6 h-6 text-gray-500 cursor-pointer hover:text-gray-900") {
                         "<svg fill=\"currentColor\" viewBox=\"0 0 20 20\"><path d=\"M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z\"></path><path d=\"M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z\"></path></svg>"
                     }
@@ -123,13 +150,15 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                             "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4\" /></svg>"
                         }
                     }
-                    child(ArchiveDropdown) {
-                        attrs.isOpen = isArchiveDropdownOpen
-                        attrs.onClickOut = { setIsArchiveDropdownOpen(false) }
-                        attrs.bookmark = bookmark
-                        attrs.onSelectArchive = {
-                            setIsArchiveDropdownOpen(false)
-                            setSelectedArchive(it)
+                    if (bookmark != null) {
+                        child(ArchiveDropdown) {
+                            attrs.isOpen = isArchiveDropdownOpen
+                            attrs.onClickOut = { setIsArchiveDropdownOpen(false) }
+                            attrs.bookmark = bookmark
+                            attrs.onSelectArchive = {
+                                setIsArchiveDropdownOpen(false)
+                                setSelectedArchive(it)
+                            }
                         }
                     }
                 }
@@ -140,28 +169,37 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
                             "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z\" /></svg>"
                         }
                     }
-                    child(BookmarkOptionsDropdown) {
-                        attrs.isOpen = isOptionsDropdownOpen
-                        attrs.onClickOut = { setIsOptionsDropdownOpen(false) }
-                        attrs.bookmark = bookmark
-                        attrs.onDelete = { handleDelete() }
-                        attrs.onEdit = { handleEdit(it) }
+                    if (bookmark != null) {
+                        child(BookmarkOptionsDropdown) {
+                            attrs.isOpen = isOptionsDropdownOpen
+                            attrs.onClickOut = { setIsOptionsDropdownOpen(false) }
+                            attrs.bookmark = bookmark
+                            attrs.onDelete = { handleDelete() }
+                            attrs.onEdit = { handleEdit(it) }
+                        }
                     }
                 }
             }
         }
     }
 
-    when {
-        isLoading -> {
-            p { +"Loading..." }
-        }
-        error != null -> {
-            p { +"Error: $error" }
-        }
-        bookmark != null -> {
-            renderHeader(bookmark)
-            renderSelectedArchive(selectedArchive)
+    fun RBuilder.renderContent() {
+        div("flex-grow bg-white") {
+            when {
+                isLoading -> {
+                    p { +"Loading..." }
+                }
+                error != null -> {
+                    p { +"Error: $error" }
+                }
+                bookmark != null -> {
+                    renderSelectedArchive(selectedArchive)
+                }
+
+            }
         }
     }
+
+    renderHeader()
+    renderContent()
 }
