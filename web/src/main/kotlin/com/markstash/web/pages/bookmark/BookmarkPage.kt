@@ -44,7 +44,7 @@ val bookmarkPage = functionalComponent<BookmarkPageProps> { props ->
             try {
                 val fullBookmark = bookmarksApi.show(bookmarkId)
                 setBookmark(fullBookmark)
-                setSelectedArchive(fullBookmark.archives?.firstOrNull { it.type == Archive.Type.MONOLITH_READABILITY })
+                setSelectedArchive(fullBookmark.archives?.sortedByDescending { it.createdAt }?.firstOrNull { it.type == Archive.Type.MONOLITH_READABILITY })
                 setIsLoading(false)
             } catch (e: Throwable) {
                 setError(e.message ?: "Error loading bookmark")
