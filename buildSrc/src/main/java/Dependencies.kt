@@ -11,7 +11,7 @@ object Versions {
     const val shadow = "6.0.0"
     const val sqlDelight = "1.4.1"
     const val proguard = "7.0.0"
-    const val androidGradle = "4.2.0-alpha10"
+    const val androidGradle = "4.2.0-alpha11"
     const val versions = "0.29.0"
     const val easylauncher = "3.2.1"
 
