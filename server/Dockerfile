@@ -1,6 +1,6 @@
 FROM ekidd/rust-musl-builder:latest AS monolith
 
-RUN git clone https://github.com/Y2Z/monolith.git .
+RUN git clone https://github.com/drampelt/monolith.git .
 RUN cargo build --release
 
 FROM oracle/graalvm-ce:latest AS builder

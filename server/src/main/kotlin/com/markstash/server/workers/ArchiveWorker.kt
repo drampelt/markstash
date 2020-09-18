@@ -251,7 +251,7 @@ class ArchiveWorker(
         val originalFile = File(File(archiveDir), originalArchive.path!!)
         val monolithFile = File.createTempFile("monolith", ".html")
         log.debug("Starting monolith archive")
-        val monolith = ProcessBuilder("monolith", originalFile.absolutePath, "-o", monolithFile.absolutePath)
+        val monolith = ProcessBuilder("monolith", originalFile.absolutePath, "-o", monolithFile.absolutePath, "-b", driver.currentUrl)
             .start()
 
         var time = 0
