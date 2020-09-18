@@ -51,7 +51,13 @@ val notePage = functionalComponent<NotePageProps> { props ->
     }
 
     useEffect(listOf(props.id, cachedNote)) {
-        if (note != null && note.id == noteId) return@useEffect
+        if (note != null) {
+            if (note.id == noteId) {
+                return@useEffect
+            } else {
+                setNote(null)
+            }
+        }
 
         if (cachedNote != null) {
             setNote(cachedNote)
