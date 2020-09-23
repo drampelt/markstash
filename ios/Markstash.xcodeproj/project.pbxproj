@@ -1,0 +1,585 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		68736112251BDC2100AB897B /* MarkstashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736111251BDC2100AB897B /* MarkstashApp.swift */; };
+		68736114251BDC2100AB897B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736113251BDC2100AB897B /* ContentView.swift */; };
+		68736116251BDC2300AB897B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68736115251BDC2300AB897B /* Assets.xcassets */; };
+		68736119251BDC2300AB897B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68736118251BDC2300AB897B /* Preview Assets.xcassets */; };
+		68736124251BDC2300AB897B /* MarkstashTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736123251BDC2300AB897B /* MarkstashTests.swift */; };
+		6873612F251BDC2300AB897B /* MarkstashUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6873612E251BDC2300AB897B /* MarkstashUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		68736120251BDC2300AB897B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 68736106251BDC2100AB897B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6873610D251BDC2100AB897B;
+			remoteInfo = Markstash;
+		};
+		6873612B251BDC2300AB897B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 68736106251BDC2100AB897B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6873610D251BDC2100AB897B;
+			remoteInfo = Markstash;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		6873610E251BDC2100AB897B /* Markstash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Markstash.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		68736111251BDC2100AB897B /* MarkstashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashApp.swift; sourceTree = "<group>"; };
+		68736113251BDC2100AB897B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		68736115251BDC2300AB897B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		68736118251BDC2300AB897B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		6873611A251BDC2300AB897B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6873611F251BDC2300AB897B /* MarkstashTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkstashTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		68736123251BDC2300AB897B /* MarkstashTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashTests.swift; sourceTree = "<group>"; };
+		68736125251BDC2300AB897B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6873612A251BDC2300AB897B /* MarkstashUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkstashUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6873612E251BDC2300AB897B /* MarkstashUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashUITests.swift; sourceTree = "<group>"; };
+		68736130251BDC2300AB897B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6873610B251BDC2100AB897B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6873611C251BDC2300AB897B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		68736127251BDC2300AB897B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		68736105251BDC2100AB897B = {
+			isa = PBXGroup;
+			children = (
+				68736110251BDC2100AB897B /* Markstash */,
+				68736122251BDC2300AB897B /* MarkstashTests */,
+				6873612D251BDC2300AB897B /* MarkstashUITests */,
+				6873610F251BDC2100AB897B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6873610F251BDC2100AB897B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6873610E251BDC2100AB897B /* Markstash.app */,
+				6873611F251BDC2300AB897B /* MarkstashTests.xctest */,
+				6873612A251BDC2300AB897B /* MarkstashUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		68736110251BDC2100AB897B /* Markstash */ = {
+			isa = PBXGroup;
+			children = (
+				68736111251BDC2100AB897B /* MarkstashApp.swift */,
+				68736113251BDC2100AB897B /* ContentView.swift */,
+				68736115251BDC2300AB897B /* Assets.xcassets */,
+				6873611A251BDC2300AB897B /* Info.plist */,
+				68736117251BDC2300AB897B /* Preview Content */,
+			);
+			path = Markstash;
+			sourceTree = "<group>";
+		};
+		68736117251BDC2300AB897B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				68736118251BDC2300AB897B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		68736122251BDC2300AB897B /* MarkstashTests */ = {
+			isa = PBXGroup;
+			children = (
+				68736123251BDC2300AB897B /* MarkstashTests.swift */,
+				68736125251BDC2300AB897B /* Info.plist */,
+			);
+			path = MarkstashTests;
+			sourceTree = "<group>";
+		};
+		6873612D251BDC2300AB897B /* MarkstashUITests */ = {
+			isa = PBXGroup;
+			children = (
+				6873612E251BDC2300AB897B /* MarkstashUITests.swift */,
+				68736130251BDC2300AB897B /* Info.plist */,
+			);
+			path = MarkstashUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6873610D251BDC2100AB897B /* Markstash */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68736133251BDC2300AB897B /* Build configuration list for PBXNativeTarget "Markstash" */;
+			buildPhases = (
+				6873610A251BDC2100AB897B /* Sources */,
+				6873610B251BDC2100AB897B /* Frameworks */,
+				6873610C251BDC2100AB897B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Markstash;
+			productName = Markstash;
+			productReference = 6873610E251BDC2100AB897B /* Markstash.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6873611E251BDC2300AB897B /* MarkstashTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68736136251BDC2300AB897B /* Build configuration list for PBXNativeTarget "MarkstashTests" */;
+			buildPhases = (
+				6873611B251BDC2300AB897B /* Sources */,
+				6873611C251BDC2300AB897B /* Frameworks */,
+				6873611D251BDC2300AB897B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				68736121251BDC2300AB897B /* PBXTargetDependency */,
+			);
+			name = MarkstashTests;
+			productName = MarkstashTests;
+			productReference = 6873611F251BDC2300AB897B /* MarkstashTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		68736129251BDC2300AB897B /* MarkstashUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 68736139251BDC2300AB897B /* Build configuration list for PBXNativeTarget "MarkstashUITests" */;
+			buildPhases = (
+				68736126251BDC2300AB897B /* Sources */,
+				68736127251BDC2300AB897B /* Frameworks */,
+				68736128251BDC2300AB897B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6873612C251BDC2300AB897B /* PBXTargetDependency */,
+			);
+			name = MarkstashUITests;
+			productName = MarkstashUITests;
+			productReference = 6873612A251BDC2300AB897B /* MarkstashUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		68736106251BDC2100AB897B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1200;
+				TargetAttributes = {
+					6873610D251BDC2100AB897B = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					6873611E251BDC2300AB897B = {
+						CreatedOnToolsVersion = 12.0;
+						TestTargetID = 6873610D251BDC2100AB897B;
+					};
+					68736129251BDC2300AB897B = {
+						CreatedOnToolsVersion = 12.0;
+						TestTargetID = 6873610D251BDC2100AB897B;
+					};
+				};
+			};
+			buildConfigurationList = 68736109251BDC2100AB897B /* Build configuration list for PBXProject "Markstash" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 68736105251BDC2100AB897B;
+			productRefGroup = 6873610F251BDC2100AB897B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6873610D251BDC2100AB897B /* Markstash */,
+				6873611E251BDC2300AB897B /* MarkstashTests */,
+				68736129251BDC2300AB897B /* MarkstashUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6873610C251BDC2100AB897B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68736119251BDC2300AB897B /* Preview Assets.xcassets in Resources */,
+				68736116251BDC2300AB897B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6873611D251BDC2300AB897B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		68736128251BDC2300AB897B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6873610A251BDC2100AB897B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68736114251BDC2100AB897B /* ContentView.swift in Sources */,
+				68736112251BDC2100AB897B /* MarkstashApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6873611B251BDC2300AB897B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68736124251BDC2300AB897B /* MarkstashTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		68736126251BDC2300AB897B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6873612F251BDC2300AB897B /* MarkstashUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		68736121251BDC2300AB897B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6873610D251BDC2100AB897B /* Markstash */;
+			targetProxy = 68736120251BDC2300AB897B /* PBXContainerItemProxy */;
+		};
+		6873612C251BDC2300AB897B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6873610D251BDC2100AB897B /* Markstash */;
+			targetProxy = 6873612B251BDC2300AB897B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		68736131251BDC2300AB897B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		68736132251BDC2300AB897B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		68736134251BDC2300AB897B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Markstash/Preview Content\"";
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Markstash/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.Markstash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		68736135251BDC2300AB897B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"Markstash/Preview Content\"";
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Markstash/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.Markstash;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		68736137251BDC2300AB897B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				INFOPLIST_FILE = MarkstashTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.MarkstashTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Markstash.app/Markstash";
+			};
+			name = Debug;
+		};
+		68736138251BDC2300AB897B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				INFOPLIST_FILE = MarkstashTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.MarkstashTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Markstash.app/Markstash";
+			};
+			name = Release;
+		};
+		6873613A251BDC2300AB897B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				INFOPLIST_FILE = MarkstashUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.MarkstashUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Markstash;
+			};
+			name = Debug;
+		};
+		6873613B251BDC2300AB897B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 4HXPM6SC4A;
+				INFOPLIST_FILE = MarkstashUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.markstash.MarkstashUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Markstash;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		68736109251BDC2100AB897B /* Build configuration list for PBXProject "Markstash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68736131251BDC2300AB897B /* Debug */,
+				68736132251BDC2300AB897B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		68736133251BDC2300AB897B /* Build configuration list for PBXNativeTarget "Markstash" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68736134251BDC2300AB897B /* Debug */,
+				68736135251BDC2300AB897B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		68736136251BDC2300AB897B /* Build configuration list for PBXNativeTarget "MarkstashTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68736137251BDC2300AB897B /* Debug */,
+				68736138251BDC2300AB897B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		68736139251BDC2300AB897B /* Build configuration list for PBXNativeTarget "MarkstashUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6873613A251BDC2300AB897B /* Debug */,
+				6873613B251BDC2300AB897B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 68736106251BDC2100AB897B /* Project object */;
+}
