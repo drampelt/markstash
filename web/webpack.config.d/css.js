@@ -1,4 +1,4 @@
-config.resolve.modules.push("../../../../web/build/processedResources/Js/main");
+config.resolve.modules.push("../../../../web/build/processedResources/js/main");
 
 config.module.rules.push({
     test: /\.css$/,
