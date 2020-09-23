@@ -3,19 +3,22 @@ FROM ekidd/rust-musl-builder:latest AS monolith
 RUN git clone https://github.com/drampelt/monolith.git .
 RUN cargo build --release
 
-FROM oracle/graalvm-ce:20.2.0 AS builder
+# Disabled for now
+# FROM oracle/graalvm-ce:20.2.0 AS builder
+#
+# RUN gu install native-image
+#
+# ADD build/libs/server.min.jar /server.jar
+# RUN native-image \
+#     --no-server \
+#     --no-fallback \
+#     -H:IncludeResources='org/sqlite/native/Linux/x86_64/.*' \
+#     -H:+ReportExceptionStackTraces \
+#     -jar /server.jar
+#
+# FROM frolvlad/alpine-glibc:alpine-3.11_glibc-2.31
 
-RUN gu install native-image
-
-ADD build/libs/server.min.jar /server.jar
-RUN native-image \
-    --no-server \
-    --no-fallback \
-    -H:IncludeResources='org/sqlite/native/Linux/x86_64/.*' \
-    -H:+ReportExceptionStackTraces \
-    -jar /server.jar
-
-FROM frolvlad/alpine-glibc:latest
+FROM alpine:3.12.0
 
 RUN adduser -D markstash && addgroup markstash video
 
@@ -35,6 +38,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     wqy-zenhei \
     tini \
     imagemagick \
+    openjdk11-jre-headless \
     && rm -rf /var/cache/* \
     && mkdir /var/cache/apk
 
@@ -45,6 +49,7 @@ COPY --from=monolith /home/rust/src/target/x86_64-unknown-linux-musl/release/mon
 USER markstash
 WORKDIR /home/markstash
 
-COPY --from=builder --chown=markstash:markstash /server /home/markstash/server
+# COPY --from=builder --chown=markstash:markstash /server /home/markstash/server
+ADD build/libs/server.min.jar /home/markstash/server.jar
 
-CMD ["/home/markstash/server"]
+CMD ["java", "-jar", "/home/markstash/server.jar"]
