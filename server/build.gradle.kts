@@ -66,8 +66,13 @@ tasks {
 
         injars("$buildDir/libs/server.jar")
         outjars("$buildDir/libs/server.min.jar")
-        libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
-        libraryjars("${System.getProperty("java.home")}/lib/jce.jar")
+
+        if (JavaVersion.current().isJava9Compatible) {
+            libraryjars("${System.getProperty("java.home")}/jmods")
+        } else {
+            libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
+            libraryjars("${System.getProperty("java.home")}/lib/jce.jar")
+        }
 
         configuration("proguard.pro")
     }

@@ -54,6 +54,7 @@
 
 -dontwarn org.slf4j.**
 -dontwarn org.littleshoot.**
+-dontwarn org.xbill.DNS.spi.**
 -dontwarn ch.qos.logback.**
 -dontwarn io.netty.**
 -dontwarn org.apache.**
