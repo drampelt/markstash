@@ -1,0 +1,5 @@
+archives/
+database/
+src/
+build/
+!build/libs/server.min.jar
