@@ -19,10 +19,6 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-
     # Runs a single command using the runners shell
     - name: Setup Java JDK
       uses: actions/setup-java@v1.3.0
@@ -37,6 +33,9 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
+
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
 
     - name: Compile server
       run: ./gradlew :server:minimizedJar
