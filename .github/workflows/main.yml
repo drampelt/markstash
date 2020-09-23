@@ -41,5 +41,11 @@ jobs:
     - name: Save server jar
       uses: actions/upload-artifact@v2
       with:
-        name: jar
+        name: minimized jar
+        path: server/build/libs/server.jar
+
+    - name: Save minimized server jar
+      uses: actions/upload-artifact@v2
+      with:
+        name: minimized jar
         path: server/build/libs/server.min.jar
