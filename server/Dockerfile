@@ -3,7 +3,7 @@ FROM ekidd/rust-musl-builder:latest AS monolith
 RUN git clone https://github.com/drampelt/monolith.git .
 RUN cargo build --release
 
-FROM oracle/graalvm-ce:latest AS builder
+FROM oracle/graalvm-ce:20.2.0 AS builder
 
 RUN gu install native-image
 
