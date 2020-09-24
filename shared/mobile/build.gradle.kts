@@ -1,28 +1,18 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     id("com.android.library")
     kotlin("multiplatform")
-    kotlin("plugin.serialization")
+    kotlin("native.cocoapods")
 }
 
-version = "unspecified"
+version = "0.1"
 
 android {
     compileSdkVersion(Versions.androidCompileSdk)
 }
 
 kotlin {
-    jvm {
-        val main by compilations.getting {
-            kotlinOptions {
-                jvmTarget = Versions.jvm
-            }
-        }
-    }
-
-    js {
-        browser()
-    }
-
     android {
         compilations.configureEach {
             kotlinOptions {
@@ -31,13 +21,21 @@ kotlin {
         }
     }
 
-    ios()
+    ios {
+        binaries {
+            all {
+                if (this is org.jetbrains.kotlin.gradle.plugin.mpp.Framework) {
+                    export(project(":shared:client"))
+                    export(project(":shared:api"))
+                }
+            }
+        }
+    }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(Dependencies.kotlinSerialization)
-                api(Dependencies.kotlinDatetime)
+                api(project(":shared:client"))
             }
         }
 
@@ -48,19 +46,16 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-            dependencies {
-            }
-        }
-
-        val jsMain by getting {
-            dependencies {
-            }
-        }
-
         val androidMain by getting {
             dependencies {
             }
         }
+    }
+
+    cocoapods {
+        summary = "Shared module"
+        homepage = "https://markstash.com"
+
+        frameworkName = "shared"
     }
 }

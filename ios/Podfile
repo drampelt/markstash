@@ -1,0 +1,6 @@
+platform :ios, '14.0'
+use_frameworks!
+
+target 'Markstash' do
+  pod 'mobile', path: '../shared/mobile'
+end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23CCB990078B0CB0701ADDE6 /* Pods_Markstash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B0DB0ED20072E8E4052FF1 /* Pods_Markstash.framework */; };
 		68736112251BDC2100AB897B /* MarkstashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736111251BDC2100AB897B /* MarkstashApp.swift */; };
 		68736114251BDC2100AB897B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736113251BDC2100AB897B /* ContentView.swift */; };
 		68736116251BDC2300AB897B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68736115251BDC2300AB897B /* Assets.xcassets */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		56B0DB0ED20072E8E4052FF1 /* Pods_Markstash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Markstash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6873610E251BDC2100AB897B /* Markstash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Markstash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		68736111251BDC2100AB897B /* MarkstashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashApp.swift; sourceTree = "<group>"; };
 		68736113251BDC2100AB897B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -45,6 +47,9 @@
 		6873612A251BDC2300AB897B /* MarkstashUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkstashUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6873612E251BDC2300AB897B /* MarkstashUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashUITests.swift; sourceTree = "<group>"; };
 		68736130251BDC2300AB897B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6873615A251BF01900AB897B /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = "../shared/mobile/build/xcode-frameworks/shared.framework"; sourceTree = "<group>"; };
+		E8D87547E714AE4601A7A7A2 /* Pods-Markstash.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Markstash.debug.xcconfig"; path = "Target Support Files/Pods-Markstash/Pods-Markstash.debug.xcconfig"; sourceTree = "<group>"; };
+		FF5E819694E3C6977FE7B61A /* Pods-Markstash.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Markstash.release.xcconfig"; path = "Target Support Files/Pods-Markstash/Pods-Markstash.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				23CCB990078B0CB0701ADDE6 /* Pods_Markstash.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +78,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B4F6D48BE65FEDCF6035ECB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E8D87547E714AE4601A7A7A2 /* Pods-Markstash.debug.xcconfig */,
+				FF5E819694E3C6977FE7B61A /* Pods-Markstash.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		68736105251BDC2100AB897B = {
 			isa = PBXGroup;
 			children = (
@@ -79,6 +94,8 @@
 				68736122251BDC2300AB897B /* MarkstashTests */,
 				6873612D251BDC2300AB897B /* MarkstashUITests */,
 				6873610F251BDC2100AB897B /* Products */,
+				68736146251BEDF900AB897B /* Frameworks */,
+				4B4F6D48BE65FEDCF6035ECB /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -130,6 +147,15 @@
 			path = MarkstashUITests;
 			sourceTree = "<group>";
 		};
+		68736146251BEDF900AB897B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6873615A251BF01900AB897B /* shared.framework */,
+				56B0DB0ED20072E8E4052FF1 /* Pods_Markstash.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,6 +163,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 68736133251BDC2300AB897B /* Build configuration list for PBXNativeTarget "Markstash" */;
 			buildPhases = (
+				8F7721B914F25FB7D9DAD1F0 /* [CP] Check Pods Manifest.lock */,
 				6873610A251BDC2100AB897B /* Sources */,
 				6873610B251BDC2100AB897B /* Frameworks */,
 				6873610C251BDC2100AB897B /* Resources */,
@@ -253,6 +280,31 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8F7721B914F25FB7D9DAD1F0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Markstash-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6873610A251BDC2100AB897B /* Sources */ = {
@@ -414,6 +466,7 @@
 		};
 		68736134251BDC2300AB897B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8D87547E714AE4601A7A7A2 /* Pods-Markstash.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -436,6 +489,7 @@
 		};
 		68736135251BDC2300AB897B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = FF5E819694E3C6977FE7B61A /* Pods-Markstash.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

@@ -73,6 +73,7 @@ dependencies {
 
     implementation(project(":shared:api"))
     implementation(project(":shared:client"))
+    implementation(project(":shared:mobile"))
 
     implementation(Dependencies.accompanist)
     implementation(Dependencies.coil)

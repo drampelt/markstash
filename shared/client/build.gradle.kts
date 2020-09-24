@@ -30,6 +30,8 @@ kotlin {
         }
     }
 
+    ios()
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -50,21 +52,24 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 api(Dependencies.ktorClientJs)
-                api(Dependencies.ktorClientSerializationJs)
             }
         }
 
         val jvmMain by getting {
             dependencies {
                 api(Dependencies.ktorClientOkHttp)
-                api(Dependencies.ktorClientSerializationJvm)
             }
         }
 
         val androidMain by getting {
             dependencies {
                 api(Dependencies.ktorClientOkHttp)
-                api(Dependencies.ktorClientSerializationJvm)
+            }
+        }
+
+        val iosMain by getting {
+            dependencies {
+                api(Dependencies.ktorClientIos)
             }
         }
     }

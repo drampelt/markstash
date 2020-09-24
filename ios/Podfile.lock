@@ -1,0 +1,16 @@
+PODS:
+  - mobile (0.1)
+
+DEPENDENCIES:
+  - mobile (from `../shared/mobile`)
+
+EXTERNAL SOURCES:
+  mobile:
+    :path: "../shared/mobile"
+
+SPEC CHECKSUMS:
+  mobile: ddbee5d1922aee4006ba73eb6d06ec5ff65fbfd2
+
+PODFILE CHECKSUM: 82282b4aef341442b526fae4f65389db9e53f591
+
+COCOAPODS: 1.9.3
