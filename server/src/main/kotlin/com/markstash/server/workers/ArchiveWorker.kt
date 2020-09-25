@@ -83,6 +83,7 @@ class ArchiveWorker(
     private var warcArchiveId: Long = 0
     private var pdfArchiveId: Long = 0
     private var faviconArchiveId: Long = 0
+    private var featureImageArchiveId: Long = 0
 
     private val tmpDir by lazy { Files.createTempDirectory("tmp") }
 
@@ -117,11 +118,13 @@ class ArchiveWorker(
         warcArchiveId = createArchive(Archive.Type.WARC)
         pdfArchiveId = createArchive(Archive.Type.PDF)
         faviconArchiveId = createArchive(Archive.Type.FAVICON)
+        featureImageArchiveId = createArchive(Archive.Type.FEATURE_IMAGE)
 
         startProxy()
         setupDriver()
         loadPage()
         saveFavicon()
+        saveFeatureImage()
         saveBasic()
         saveMonolith()
         saveScreenshot()
@@ -449,6 +452,76 @@ class ArchiveWorker(
                             return
                         } else {
                             log.error("Could not convert icon: exit code ${convertProcess.exitValue()}")
+                            downloadTmp.delete()
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        log.error("Could not download icon")
+    }
+
+    private suspend fun saveFeatureImage() {
+        log.debug("Starting feature image download")
+        val images = (driver as WebDriver).findElements(By.xpath("//meta")).mapNotNull { el ->
+            val name = el.getAttribute("name").takeUnless { it.isNullOrBlank() } ?: el.getAttribute("property")
+            if (name == "og:image" || name == "twitter:image" || name == "twitter:image:src") {
+                val href = el.getAttribute("content") ?: ""
+                if (href.isEmpty()) return@mapNotNull null
+                val url = URL(driver.currentUrl).let {
+                    if (href.startsWith("//")) {
+                        it.protocol + ":" + href
+                    } else {
+                        URL(it, href).toString()
+                    }
+                }
+                url
+            } else {
+                null
+            }
+        }
+
+        images.forEach { log.debug("Image: $it") }
+
+        if (images.isEmpty()) {
+            log.error("No icons found")
+            return
+        }
+
+        HttpClient(CIO) { followRedirects = true }.use { client ->
+            for (image in images) {
+                log.debug("Trying to download $image")
+                val response = runCatching { client.get<KtorHttpResponse>(image) }
+                    .getOrNull() ?: continue
+
+                if (response.status.isSuccess()) {
+                    val ext = Paths.get(URL(image).path).fileName.toString().substringAfterLast(".").takeIf { it.length <= 5 } ?: "unknown"
+                    val downloadTmp = File.createTempFile("feature", "input.$ext")
+                    response.content.copyAndClose(downloadTmp.writeChannel())
+
+                    val fileName = "feature.png"
+                    val file = File(archiveFolder, fileName)
+
+                    log.debug("Converting image: ${downloadTmp.absolutePath} -> ${file.absolutePath}")
+                    val convertProcess = ProcessBuilder(listOf("convert", "${downloadTmp.absolutePath}[0]", file.absolutePath))
+                        .inheritIO()
+                        .start()
+
+                    var time = 0
+                    while (time < 300) {
+                        if (convertProcess.isAlive) {
+                            delay(100)
+                            time++
+                        } else if (convertProcess.exitValue() == 0) {
+                            log.debug("Completed image conversion")
+                            db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), featureImageArchiveId)
+                            db.bookmarkQueries.updateIcon(featureImageArchiveId, bookmarkId)
+                            downloadTmp.delete()
+                            return
+                        } else {
+                            log.error("Could not convert image: exit code ${convertProcess.exitValue()}")
                             downloadTmp.delete()
                             break
                         }

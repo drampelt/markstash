@@ -29,6 +29,7 @@ data class Archive(
         MONOLITH_READABILITY(PreviewType.INLINE, "Readability (Monolith)"),
         SCREENSHOT(PreviewType.INLINE, "Screenshot"),
         SCREENSHOT_FULL(PreviewType.INLINE, "Full Page Screenshot"),
+        FEATURE_IMAGE(PreviewType.INLINE, "Feature Image"),
         HAR(PreviewType.DOWNLOAD, "HAR"),
         WARC(PreviewType.DOWNLOAD, "WARC"),
         FAVICON(PreviewType.DOWNLOAD, "Favicon"),
