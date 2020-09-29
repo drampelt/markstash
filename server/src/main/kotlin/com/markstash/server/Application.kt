@@ -125,7 +125,7 @@ fun Application.main() {
             single(named(Constants.Jwt.ALGORITHM)) { jwtAlgorithm }
             single { JobProcessor(this@main) }
             single(named(Constants.Storage.ARCHIVE_DIR)) { environment.config.propertyOrNull("markstash.archive_dir")?.getString() ?: "archives" }
-            single(named(Constants.Binaries.CHROME_BIN)) { environment.config.propertyOrNull("markstash.chrome_bin")?.getString() ?: "chromium-browser" }
+            single(named(Constants.Binaries.CHROME_BIN)) { environment.config.propertyOrNull("markstash.chrome_bin")?.getString() ?: "google-chrome" }
             single(named(Constants.Settings.CHROME_USE_DEV_SHM)) { environment.config.propertyOrNull("markstash.chrome_use_dev_shm")?.getString()?.toBoolean() ?: false }
         })
     }

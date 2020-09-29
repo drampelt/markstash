@@ -1,55 +1,65 @@
-FROM ekidd/rust-musl-builder:latest AS monolith
+FROM rust:1.46.0-buster AS monolith
 
-RUN git clone https://github.com/drampelt/monolith.git .
-RUN cargo build --release
+RUN git clone https://github.com/drampelt/monolith.git
+RUN cd monolith && cargo build --release
 
-# Disabled for now
-# FROM oracle/graalvm-ce:20.2.0 AS builder
-#
-# RUN gu install native-image
-#
-# ADD build/libs/server.min.jar /server.jar
-# RUN native-image \
-#     --no-server \
-#     --no-fallback \
-#     -H:IncludeResources='org/sqlite/native/Linux/x86_64/.*' \
-#     -H:+ReportExceptionStackTraces \
-#     -jar /server.jar
-#
-# FROM frolvlad/alpine-glibc:alpine-3.11_glibc-2.31
 
-FROM alpine:3.12.0
+FROM oracle/graalvm-ce:20.2.0 AS builder
 
-RUN adduser -D markstash && addgroup markstash video
+RUN gu install native-image
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.11/main" >> /etc/apk/repositories \
-    && apk upgrade -U -a \
-    && apk add --no-cache \
-    libstdc++ \
-    chromium \
-    chromium-chromedriver \
-    harfbuzz \
-    nss \
-    freetype \
-    ttf-freefont \
-    wqy-zenhei \
-    tini \
-    imagemagick \
-    openjdk11-jre-headless \
-    && rm -rf /var/cache/* \
-    && mkdir /var/cache/apk
+ADD build/libs/server.min.jar /server.jar
+RUN native-image \
+    --no-server \
+    --no-fallback \
+    -H:IncludeResources='org/sqlite/native/Linux/x86_64/.*' \
+    -H:+ReportExceptionStackTraces \
+    -jar /server.jar
 
-ENTRYPOINT ["/sbin/tini", "--"]
 
-COPY --from=monolith /home/rust/src/target/x86_64-unknown-linux-musl/release/monolith /usr/bin/monolith
+FROM debian:buster-slim
+
+RUN groupadd -r markstash && useradd -r -g markstash -G audio,video markstash \
+	&& mkdir -p /home/markstash && chown -R markstash:markstash /home/markstash \
+	&& mkdir -p /opt/google/chrome && chown -R markstash:markstash /opt/google/chrome
+
+ENV CHROMEDRIVER_VERSION 85.0.4183.87
+
+RUN apt-get update && apt-get install -y \
+	apt-transport-https \
+	ca-certificates \
+	curl \
+	gnupg \
+	unzip \
+	--no-install-recommends \
+	&& curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+	&& echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+	&& apt-get update && apt-get install -y \
+	google-chrome-stable \
+	fontconfig \
+	fonts-ipafont-gothic \
+	fonts-wqy-zenhei \
+	fonts-thai-tlwg \
+	fonts-kacst \
+	fonts-symbola \
+	fonts-noto \
+	fonts-freefont-ttf \
+	imagemagick \
+	librsvg2-bin \
+	tini \
+	--no-install-recommends \
+	&& wget -q --continue -P /tmp "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" \
+	&& unzip /tmp/chromedriver_linux64.zip -d /usr/bin \
+	&& rm /tmp/chromedriver_linux64.zip \
+	&& apt-get purge --auto-remove -y curl gnupg unzip \
+	&& rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+COPY --from=monolith /monolith/target/release/monolith /usr/bin/monolith
+COPY --from=builder --chown=markstash:markstash /server /home/markstash/server
 
 USER markstash
 WORKDIR /home/markstash
 
-# COPY --from=builder --chown=markstash:markstash /server /home/markstash/server
-ADD build/libs/server.min.jar /home/markstash/server.jar
-
-CMD ["java", "-jar", "/home/markstash/server.jar"]
+CMD ["/home/markstash/server"]
