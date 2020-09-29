@@ -517,7 +517,6 @@ class ArchiveWorker(
                         } else if (convertProcess.exitValue() == 0) {
                             log.debug("Completed image conversion")
                             db.archiveQueries.update(Archive.Status.COMPLETED, "$archivePath/$fileName", file.length().toString(), featureImageArchiveId)
-                            db.bookmarkQueries.updateIcon(featureImageArchiveId, bookmarkId)
                             downloadTmp.delete()
                             return
                         } else {
