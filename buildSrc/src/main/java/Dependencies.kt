@@ -1,7 +1,7 @@
 object Versions {
     const val jvm = "1.8"
     const val kotlin = "1.4.10"
-    const val kotlinComposeExtension = "1.0.0-alpha03"
+    const val kotlinComposeExtension = "1.0.0-alpha05"
     const val graal = "20.1.0"
     const val androidMinSdk = 21
     const val androidTargetSdk = 29
@@ -26,7 +26,7 @@ object Versions {
     const val browserMob = "2.1.5"
     const val coil = "0.13.0"
     const val coilIco = "0.1.1"
-    const val compose = "1.0.0-alpha03"
+    const val compose = "1.0.0-alpha05"
     const val composeRouter = "0.15.1"
     const val cssLoader = "3.6.0"
     const val cssnano = "4.1.10"
