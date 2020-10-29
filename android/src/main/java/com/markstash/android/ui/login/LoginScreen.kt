@@ -35,11 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import com.markstash.android.R
 import com.markstash.android.Session
-import com.markstash.android.inject
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.SessionsApi
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.inject
 
 @Composable
 fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {

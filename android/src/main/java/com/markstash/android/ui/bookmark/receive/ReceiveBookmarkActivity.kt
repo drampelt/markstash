@@ -26,9 +26,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.LaunchedTask
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.launchInComposition
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,9 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import coil.request.ImageRequest
-import com.markstash.android.KoinContext
 import com.markstash.android.R
-import com.markstash.android.inject
 import com.markstash.android.ui.components.BottomSheet
 import com.markstash.android.ui.components.Tag
 import com.markstash.api.bookmarks.CreateRequest
@@ -62,7 +59,7 @@ import net.mm2d.touchicon.Icon
 import net.mm2d.touchicon.PageIcon
 import net.mm2d.touchicon.Relationship
 import net.mm2d.touchicon.TouchIconExtractor
-import org.koin.android.ext.android.getKoin
+import org.koin.androidx.compose.inject
 import java.net.URL
 
 class ReceiveBookmarkActivity : AppCompatActivity() {
@@ -74,17 +71,15 @@ class ReceiveBookmarkActivity : AppCompatActivity() {
         val title = intent.getStringExtra(Intent.EXTRA_SUBJECT)
 
         setContent {
-            Providers(KoinContext provides getKoin()) {
-                MaterialTheme {
-                    ReceiveBookmarkScreen(
-                        url = url,
-                        title = title,
-                        onFinish = {
-                            finish()
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                        }
-                    )
-                }
+            MaterialTheme {
+                ReceiveBookmarkScreen(
+                    url = url,
+                    title = title,
+                    onFinish = {
+                        finish()
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                    }
+                )
             }
         }
     }
@@ -102,13 +97,13 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
 
     val notUrlErrorMessage = stringResource(R.string.bookmark_label_not_url)
 
-    launchInComposition {
+    LaunchedTask {
         if (url.isNullOrBlank() || !PatternsCompat.WEB_URL.matcher(url).matches()) {
             error = notUrlErrorMessage
             isLoading = false
             delay(2500)
             onFinish()
-            return@launchInComposition
+            return@LaunchedTask
         }
 
         launch(Dispatchers.IO) {
@@ -275,7 +270,7 @@ fun ReceiveBookmarkContent(
 
                     Spacer(Modifier.height(16.dp))
 
-                    IconButton(onClick = {}, modifier = Modifier.gravity(Alignment.End)) {
+                    IconButton(onClick = {}, modifier = Modifier.align(Alignment.End)) {
                         Icon(Icons.Default.Delete)
                     }
                 }

@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
 import com.markstash.android.Session
-import com.markstash.android.inject
+import org.koin.androidx.compose.inject
 
 @Composable
 fun LoginSettingsScreen(onBackPressed: () -> Unit) {

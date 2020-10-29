@@ -1,21 +1,18 @@
 package com.markstash.android.ui
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ambientOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.ui.tooling.preview.Preview
 import com.markstash.android.Session
-import com.markstash.android.inject
 import com.markstash.android.ui.login.LoginScreen
 import com.markstash.android.ui.login.LoginSettingsScreen
 import com.markstash.android.ui.main.MainScreen
-import org.koin.core.Koin
+import org.koin.androidx.compose.inject
 
 @Composable
 fun MarkstashApp() {

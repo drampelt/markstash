@@ -87,6 +87,7 @@ dependencies {
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
     implementation(Dependencies.koinAndroid)
+    implementation(Dependencies.koinAndroidxCompose)
     implementation(Dependencies.kotlinSerialization)
     implementation(Dependencies.touchicon)
     implementation(Dependencies.xAppCompat)

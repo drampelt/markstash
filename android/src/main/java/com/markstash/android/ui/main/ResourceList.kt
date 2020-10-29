@@ -34,7 +34,6 @@ import androidx.ui.tooling.preview.Preview
 import coil.request.ImageRequest
 import com.markstash.android.R
 import com.markstash.android.Session
-import com.markstash.android.inject
 import com.markstash.android.ui.components.Tag
 import com.markstash.api.models.Resource
 import com.markstash.client.util.formatRelativeDisplay
@@ -43,6 +42,7 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.androidx.compose.inject
 import kotlin.time.ExperimentalTime
 import kotlin.time.days
 

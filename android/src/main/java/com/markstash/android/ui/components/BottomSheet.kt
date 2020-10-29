@@ -2,21 +2,20 @@ package com.markstash.android.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.animatedFloat
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedTask
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.launchInComposition
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -24,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.onPositioned
+import androidx.compose.ui.onGloballyPositioned
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.unit.dp
 
@@ -39,11 +38,11 @@ fun BottomSheet(
     val dragOffset = animatedFloat(320f)
     val dragPercent = (dragOffset.value * densityAmbient.density) / height.toFloat()
 
-    launchInComposition {
+    LaunchedTask {
         dragOffset.animateTo(0f)
     }
 
-    Stack {
+    Box {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,7 +57,7 @@ fun BottomSheet(
             color = Color.White,
             elevation = 4.dp,
             modifier = Modifier
-                .gravity(Alignment.BottomStart)
+                .align(Alignment.BottomStart)
                 .fillMaxWidth()
                 .offset(y = dragOffset.value.dp)
                 .draggable(
@@ -81,7 +80,7 @@ fun BottomSheet(
                         }
                     }
                 )
-                .onPositioned { height = it.size.height }
+                .onGloballyPositioned { height = it.size.height }
                 .animateContentSize()
         ) {
             children()

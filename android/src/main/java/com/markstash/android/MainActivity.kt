@@ -15,7 +15,6 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             Providers(
-                KoinContext provides getKoin(),
                 ReceivedIntentAmbient provides ReceivedIntent(intent),
             ) {
                 MarkstashApp()

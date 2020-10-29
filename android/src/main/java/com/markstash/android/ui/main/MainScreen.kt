@@ -2,10 +2,10 @@ package com.markstash.android.ui.main
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.Box
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,8 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedTask
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.launchInComposition
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,9 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.markstash.android.R
 import com.markstash.android.ReceivedIntentAmbient
 import com.markstash.android.Session
-import com.markstash.android.inject
 import com.markstash.api.models.Resource
 import com.markstash.client.api.ResourcesApi
+import org.koin.androidx.compose.inject
 
 @Composable
 fun MainScreen(onLogOut: () -> Unit) {
@@ -41,7 +41,7 @@ fun MainScreen(onLogOut: () -> Unit) {
 
     val context = ContextAmbient.current
 
-    launchInComposition {
+    LaunchedTask {
         val intent = receivedIntent.intent
         if (intent != null && intent.action == Intent.ACTION_SEND && intent.type == "") {
             receivedIntent.handle()
@@ -96,7 +96,7 @@ fun IndexScreen() {
     var resources: List<Resource> by remember { mutableStateOf(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
-    launchInComposition {
+    LaunchedTask {
         isLoading = true
         try {
             resources = resourcesApi.index()
