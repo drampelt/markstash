@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Vibrator
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
@@ -51,7 +51,7 @@ import com.markstash.api.bookmarks.UpdateRequest
 import com.markstash.api.models.Bookmark
 import com.markstash.client.api.BookmarksApi
 import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.coil.ErrorResult
+import dev.chrisbanes.accompanist.imageloading.ImageLoadState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -213,7 +213,7 @@ fun ReceiveBookmarkContent(
                 CoilImage(
                     request = iconRequest,
                     modifier = Modifier.size(48.dp),
-                    onRequestCompleted = { iconFailed = it is ErrorResult },
+                    onRequestCompleted = { iconFailed = it is ImageLoadState.Error },
                 )
             }
 
