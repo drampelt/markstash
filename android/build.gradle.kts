@@ -83,7 +83,7 @@ dependencies {
     implementation(Dependencies.composeFoundationLayout)
     implementation(Dependencies.composeMaterial)
     implementation(Dependencies.composeMaterialIcons)
-//    implementation(Dependencies.composeRouter) // Not updated for dev 16 yet
+    implementation(Dependencies.composeNavigation)
     implementation(Dependencies.composeTooling)
     implementation(Dependencies.composeTest)
     implementation(Dependencies.koinAndroid)
