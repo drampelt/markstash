@@ -85,7 +85,6 @@ dependencies {
     implementation(Dependencies.composeMaterialIcons)
     implementation(Dependencies.composeNavigation)
     implementation(Dependencies.composeTooling)
-    implementation(Dependencies.composeTest)
     implementation(Dependencies.koinAndroid)
     implementation(Dependencies.koinAndroidxCompose)
     implementation(Dependencies.kotlinSerialization)

@@ -1,14 +1,15 @@
 package com.markstash.android.ui.login
 
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.TextField
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,11 +26,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
 import com.markstash.android.Session
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 @Composable
 fun LoginSettingsScreen(onBackPressed: () -> Unit) {
-    val session: Session by inject()
+    val session = get<Session>()
     var baseUrl by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue(text = session.baseUrl) }
 
     fun handleBackPress() {
@@ -65,13 +66,12 @@ fun LoginSettings(
 ) {
 
     ScrollableColumn(modifier = modifier) {
-        TextField(
+        OutlinedTextField(
             value = baseUrl,
             onValueChange = setBaseUrl,
             label = { Text(stringResource(R.string.settings_label_server_address)) },
             placeholder = { Text(stringResource(R.string.settings_default_server_address)) },
-            keyboardType = KeyboardType.Uri,
-            imeAction = ImeAction.Done,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri, imeAction = ImeAction.Done),
             modifier = Modifier.fillMaxWidth(),
             trailingIcon = {
                 IconButton(onClick = { setBaseUrl(TextFieldValue("")) }) {

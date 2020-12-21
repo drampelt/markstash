@@ -2,7 +2,6 @@ package com.markstash.android.ui.login
 
 import android.widget.Toast
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +9,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -25,27 +26,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import com.markstash.android.R
 import com.markstash.android.Session
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.SessionsApi
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 @Composable
 fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
-    val session: Session by inject()
-    val sessionsApi: SessionsApi by inject()
-    val context = ContextAmbient.current
+    val session = get<Session>()
+    val sessionsApi = get<SessionsApi>()
+    val context = AmbientContext.current
 
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(false) }
@@ -93,30 +94,29 @@ fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
 
 @Composable
 fun LoginForm(
+    modifier: Modifier = Modifier,
     onLogIn: ((email: String, password: String) -> Unit)? = null,
     isLoading: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     var email by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue() }
     var password by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue() }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text(stringResource(R.string.login_label_email)) },
-            imeAction = ImeAction.Next,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(Modifier.height(16.dp))
 
-        TextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text(stringResource(R.string.login_label_password)) },
-            imeAction = ImeAction.Go,
-            keyboardType = KeyboardType.Password,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Go),
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
         )

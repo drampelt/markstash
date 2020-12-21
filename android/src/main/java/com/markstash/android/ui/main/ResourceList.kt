@@ -1,6 +1,5 @@
 package com.markstash.android.ui.main
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,12 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumnForIndexed
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
@@ -25,12 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawOpacity
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import coil.request.ImageRequest
 import com.markstash.android.R
 import com.markstash.android.Session
@@ -42,25 +42,27 @@ import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 import kotlin.time.ExperimentalTime
 import kotlin.time.days
 
 @Composable
 fun ResourceList(resources: List<Resource>) {
-    LazyColumnForIndexed(resources) { index, resource ->
-        ResourceRow(resource)
+    LazyColumn {
+        itemsIndexed(resources) { index, resource ->
+            ResourceRow(resource)
 
-        if (index < resources.size) {
-            Divider()
+            if (index < resources.size) {
+                Divider()
+            }
         }
     }
 }
 
 @Composable
 fun ResourceRowIcon(resource: Resource, modifier: Modifier = Modifier) {
-    val session: Session by inject()
-    val context = ContextAmbient.current
+    val session = get<Session>()
+    val context = AmbientContext.current
 
     val coilRequest: ImageRequest? = remember(resource) {
         if (resource.iconArchiveId == null) return@remember null
@@ -110,7 +112,7 @@ fun ResourceRow(resource: Resource) {
                 Text(
                     text = domain,
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.drawOpacity(0.7f),
+                    modifier = Modifier.alpha(0.7f),
                 )
 
                 Spacer(modifier = Modifier.width(4.dp))
@@ -118,7 +120,7 @@ fun ResourceRow(resource: Resource) {
                 Text(
                     text = "•",
                     style = MaterialTheme.typography.caption,
-                    modifier = Modifier.drawOpacity(0.7f),
+                    modifier = Modifier.alpha(0.7f),
                 )
 
                 Spacer(modifier = Modifier.width(4.dp))
@@ -128,7 +130,7 @@ fun ResourceRow(resource: Resource) {
             Text(
                 text = date.formatRelativeDisplay(),
                 style = MaterialTheme.typography.caption,
-                modifier = Modifier.drawOpacity(0.7f),
+                modifier = Modifier.alpha(0.7f),
             )
         }
 
@@ -138,7 +140,7 @@ fun ResourceRow(resource: Resource) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .drawOpacity(if (title == null) 0.7f else 1.0f)
+                .alpha(if (title == null) 0.7f else 1.0f)
                 .padding(horizontal = 16.dp),
         )
 
@@ -148,7 +150,7 @@ fun ResourceRow(resource: Resource) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .drawOpacity(if (excerpt == null) 0.7f else 1.0f)
+                .alpha(if (excerpt == null) 0.7f else 1.0f)
                 .padding(horizontal = 16.dp),
         )
 
@@ -157,15 +159,17 @@ fun ResourceRow(resource: Resource) {
                 text = stringResource(R.string.resource_label_no_tags),
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier
-                    .drawOpacity(0.7f)
+                    .alpha(0.7f)
                     .padding(horizontal = 16.dp),
             )
         } else {
             Spacer(modifier = Modifier.height(8.dp))
 
-            LazyRowFor(items = tags, contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) { tag ->
-                Tag(tag = tag)
-                Spacer(modifier = Modifier.width(8.dp))
+            LazyRow(contentPadding = PaddingValues(start = 16.dp, end = 16.dp)) {
+                items(items = tags, itemContent = { tag ->
+                    Tag(tag = tag)
+                    Spacer(modifier = Modifier.width(8.dp))
+                })
             }
         }
 

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Vibrator
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayout
@@ -17,16 +16,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedTask
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -59,7 +60,7 @@ import net.mm2d.touchicon.Icon
 import net.mm2d.touchicon.PageIcon
 import net.mm2d.touchicon.Relationship
 import net.mm2d.touchicon.TouchIconExtractor
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 import java.net.URL
 
 class ReceiveBookmarkActivity : AppCompatActivity() {
@@ -87,7 +88,7 @@ class ReceiveBookmarkActivity : AppCompatActivity() {
 
 @Composable
 fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
-    val bookmarksApi: BookmarksApi by inject()
+    val bookmarksApi = get<BookmarksApi>()
 
     var isLoading by remember { mutableStateOf(true) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -97,13 +98,13 @@ fun ReceiveBookmarkScreen(url: String?, title: String?, onFinish: () -> Unit) {
 
     val notUrlErrorMessage = stringResource(R.string.bookmark_label_not_url)
 
-    LaunchedTask {
+    LaunchedEffect(url, title) {
         if (url.isNullOrBlank() || !PatternsCompat.WEB_URL.matcher(url).matches()) {
             error = notUrlErrorMessage
             isLoading = false
             delay(2500)
             onFinish()
-            return@LaunchedTask
+            return@LaunchedEffect
         }
 
         launch(Dispatchers.IO) {
@@ -189,7 +190,7 @@ fun ReceiveBookmarkContent(
     onAddTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
 ) {
-    val context = ContextAmbient.current
+    val context = AmbientContext.current
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
     var tagInput by remember { mutableStateOf(TextFieldValue()) }
@@ -206,7 +207,7 @@ fun ReceiveBookmarkContent(
         Row {
             if (iconRequest == null || isLoading || iconFailed) {
                 Icon(
-                    asset = if (isLoading) Icons.Default.Refresh else Icons.Default.Star,
+                    if (isLoading) Icons.Default.Refresh else Icons.Default.Star,
                     modifier = Modifier.size(48.dp),
                 )
             } else {
@@ -258,8 +259,8 @@ fun ReceiveBookmarkContent(
                     OutlinedTextField(
                         value = tagInput,
                         onValueChange = { tagInput = it },
-                        label = { Text(stringResource(R.string.bookmark_action_add_tag)) },
-                        imeAction = ImeAction.Go,
+                        label = { Text(stringResource(id = R.string.bookmark_action_add_tag)) },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Go),
                         onImeActionPerformed = { _, _ ->
                             if (tagInput.text.isNotBlank()) {
                                 onAddTag(tagInput.text)

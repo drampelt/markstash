@@ -3,7 +3,6 @@ package com.markstash.android.ui.main
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,18 +11,19 @@ import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedTask
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
@@ -31,17 +31,17 @@ import com.markstash.android.ReceivedIntentAmbient
 import com.markstash.android.Session
 import com.markstash.api.models.Resource
 import com.markstash.client.api.ResourcesApi
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 @Composable
 fun MainScreen(onLogOut: () -> Unit) {
-    val session: Session by inject()
+    val session = get<Session>()
     val scaffoldState = rememberScaffoldState()
     val receivedIntent = ReceivedIntentAmbient.current
 
-    val context = ContextAmbient.current
+    val context = AmbientContext.current
 
-    LaunchedTask {
+    LaunchedEffect(subject = Unit) {
         val intent = receivedIntent.intent
         if (intent != null && intent.action == Intent.ACTION_SEND && intent.type == "") {
             receivedIntent.handle()
@@ -74,7 +74,7 @@ fun MainScreen(onLogOut: () -> Unit) {
 
 @Composable
 fun DrawerContent(onLogOut: () -> Unit) {
-    val session: Session by inject()
+    val session = get<Session>()
 
     ScrollableColumn {
         Row(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
@@ -91,12 +91,12 @@ fun DrawerContent(onLogOut: () -> Unit) {
 
 @Composable
 fun IndexScreen() {
-    val resourcesApi: ResourcesApi by inject()
+    val resourcesApi = get<ResourcesApi>()
 
     var resources: List<Resource> by remember { mutableStateOf(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedTask {
+    LaunchedEffect(Unit) {
         isLoading = true
         try {
             resources = resourcesApi.index()

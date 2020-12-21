@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedTask
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,8 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.onGloballyPositioned
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -32,13 +32,13 @@ fun BottomSheet(
     onClose: () -> Unit,
     children: @Composable () -> Unit,
 ) {
-    val densityAmbient = DensityAmbient.current
+    val densityAmbient = AmbientDensity.current
 
     var height by remember { mutableStateOf(0) }
     val dragOffset = animatedFloat(320f)
     val dragPercent = (dragOffset.value * densityAmbient.density) / height.toFloat()
 
-    LaunchedTask {
+    LaunchedEffect(Unit) {
         dragOffset.animateTo(0f)
     }
 

@@ -6,16 +6,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import androidx.ui.tooling.preview.Preview
 import com.markstash.android.Session
 import com.markstash.android.ui.login.LoginScreen
 import com.markstash.android.ui.login.LoginSettingsScreen
 import com.markstash.android.ui.main.MainScreen
-import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.get
 
 @Composable
 fun MarkstashApp() {
@@ -31,7 +31,7 @@ sealed class RootScreen(val name: String) {
 
 @Composable
 private fun AppContent() {
-    val session: Session by inject()
+    val session = get<Session>()
     var isLoggedIn by remember { mutableStateOf(session.isLoggedIn) }
     val navController = rememberNavController()
 
