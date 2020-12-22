@@ -6,6 +6,7 @@ object Versions {
     const val androidMinSdk = 21
     const val androidTargetSdk = 29
     const val androidCompileSdk = 29
+    const val node = "12.18.3"
 
     // Gradle plugins
     const val shadow = "6.0.0"

@@ -26,3 +26,9 @@ allprojects {
         maven(url = "https://kotlin.bintray.com/kotlinx/")
     }
 }
+
+gradle.projectsEvaluated {
+    rootProject.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        nodeVersion = Versions.node
+    }
+}
