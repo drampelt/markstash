@@ -10,6 +10,15 @@ version = "0.1"
 
 android {
     compileSdkVersion(Versions.androidCompileSdk)
+
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            java.srcDir("src/androidMain/java")
+            java.srcDir("src/androidMain/kotlin")
+            res.srcDir("src/androidMain/res")
+        }
+    }
 }
 
 kotlin {
@@ -36,6 +45,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":shared:client"))
+                api(Dependencies.kotlinCoroutines)
             }
         }
 
@@ -48,6 +58,8 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                api(Dependencies.xAppCompat)
+                api(Dependencies.xViewmodel)
             }
         }
     }

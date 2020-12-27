@@ -62,6 +62,7 @@ object Versions {
     const val urlLoader = "4.1.0"
     const val webextensionPolyfill = "0.6.0"
     const val xAppCompat = "1.1.0"
+    const val xLifecyle = "2.2.0"
 }
 
 object Dependencies {
@@ -108,4 +109,5 @@ object Dependencies {
     const val svm = "org.graalvm.nativeimage:svm:${Versions.graal}"
     const val touchicon = "net.mm2d:touchicon:${Versions.touchicon}"
     const val xAppCompat = "androidx.appcompat:appcompat:${Versions.xAppCompat}"
+    const val xViewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.xLifecyle}"
 }
