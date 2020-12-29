@@ -18,30 +18,28 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.markstash.android.AmbientReceivedIntent
 import com.markstash.android.R
-import com.markstash.android.ReceivedIntentAmbient
 import com.markstash.android.Session
-import com.markstash.api.models.Resource
-import com.markstash.client.api.ResourcesApi
+import com.markstash.mobile.ui.main.ResourceListViewModel
 import org.koin.androidx.compose.get
+import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun MainScreen(onLogOut: () -> Unit) {
     val session = get<Session>()
     val scaffoldState = rememberScaffoldState()
-    val receivedIntent = ReceivedIntentAmbient.current
+    val receivedIntent = AmbientReceivedIntent.current
 
     val context = AmbientContext.current
 
-    LaunchedEffect(subject = Unit) {
+    LaunchedEffect(Unit) {
         val intent = receivedIntent.intent
         if (intent != null && intent.action == Intent.ACTION_SEND && intent.type == "") {
             receivedIntent.handle()
@@ -91,27 +89,15 @@ fun DrawerContent(onLogOut: () -> Unit) {
 
 @Composable
 fun IndexScreen() {
-    val resourcesApi = get<ResourcesApi>()
+    val viewModel = getViewModel<ResourceListViewModel>()
+    val state by viewModel.state.collectAsState()
 
-    var resources: List<Resource> by remember { mutableStateOf(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        isLoading = true
-        try {
-            resources = resourcesApi.index()
-            isLoading = false
-        } catch (e: Throwable) {
-
-        }
-    }
-
-    if (isLoading) {
+    if (state.isLoading) {
         Text(
             text = stringResource(R.string.resource_label_loading),
             modifier = Modifier.padding(16.dp)
         )
     } else {
-        ResourceList(resources)
+        ResourceList(state.resources)
     }
 }

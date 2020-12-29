@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             Providers(
-                ReceivedIntentAmbient provides ReceivedIntent(intent),
+                AmbientReceivedIntent provides ReceivedIntent(intent),
             ) {
                 MarkstashApp()
             }
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-val ReceivedIntentAmbient = ambientOf<ReceivedIntent>()
+val AmbientReceivedIntent = ambientOf<ReceivedIntent>()
 
 class ReceivedIntent(intent: Intent? = null) {
     var intent = intent
