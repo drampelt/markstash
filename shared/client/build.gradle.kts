@@ -7,6 +7,15 @@ version = "unspecified"
 
 android {
     compileSdkVersion(Versions.androidCompileSdk)
+
+    sourceSets {
+        getByName("main") {
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+            java.srcDir("src/androidMain/java")
+            java.srcDir("src/androidMain/kotlin")
+            res.srcDir("src/androidMain/res")
+        }
+    }
 }
 
 kotlin {

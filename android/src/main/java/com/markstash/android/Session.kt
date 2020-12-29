@@ -3,7 +3,7 @@ package com.markstash.android
 import android.content.Context
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.client.api.ApiClient
+import com.markstash.client.api.MutableApiClient
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,7 +40,7 @@ class Session(context: Context) {
     val isLoggedIn: Boolean
         get() = user != null
 
-    val apiClient = ApiClient(baseUrl = baseUrl)
+    val apiClient = MutableApiClient(baseUrl = baseUrl)
 
     init {
         sharedPreferences.getString(KEY_USER, null)?.let { userString ->

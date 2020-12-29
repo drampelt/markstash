@@ -1,5 +1,6 @@
 package com.markstash.android
 
+import com.markstash.client.api.ApiClient
 import com.markstash.client.api.BookmarksApi
 import com.markstash.client.api.NotesApi
 import com.markstash.client.api.ResourcesApi
@@ -13,7 +14,7 @@ import org.koin.dsl.module
 val appModule = module {
     single { Session(get()) }
 
-    single { get<Session>().apiClient }
+    single<ApiClient> { get<Session>().apiClient }
     single { SessionsApi(get()) }
     single { ResourcesApi(get()) }
     single { BookmarksApi(get()) }

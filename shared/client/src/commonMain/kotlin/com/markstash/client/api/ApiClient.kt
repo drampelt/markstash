@@ -16,50 +16,71 @@ import io.ktor.client.statement.readBytes
 import io.ktor.utils.io.core.String
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonBuilder
+import kotlin.native.concurrent.ThreadLocal
 
-class ApiClient(
-    var baseUrl: String = "",
-    var authToken: String? = null
-) {
-    val httpClient = HttpClient { configure() }
+interface ApiClient {
+    val httpClient: HttpClient
+    val baseUrl: String
+}
 
-    private fun HttpClientConfig<*>.configure() {
-        val json = Json {
-            ignoreUnknownKeys = true
-        }
-
-        expectSuccess = false
-        install(JsonFeature) {
-            serializer = KotlinxSerializer(json)
-        }
-
+// Most platforms can use singleton and then update the baseUrl/authToken as necessary
+class MutableApiClient(
+    override var baseUrl: String = "",
+    var authToken: String? = null,
+) : ApiClient {
+    override val httpClient = HttpClient {
+        configure()
         defaultRequest {
             authToken?.let { header("Authorization", "Bearer $it") }
         }
+    }
+}
 
-        HttpResponseValidator {
-            validateResponse { response ->
-                val status = response.status.value
-                if (status < 300) return@validateResponse
+// Native platforms need frozen parameters and then create a new instance of the client if they change
+class FrozenApiClient(
+    override val baseUrl: String = "",
+    authToken: String? = null,
+) : ApiClient {
+    override val httpClient = HttpClient {
+        configure()
+        defaultRequest {
+            authToken?.let { header("Authorization", "Bearer $it") }
+        }
+    }
+}
 
-                val errorResponse = try {
-                    val responseString = String(response.readBytes())
-                    json.decodeFromString(ErrorResponse.serializer(), responseString)
-                } catch (e: Throwable) {
-                    when (status) {
-                        400 -> throw ValidationException()
-                        403 -> throw ForbiddenException()
-                        404 -> throw NotFoundException()
-                        else -> throw ServerException(status, ErrorResponse.simple("An unknown error occurred"))
-                    }
-                }
+internal fun HttpClientConfig<*>.configure() {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 
+    expectSuccess = false
+    install(JsonFeature) {
+        serializer = KotlinxSerializer(json)
+    }
+
+    HttpResponseValidator {
+        validateResponse { response ->
+            val status = response.status.value
+            if (status < 300) return@validateResponse
+
+            val errorResponse = try {
+                val responseString = String(response.readBytes())
+                json.decodeFromString(ErrorResponse.serializer(), responseString)
+            } catch (e: Throwable) {
                 when (status) {
-                    400 -> throw ValidationException(errorResponse)
-                    403 -> throw ForbiddenException(errorResponse)
-                    404 -> throw NotFoundException(errorResponse)
-                    else -> throw ServerException(status, errorResponse)
+                    400 -> throw ValidationException()
+                    403 -> throw ForbiddenException()
+                    404 -> throw NotFoundException()
+                    else -> throw ServerException(status, ErrorResponse.simple("An unknown error occurred"))
                 }
+            }
+
+            when (status) {
+                400 -> throw ValidationException(errorResponse)
+                403 -> throw ForbiddenException(errorResponse)
+                404 -> throw NotFoundException(errorResponse)
+                else -> throw ServerException(status, errorResponse)
             }
         }
     }
