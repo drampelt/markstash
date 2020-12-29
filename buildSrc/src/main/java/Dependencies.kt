@@ -35,7 +35,7 @@ object Versions {
     const val jsCookie = "2.2.1"
     const val jwarc = "0.13.0"
     const val koin = "2.2.2"
-    const val kotlinCoroutines = "1.3.9-native-mt"
+    const val kotlinCoroutines = "1.4.2-native-mt"
     const val kotlinDatetime = "0.1.1"
     const val kotlinReact = "16.13.1-pre.111-kotlin-1.4.0"
     const val kotlinReactRouter = "5.1.2-pre.111-kotlin-1.4.0"
