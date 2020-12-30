@@ -19,10 +19,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -35,33 +34,20 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
-import com.markstash.api.sessions.LoginRequest
-import com.markstash.api.sessions.LoginResponse
-import com.markstash.client.api.SessionsApi
-import com.markstash.mobile.Session
-import kotlinx.coroutines.launch
-import org.koin.androidx.compose.get
+import com.markstash.mobile.ui.login.LoginViewModel
+import org.koin.androidx.compose.getViewModel
 
 @Composable
-fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
-    val session = get<Session>()
-    val sessionsApi = get<SessionsApi>()
+fun LoginScreen(onShowSettings: () -> Unit, onLogIn: () -> Unit) {
+    val viewModel = getViewModel<LoginViewModel>()
+    val state by viewModel.state.collectAsState()
     val context = AmbientContext.current
 
-    val scope = rememberCoroutineScope()
-    var isLoading by remember { mutableStateOf(false) }
-
-    fun handleLogIn(email: String, password: String) {
-        isLoading = true
-        scope.launch {
-            try {
-                val response = sessionsApi.login(LoginRequest(email, password))
-                session.login(response)
-                onLogIn(response)
-            } catch (e: Throwable) {
-                isLoading = false
-                Toast.makeText(context, e.message ?: "Error logging in", Toast.LENGTH_LONG).show()
-            }
+    LaunchedEffect(state) {
+        if (state.didLogIn) onLogIn()
+        if (state.error != null) {
+            Toast.makeText(context, state.error?.message, Toast.LENGTH_LONG).show()
+            viewModel.dismissError()
         }
     }
 
@@ -85,8 +71,8 @@ fun LoginScreen(onShowSettings: () -> Unit, onLogIn: (LoginResponse) -> Unit) {
         Spacer(Modifier.height(32.dp))
 
         LoginForm(
-            onLogIn = ::handleLogIn,
-            isLoading = isLoading,
+            onLogIn = viewModel::login,
+            isLoading = state.isLoggingIn,
             modifier = Modifier.padding(16.dp),
         )
     }

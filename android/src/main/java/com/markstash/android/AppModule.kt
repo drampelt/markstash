@@ -9,6 +9,7 @@ import com.markstash.client.api.SessionsApi
 import com.markstash.client.api.TagsApi
 import com.markstash.client.api.UsersApi
 import com.markstash.mobile.Session
+import com.markstash.mobile.ui.login.LoginViewModel
 import com.markstash.mobile.ui.main.ResourceListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -35,5 +36,6 @@ val appModule = module {
     single { TagsApi(get()) }
     single { UsersApi(get()) }
 
+    viewModel { LoginViewModel(get(), get()) }
     viewModel { ResourceListViewModel(get()) }
 }
