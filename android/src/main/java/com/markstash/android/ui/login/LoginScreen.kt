@@ -22,9 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focusRequester
 import androidx.compose.ui.platform.AmbientContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -87,12 +90,17 @@ fun LoginForm(
     var email by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue() }
     var password by savedInstanceState(saver = TextFieldValue.Saver) { TextFieldValue() }
 
+    val passwordFocusRequester = remember { FocusRequester() }
+
     Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text(stringResource(R.string.login_label_email)) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            onImeActionPerformed = { action, _ ->
+                if (action == ImeAction.Next) passwordFocusRequester.requestFocus()
+            },
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -103,8 +111,16 @@ fun LoginForm(
             onValueChange = { password = it },
             label = { Text(stringResource(R.string.login_label_password)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Go),
+            onImeActionPerformed = { action, controller ->
+                if (action == ImeAction.Go) {
+                    controller?.hideSoftwareKeyboard()
+                    onLogIn?.invoke(email.text, password.text)
+                }
+            },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
         )
 
         Spacer(Modifier.height(16.dp))
