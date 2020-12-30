@@ -26,7 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.markstash.android.AmbientReceivedIntent
 import com.markstash.android.R
-import com.markstash.android.Session
+import com.markstash.mobile.Session
 import com.markstash.mobile.ui.main.ResourceListViewModel
 import org.koin.androidx.compose.get
 import org.koin.androidx.compose.getViewModel

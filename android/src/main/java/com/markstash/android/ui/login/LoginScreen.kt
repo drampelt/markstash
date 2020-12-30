@@ -35,10 +35,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
-import com.markstash.android.Session
 import com.markstash.api.sessions.LoginRequest
 import com.markstash.api.sessions.LoginResponse
 import com.markstash.client.api.SessionsApi
+import com.markstash.mobile.Session
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 

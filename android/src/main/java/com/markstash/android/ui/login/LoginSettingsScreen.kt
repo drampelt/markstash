@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.markstash.android.R
-import com.markstash.android.Session
+import com.markstash.mobile.Session
 import org.koin.androidx.compose.get
 
 @Composable

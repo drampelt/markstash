@@ -1,21 +1,24 @@
-package com.markstash.android
+package com.markstash.mobile
 
-import android.content.Context
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
-import com.markstash.client.api.MutableApiClient
+import com.russhwolf.settings.Settings
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class Session(context: Context) {
+class Session(
+    private val listener: Listener? = null,
+) {
     companion object {
         private const val KEY_BASE_URL = "base_url"
         private const val KEY_USER = "user"
+
+        const val DEFAULT_BASE_URL = "https://app.markstash.com/api"
     }
 
-    private val sharedPreferences = context.getSharedPreferences("default", Context.MODE_PRIVATE)
-    private val defaultBaseUrl = context.getString(R.string.settings_default_server_address)
+    // TODO: should probably use separate secure settings for auth token
+    private val settings: Settings = Settings()
 
     var user: User? = null
         private set
@@ -23,50 +26,46 @@ class Session(context: Context) {
     var authToken: String? = null
         private set(value) {
             field = value
-            apiClient.authToken = value
+            listener?.onAuthTokenChange(value)
         }
 
-    var baseUrl: String = sharedPreferences.getString(KEY_BASE_URL, null) ?: defaultBaseUrl
+    var baseUrl: String = settings.getString(KEY_BASE_URL, DEFAULT_BASE_URL)
         set(value) {
-            val newUrl = if (value.isBlank()) defaultBaseUrl else value
+            val newUrl = if (value.isBlank()) DEFAULT_BASE_URL else value
             field = newUrl
-            apiClient.baseUrl = newUrl
-            sharedPreferences.edit().apply {
-                putString(KEY_BASE_URL, newUrl)
-                apply()
-            }
+            settings.putString(KEY_BASE_URL, newUrl)
+            listener?.onBaseUrlChange(newUrl)
         }
 
     val isLoggedIn: Boolean
         get() = user != null
 
-    val apiClient = MutableApiClient(baseUrl = baseUrl)
-
     init {
-        sharedPreferences.getString(KEY_USER, null)?.let { userString ->
+        settings.getStringOrNull(KEY_USER)?.let { userString ->
             val loginResponse = Json.decodeFromString<LoginResponse>(userString)
             user = loginResponse.user
             authToken = loginResponse.authToken
         }
+
+        listener?.onBaseUrlChange(baseUrl)
     }
 
     fun login(loginResponse: LoginResponse) {
         user = loginResponse.user
         authToken = loginResponse.authToken
-        sharedPreferences.edit().apply {
-            putString(KEY_USER, Json.encodeToString(loginResponse) )
-            apply()
-        }
+        settings.putString(KEY_USER, Json.encodeToString(loginResponse))
     }
 
     fun logout() {
         user = null
         authToken = null
-        sharedPreferences.edit().apply {
-            remove(KEY_USER)
-            apply()
-        }
+        settings.remove(KEY_USER)
     }
 
     fun requireUser() = user ?: throw IllegalStateException("Not logged in")
+
+    interface Listener {
+        fun onAuthTokenChange(authToken: String?)
+        fun onBaseUrlChange(baseUrl: String)
+    }
 }

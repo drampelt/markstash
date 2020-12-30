@@ -11,10 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
-import com.markstash.android.Session
 import com.markstash.android.ui.login.LoginScreen
 import com.markstash.android.ui.login.LoginSettingsScreen
 import com.markstash.android.ui.main.MainScreen
+import com.markstash.mobile.Session
 import org.koin.androidx.compose.get
 
 @Composable

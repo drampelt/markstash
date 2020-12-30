@@ -46,6 +46,9 @@ kotlin {
             dependencies {
                 api(project(":shared:client"))
                 api(Dependencies.kotlinCoroutines)
+
+                implementation(Dependencies.multiplatformSettings)
+                implementation(Dependencies.kotlinSerialization)
             }
         }
 

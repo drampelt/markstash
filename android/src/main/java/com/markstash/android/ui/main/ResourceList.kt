@@ -33,11 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.request.ImageRequest
 import com.markstash.android.R
-import com.markstash.android.Session
 import com.markstash.android.ui.components.Tag
 import com.markstash.api.models.Resource
 import com.markstash.client.util.formatRelativeDisplay
 import com.markstash.client.util.parseDomainFromUrl
+import com.markstash.mobile.Session
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
