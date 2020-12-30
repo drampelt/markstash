@@ -7,7 +7,7 @@ import kotlinx.coroutines.cancelChildren
 
 actual open class BaseViewModel {
     private val viewModelJob = SupervisorJob()
-    actual val viewModelScope: CoroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    actual val scope: CoroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     protected actual open fun onCleared() {
         viewModelJob.cancelChildren()

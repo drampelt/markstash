@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 expect open class BaseViewModel() {
-    val viewModelScope: CoroutineScope
+    val scope: CoroutineScope
 
     protected open fun onCleared()
 }
@@ -25,6 +25,6 @@ open class StateViewModel<T>(initialState: T) : BaseViewModel() {
 
     fun observeState(observer: ((T) -> Unit)) {
         state.onEach { observer(it) }
-            .launchIn(viewModelScope)
+            .launchIn(scope)
     }
 }

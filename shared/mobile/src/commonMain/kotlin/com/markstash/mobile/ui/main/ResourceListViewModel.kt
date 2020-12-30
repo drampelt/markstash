@@ -20,7 +20,7 @@ class ResourceListViewModel(
     }
 
     fun loadResources() {
-        viewModelScope.launch {
+        scope.launch {
             setState(currentState.copy(isLoading = true))
 
             val resources = runCatching { resourcesApi.index() }
