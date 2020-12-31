@@ -3,6 +3,8 @@ package com.markstash.mobile
 import com.markstash.api.models.User
 import com.markstash.api.sessions.LoginResponse
 import com.russhwolf.settings.Settings
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -21,7 +23,10 @@ class Session(
     private val settings: Settings = Settings()
 
     var user: User? = null
-        private set
+        private set(value) {
+            field = value
+            _isLoggedInFlow.value = value != null
+        }
 
     var authToken: String? = null
         private set(value) {
@@ -39,6 +44,9 @@ class Session(
 
     val isLoggedIn: Boolean
         get() = user != null
+
+    private val _isLoggedInFlow = MutableStateFlow(isLoggedIn)
+    val isLoggedInFlow: StateFlow<Boolean> = _isLoggedInFlow
 
     init {
         settings.getStringOrNull(KEY_USER)?.let { userString ->
