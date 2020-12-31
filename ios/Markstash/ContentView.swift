@@ -10,8 +10,9 @@ import shared
 
 struct ContentView: View {
     var body: some View {
-        Text(SharedTestKt.hello)
-            .padding()
+        Button(action: { Session.instance.logout() }) {
+            Text("Log Out")
+        }
     }
 }
 

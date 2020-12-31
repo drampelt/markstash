@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import shared
 
 @main
 struct MarkstashApp: App {
+    @ObservedStateFlow<KotlinBoolean>(Session.instance.isLoggedInFlow) private var isLoggedIn
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isLoggedIn.boolValue {
+                ContentView()
+            } else {
+                LoginScreen()
+            }
         }
     }
 }

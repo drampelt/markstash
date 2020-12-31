@@ -10,6 +10,10 @@
 		23CCB990078B0CB0701ADDE6 /* Pods_Markstash.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B0DB0ED20072E8E4052FF1 /* Pods_Markstash.framework */; };
 		68198CC62598FB6100D21CDA /* ObservableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CC52598FB6100D21CDA /* ObservableViewModel.swift */; };
 		68198CD025990EEF00D21CDA /* Apis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CCF25990EEF00D21CDA /* Apis.swift */; };
+		68198CDE259BBBA900D21CDA /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CDD259BBBA900D21CDA /* LoginScreen.swift */; };
+		68198CE6259CE7A600D21CDA /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CE5259CE7A600D21CDA /* Session.swift */; };
+		68198CEB259D00DA00D21CDA /* LoginSettingsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CEA259D00DA00D21CDA /* LoginSettingsScreen.swift */; };
+		68198CF0259D813D00D21CDA /* ObservableStateFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68198CEF259D813D00D21CDA /* ObservableStateFlow.swift */; };
 		68736112251BDC2100AB897B /* MarkstashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736111251BDC2100AB897B /* MarkstashApp.swift */; };
 		68736114251BDC2100AB897B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68736113251BDC2100AB897B /* ContentView.swift */; };
 		68736116251BDC2300AB897B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68736115251BDC2300AB897B /* Assets.xcassets */; };
@@ -39,6 +43,10 @@
 		56B0DB0ED20072E8E4052FF1 /* Pods_Markstash.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Markstash.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		68198CC52598FB6100D21CDA /* ObservableViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableViewModel.swift; sourceTree = "<group>"; };
 		68198CCF25990EEF00D21CDA /* Apis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Apis.swift; sourceTree = "<group>"; };
+		68198CDD259BBBA900D21CDA /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
+		68198CE5259CE7A600D21CDA /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		68198CEA259D00DA00D21CDA /* LoginSettingsScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginSettingsScreen.swift; sourceTree = "<group>"; };
+		68198CEF259D813D00D21CDA /* ObservableStateFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableStateFlow.swift; sourceTree = "<group>"; };
 		6873610E251BDC2100AB897B /* Markstash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Markstash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		68736111251BDC2100AB897B /* MarkstashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkstashApp.swift; sourceTree = "<group>"; };
 		68736113251BDC2100AB897B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -91,6 +99,23 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		68198CDB259BBB8F00D21CDA /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				68198CDC259BBB9D00D21CDA /* Login */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		68198CDC259BBB9D00D21CDA /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				68198CDD259BBBA900D21CDA /* LoginScreen.swift */,
+				68198CEA259D00DA00D21CDA /* LoginSettingsScreen.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
 		68736105251BDC2100AB897B = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +141,7 @@
 		68736110251BDC2100AB897B /* Markstash */ = {
 			isa = PBXGroup;
 			children = (
+				68198CDB259BBB8F00D21CDA /* UI */,
 				68736111251BDC2100AB897B /* MarkstashApp.swift */,
 				68736113251BDC2100AB897B /* ContentView.swift */,
 				68198CC52598FB6100D21CDA /* ObservableViewModel.swift */,
@@ -123,6 +149,8 @@
 				6873611A251BDC2300AB897B /* Info.plist */,
 				68736117251BDC2300AB897B /* Preview Content */,
 				68198CCF25990EEF00D21CDA /* Apis.swift */,
+				68198CE5259CE7A600D21CDA /* Session.swift */,
+				68198CEF259D813D00D21CDA /* ObservableStateFlow.swift */,
 			);
 			path = Markstash;
 			sourceTree = "<group>";
@@ -318,9 +346,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				68736114251BDC2100AB897B /* ContentView.swift in Sources */,
+				68198CEB259D00DA00D21CDA /* LoginSettingsScreen.swift in Sources */,
+				68198CF0259D813D00D21CDA /* ObservableStateFlow.swift in Sources */,
 				68736112251BDC2100AB897B /* MarkstashApp.swift in Sources */,
+				68198CE6259CE7A600D21CDA /* Session.swift in Sources */,
 				68198CC62598FB6100D21CDA /* ObservableViewModel.swift in Sources */,
 				68198CD025990EEF00D21CDA /* Apis.swift in Sources */,
+				68198CDE259BBBA900D21CDA /* LoginScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
